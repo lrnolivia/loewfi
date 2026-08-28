@@ -18,6 +18,17 @@
        the divider to the middle of the page and killed the hero's top padding. */
     --nav-top:26px;
     --nav-height:64px;
+    /* glow accents: cyan for hover states, red matching the badge's own
+       sienna fill, and a neutral greige matching the notify button's resting
+       color — all stored as unitless RGB for rgba(var(--x), alpha). */
+    --glow-cyan:28,140,147;
+    --glow-red:181,71,31;
+    --glow-neutral:140,132,116;
+    /* lighter pastel versions of the above, used only for small icon glyphs
+       sitting on top of the saturated glass fills — a pastel icon reads as
+       an accent, a full-saturation one would just fight the button color */
+    --pastel-red:255,214,199;
+    --pastel-cyan:191,239,241;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100%;}
@@ -38,28 +49,159 @@
   }
   .nav-pill{
     pointer-events:auto;
+    position:relative; isolation:isolate; overflow:hidden;
     display:flex; align-items:center; gap:30px;
-    background:var(--cream); color:var(--ink);
+    color:var(--cream); /* was --ink: the pill is glass now, showing the dark photo through it,
+                            so nav text needs to sit light-on-dark instead of dark-on-cream */
     padding:13px 28px; /* more horizontal padding */
     border-radius:100px;
-    box-shadow:0 14px 34px rgba(0,0,0,0.35);
+    /* back to the original, more restrained edge highlight — the brighter
+       version fought with the glass fill and read as overexposed */
+    border:1px solid rgba(241,236,223,0.16);
+    box-shadow:0 14px 34px rgba(0,0,0,0.35), inset 0 1px 0 rgba(241,236,223,0.18);
   }
+  /* ---- glass primitives: shared by .nav-pill and the nested .nav-cta badge.
+     Layer stack (all absolute, inset:0, pointer-events:none unless noted):
+       0  backdrop  — a second copy of the hero photo, filtered (not
+                       backdrop-filter — see the note on .glass__backdrop).
+       1  tint       — the glass's own color cast.
+       2  sheen       — the big diagonal specular sweep.
+       2  specular    — a tighter catch-light (used on the CTA badge only).
+       3+ content     — real content; never sits inside a filtered layer,
+                       so it stays perfectly sharp and legible.
+     ---- */
+  .glass__backdrop{
+    position:absolute; inset:0; z-index:0;
+    background-image:url('/images/moss.jpg');
+    background-repeat:no-repeat; background-position:center center; background-size:cover;
+    background-attachment:fixed;
+    filter:grayscale(0.55) brightness(0.8) contrast(1.08);
+  }
+  .glass__tint{ position:absolute; inset:0; z-index:1; pointer-events:none; }
+  .glass__sheen{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+    background:linear-gradient(135deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.05) 32%, rgba(255,255,255,0) 55%);
+    mix-blend-mode:overlay;
+  }
+  /* tight specular catch-light — used only where a glossy "glass button"
+     highlight is wanted (the CTA badge), not the whole pill */
+  .glass__specular{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+    background:radial-gradient(ellipse 55% 85% at 12% 0%, rgba(255,255,255,0.7), rgba(255,255,255,0) 70%);
+    mix-blend-mode:screen;
+  }
+  /* the brightening pass: a cream wash blended with soft-light rather than
+     laid flatly on top, so it lifts midtones without flattening the photo's
+     shadows/highlights. Kept deliberately light (0.16) — a stronger version
+     of this read as overexposed. */
+  .nav-pill .glass__tint{
+    background:rgba(241,236,223,0.16);
+    mix-blend-mode:soft-light;
+  }
+  .nav-pill__content{ position:relative; z-index:4; display:flex; align-items:center; gap:30px; }
   .nav-pill .brand{
     font-weight:700; font-size:19px; letter-spacing:-0.01em;
-    padding-right:8px; border-right:1px solid rgba(20,20,16,0.18);
+    padding-right:8px; border-right:1px solid rgba(241,236,223,0.22);
+    text-shadow:0 1px 6px rgba(0,0,0,0.5); /* keeps it legible now the glass reads brighter */
   }
   .nav-links{display:flex; gap:24px; list-style:none; margin:0; padding:0;}
   .nav-links a{
-    color:var(--ink); text-decoration:none; font-size:12px;
+    color:var(--cream); text-decoration:none; font-size:12px;
     letter-spacing:0.05em; text-transform:uppercase;
-    font-family:'Space Mono',monospace; opacity:0.35; /* inactive links — barely visible */
+    font-family:'Space Mono',monospace; opacity:0.55; /* inactive links — barely visible */
+    text-shadow:0 1px 5px rgba(0,0,0,0.45);
   }
+
+  /* mobile-only hamburger + dropdown, revealing the links that .nav-links
+     hides below 760px (see the media query) */
+  .nav-actions{ display:flex; align-items:center; gap:14px; }
+  .nav-toggle{
+    display:none; position:relative; width:30px; height:30px;
+    border:none; background:transparent; padding:0; cursor:pointer; flex:0 0 auto;
+  }
+  .nav-toggle span{
+    position:absolute; left:5px; right:5px; height:2.5px; border-radius:2px;
+    background:var(--cream); transition:transform .3s var(--ease), opacity .2s ease;
+  }
+  .nav-toggle span:nth-child(1){ top:9px; }
+  .nav-toggle span:nth-child(2){ top:14px; }
+  .nav-toggle span:nth-child(3){ top:19px; }
+  .nav-toggle.is-open span:nth-child(1){ transform:translateY(5px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2){ opacity:0; }
+  .nav-toggle.is-open span:nth-child(3){ transform:translateY(-5px) rotate(-45deg); }
+
+  /* the dropdown itself: deliberately solid, not glass — needs to stay
+     readable regardless of what's behind it and what the glass is doing */
+  .nav-dropdown{
+    display:none;
+    position:absolute; left:0; right:0; pointer-events:auto;
+    top:calc((var(--nav-top) * 2) + var(--nav-height) + 14px);
+    background:var(--ink);
+    border:1px solid rgba(241,236,223,0.14);
+    border-radius:18px;
+    padding:6px;
+    box-shadow:0 24px 60px rgba(0,0,0,0.55);
+    z-index:59;
+  }
+  .nav-dropdown.is-open{ display:block; animation:fadeDown .35s var(--ease) both; }
+  .nav-dropdown ul{ list-style:none; margin:0; padding:0; }
+  .nav-dropdown a{
+    display:block; padding:14px 14px;
+    color:var(--cream); text-decoration:none;
+    font-family:'Space Mono',monospace; font-size:12.5px;
+    letter-spacing:0.05em; text-transform:uppercase;
+    border-bottom:1px solid rgba(241,236,223,0.08);
+  }
+  .nav-dropdown li:last-child a{ border-bottom:none; }
+  .nav-dropdown a:active{ opacity:.7; }
+  @media (min-width:761px){ .nav-dropdown{ display:none !important; } }
+
+  /* ---- .nav-cta: colored liquid glass, modeled on the reference buttons —
+     translucent color that reads DARK/MUTED at rest and turns bright with
+     a real glow on hover, rather than a flat saturated chip with a big
+     white sheen wash on top (which read as too much / too flat). ---- */
   .nav-cta{
-    background:#B5471F; color:#fff; /* brick sienna, work-in-progress accent */
-    font-family:'Space Mono',monospace; font-size:10px; font-weight:700; /* smaller, bolder for readability */
+    position:relative; isolation:isolate; overflow:hidden;
+    color:#fff;
+    font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
     text-transform:uppercase; letter-spacing:0.05em;
-    padding:7px 14px; border-radius:100px; /* back to a full pill, ~20% smaller than before */
+    padding:7px 14px; border-radius:100px;
+    border:1px solid rgba(255,255,255,0.2);
+    /* rest state: only a faint grounding shadow, no colored bloom yet —
+       the glow is what "activating" looks like, so it has to start near zero */
+    box-shadow:0 2px 8px rgba(0,0,0,0.3);
+    transition:box-shadow .35s var(--ease), transform .3s var(--ease);
   }
+  /* translucent red at rest — low alpha over the pill's own dark glass
+     reads as a dark, muted red. Hover pushes the alpha way up so the same
+     color reads bright/saturated: one variable doing both jobs, like the
+     reference "+" button's dim-vs-lit states. */
+  .nav-cta .glass__tint{
+    background:rgba(var(--glow-red),0.5);
+    transition:background .35s var(--ease);
+  }
+  .nav-cta:hover .glass__tint{ background:rgba(var(--glow-red),0.96); }
+  .nav-cta .glass__specular{
+    background:radial-gradient(ellipse 70% 100% at 20% -10%, rgba(255,255,255,0.4), rgba(255,255,255,0) 65%);
+  }
+  .nav-cta__label{ position:relative; z-index:4; display:flex; align-items:center; gap:6px; }
+  .nav-cta__icon{ width:11px; height:11px; flex:0 0 auto; color:rgba(var(--pastel-red),0.95); }
+  /* the "basically glows" active state: color already jumped brighter via
+     .glass__tint above, box-shadow adds the light actually bleeding out */
+  .nav-cta:hover{
+    box-shadow:
+      0 0 16px 1px rgba(var(--glow-red),0.55),
+      0 0 42px 8px rgba(var(--glow-red),0.35),
+      0 0 84px 22px rgba(var(--glow-red),0.18);
+  }
+  .nav-cta::after{
+    content:'';
+    position:absolute; inset:0; border-radius:inherit; z-index:5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:0; mix-blend-mode:overlay; pointer-events:none;
+    transition:opacity .4s var(--ease);
+  }
+  .nav-cta:hover::after{ opacity:0.16; }
 
   /* HERO: adjust so content + footer + nav fit in one viewport by default */
   .hero{
@@ -76,21 +218,32 @@
   .bg-photo{
     position:absolute; inset:0;
     background:url('/images/moss.jpg') center/cover no-repeat;
-    filter:grayscale(0.55) brightness(0.80) contrast(1.08);
+    /* nudged brighter/flatter — the bulk of the dimming lives in the ::after
+       gradient below, which is where it's been pulled back */
+    filter:grayscale(0.55) brightness(0.94) contrast(1.05);
   }
-  /* stronger top band so nav + tag look like a single dark row */
+  /* light film grain on the photo itself — same turbulence texture as the
+     glass's grain, just at a fraction of the opacity (0.035 vs the glass's
+     0.12) so it reads as photo texture, not competing with the glass */
+  .bg-photo::before{
+    content:'';
+    position:absolute; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:0.035; mix-blend-mode:overlay; pointer-events:none;
+  }
+  /* stronger top band so nav + tag look like a single dark row — every stop
+     pulled down from its old value so the glass has more light to bend */
   .bg-photo::after{
     content: '';
     position: absolute;
     inset: 0;
-    /* make a stronger solid top band, then fade down */
     background: linear-gradient(
       0deg,
-      rgba(0,0,0,0.95) 0%,
-      rgba(0,0,0,0.95) 14%,
-      rgba(20,20,16,0.92) 18%,
-      rgba(20,20,16,0.35) 55%,
-      rgba(20,20,16,0.65) 100%
+      rgba(0,0,0,0.55) 0%,
+      rgba(0,0,0,0.55) 14%,
+      rgba(20,20,16,0.48) 18%,
+      rgba(20,20,16,0.14) 55%,
+      rgba(20,20,16,0.32) 100%
     );
     pointer-events: none;
   }
@@ -113,25 +266,38 @@
      see the comments there. */
   .hero-tag-mobile{ display:none; }
 
-  /* CARD: right-shifted on desktop; content inside should be left-aligned */
+  /* CARD: right-shifted on desktop; content inside should be left-aligned.
+     Split into two layers so the mouse-tilt parallax stays purely physical:
+     .card is just a static, untransformed anchor (paper's resting -3deg tilt
+     lives here, permanently — it never receives the dynamic JS transform).
+     .card-surface is the layer the JS tilt/scale actually touches — it's the
+     "physical card" (fill + shadow + glow), absolutely filling .card behind
+     the copy. .card-content sits on top, in normal flow, and never receives
+     any transform at all, so the text/eyebrow/form stay crisp and fixed
+     regardless of how the surface underneath tilts on hover. */
   .card{
     position:relative; z-index:60;
     margin:0; /* we'll control placement with auto margins */
     max-width:560px; /* slightly reduced to help fit within viewport */
-    background:var(--cream); color:var(--ink);
+    color:var(--ink);
     transform:rotate(-3deg);
-    box-shadow:0 30px 70px rgba(0,0,0,0.45);
     /* place to the right while keeping a consistent right padding */
     margin-left:auto; /* push to the right */
     margin-right:6vw; /* ample padding from right edge */
     text-align:left; /* keep copy left-aligned even when card sits on right */
-    /* preserve-3d allows the inner content wrapper to counter-transform */
+    /* gives .card-surface's rotateX/rotateY real 3D depth */
     perspective:1000px;
   }
+  .card-surface{
+    position:absolute; inset:0;
+    background:var(--cream);
+    box-shadow:0 30px 70px rgba(0,0,0,0.45);
+    transition:box-shadow .3s ease, transform .15s ease-out;
+    will-change:transform;
+  }
   .card-content{
+    position:relative; z-index:1;
     padding:44px 40px 36px;
-    /* counter-transform to undo any parent tilt */
-    transform-style:preserve-3d;
   }
   .eyebrow{
     display:flex; align-items:center; gap:8px;
@@ -150,21 +316,58 @@
     font-size:15px; line-height:1.6; color:#3E3B33;
     max-width:440px; margin:0 0 30px;
   }
-  .notify{ display:flex; max-width:420px; }
+  /* the form itself is plain again — no sheen, no grain, no ambient glow.
+     All of that now lives on the send button alone (below), which is the
+     thing that's actually meant to read as a glass "object" */
+  .notify{
+    position:relative; max-width:420px;
+  }
   .notify input{
-    flex:1; border:none; background:#DCD5C3; padding:14px 16px; /* darker shade of the card's own cream, not grey */
+    width:100%; border:none; background:#DCD5C3; /* darker shade of the card's own cream, not grey */
+    padding:15px 56px 15px 20px; /* extra right padding clears the round button */
     font-family:'Space Grotesk',sans-serif; font-size:14px; color:var(--ink); outline:none;
-    border-radius:100px 0 0 100px; /* rounded left edge, flat + flush with the button on the right */
+    border-radius:100px;
   }
+  .notify input:focus{ box-shadow:inset 0 0 0 1.5px rgba(20,20,16,0.35); }
+  /* ---- send button: a small round piece of colored glass sitting inside
+     the field, same dark-at-rest / bright-and-glowing-when-active language
+     as .nav-cta — translucent fill whose alpha does double duty as the
+     dim/lit switch, plus a real glow only once it's "on". ---- */
   .notify button{
-    border:none; background:#8C8474; color:var(--cream); /* greige */
-    font-family:'Space Mono',monospace; font-size:11.5px;
-    letter-spacing:0.05em; text-transform:uppercase;
-    padding:14px 20px; cursor:pointer;
-    border-radius:0 100px 100px 0; /* rounded right edge, flat + flush with the input on the left */
-    transition:background 0.2s ease;
+    position:absolute; top:50%; right:6px; transform:translateY(-50%); /* 6px gives the circle even padding inside the field on all sides */
+    width:38px; height:38px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    isolation:isolate; overflow:hidden;
+    border:1px solid rgba(255,255,255,0.2);
+    background:rgba(var(--glow-neutral),0.55); /* dim/inactive resting fill */
+    box-shadow:0 2px 8px rgba(0,0,0,0.25);
+    cursor:pointer; padding:0;
+    transition:background .3s var(--ease), box-shadow .35s var(--ease), transform .15s ease-out;
   }
-  .notify button:hover{ background:#1C8C93; }
+  .notify button::before{
+    /* small glossy glint, not a full diagonal wash — this is the "too much
+       white" mistake from the last pass, kept tight and low-opacity here */
+    content:'';
+    position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+    background:radial-gradient(circle at 32% 24%, rgba(255,255,255,0.5), rgba(255,255,255,0) 55%);
+    mix-blend-mode:overlay;
+  }
+  .notify button:hover, .notify button:focus-visible{
+    background:rgba(var(--glow-cyan),0.95); /* jumps to bright/saturated */
+    box-shadow:
+      0 0 10px 2px rgba(var(--glow-cyan),0.55),
+      0 0 26px 8px rgba(var(--glow-cyan),0.35),
+      0 0 52px 16px rgba(var(--glow-cyan),0.18);
+  }
+  .notify button:active{ transform:translateY(-50%) scale(0.92); }
+  /* send arrow — pastel neutral at rest, pastel cyan on hover, mirroring
+     the button's own resting/hover fill colors */
+  .notify button svg{
+    position:relative; z-index:1; width:15px; height:15px; flex:0 0 auto;
+    color:rgba(241,236,223,0.85);
+    transition:color .2s ease;
+  }
+  .notify button:hover svg{ color:rgba(var(--pastel-cyan),0.95); }
 
   footer{
     position:relative; z-index:2;
@@ -186,8 +389,14 @@
 
     .nav-wrap{ left:4vw; right:4vw; top:var(--nav-top); }
     /* stretch the pill itself edge-to-edge across the nav-wrap; same look, just full-width */
-    .nav-pill{ width:100%; padding:10px 18px; justify-content:space-between; }
+    .nav-pill{ width:100%; padding:10px 18px; }
+    /* space-between has to live on .nav-pill__content (the actual flex
+       parent of .brand/.nav-actions), not on .nav-pill itself — .nav-pill's
+       only in-flow child is .nav-pill__content, so space-between up there
+       had nothing to distribute space between and did nothing */
+    .nav-pill__content{ width:100%; justify-content:space-between; }
     .nav-links{display:none;}
+    .nav-toggle{ display:block; }
     .tag-corner{display:none;}
 
     .card{
@@ -260,7 +469,6 @@
   @keyframes cardIn{ from{opacity:0; transform:translateY(54px) rotate(0deg) scale(.95);} to{opacity:1; transform:translateY(0) rotate(-3deg) scale(1);} }
   @keyframes kenBurns{ from{transform:scale(1);} to{transform:scale(1.07);} }
   @keyframes pulseDot{ 0%,100%{box-shadow:0 0 0 0 rgba(255,212,0,.55);} 50%{box-shadow:0 0 0 7px rgba(255,212,0,0);} }
-  @keyframes shine{ from{transform:translateX(-130%) skewX(-15deg);} to{transform:translateX(230%) skewX(-15deg);} }
 
   /* entrance stagger, top to bottom */
   .nav-wrap{ animation:fadeDown .8s var(--ease) both; }
@@ -268,7 +476,7 @@
   .hero-tag-mobile{ animation:fadeDown .8s var(--ease) .15s both; }
   .grain-line{ transform-origin:left center; animation:drawLine 1s var(--ease) .3s both; }
   .hero{ perspective:1200px; } /* gives the card's mouse-tilt (JS, below) real depth */
-  .card{ animation:cardIn 1s var(--ease) .4s both; transition:transform .15s ease-out, box-shadow .3s ease; }
+  .card{ animation:cardIn 1s var(--ease) .4s both; }
   .card-content > *{ opacity:0; animation:fadeUp .8s var(--ease) both; }
   .card-content .eyebrow{ animation-delay:.75s; }
   .card-content h1{ animation-delay:.85s; }
@@ -292,19 +500,7 @@
   .nav-cta{ transition:transform .3s var(--ease); }
   .nav-pill:hover .nav-cta{ transform:scale(1.05); }
 
-  .card:hover{ box-shadow:0 40px 90px rgba(0,0,0,0.5); }
-
-  .notify button{ position:relative; overflow:hidden; transition:background .2s ease, transform .25s var(--ease); }
-  .notify button:hover{ transform:translateY(-1px); }
-  .notify button::after{
-    content:''; position:absolute; top:0; left:0; width:40%; height:100%;
-    background:linear-gradient(120deg, transparent, rgba(255,255,255,.35), transparent);
-    transform:translateX(-130%) skewX(-15deg); pointer-events:none;
-  }
-  .notify button:hover::after{ animation:shine .8s var(--ease); }
-
-  .notify input{ transition:box-shadow .25s var(--ease); }
-  .notify input:focus{ box-shadow:inset 0 0 0 1.5px rgba(20,20,16,0.35); }
+  .card:hover .card-surface{ box-shadow:0 40px 90px rgba(0,0,0,0.5); }
 
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{
@@ -318,15 +514,44 @@
 
   <div class="nav-wrap">
     <div class="nav-pill">
-      <div class="brand">loew.fi</div>
-      <ul class="nav-links">
+      <div class="glass__backdrop"></div>
+      <div class="glass__tint"></div>
+      <div class="glass__sheen"></div>
+      <div class="nav-pill__content">
+        <div class="brand">loew.fi</div>
+        <ul class="nav-links">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Portfolio</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navDropdown">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="nav-cta">
+            <div class="glass__tint"></div>
+            <div class="glass__specular"></div>
+            <span class="nav-cta__label">
+              <svg class="nav-cta__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 3.5 21 19.5H3L12 3.5Z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+                <path d="M12 9.5v5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                <circle cx="12" cy="17" r="1" fill="currentColor"/>
+              </svg>
+              .workinprogress
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="nav-dropdown" id="navDropdown">
+      <ul>
         <li><a href="#">Home</a></li>
         <li><a href="#">About</a></li>
         <li><a href="#">Portfolio</a></li>
         <li><a href="#">Contact</a></li>
       </ul>
-      <div class="nav-cta">.workinprogress</div>
-    </div>
+    </nav>
   </div>
 
   <section class="hero">
@@ -336,6 +561,7 @@
     <div class="hero-tag-mobile mono">LOEW FIDELITY<br>FIELD NOTES — VOL. 01</div>
 
     <div class="card">
+      <div class="card-surface"></div>
       <div class="card-content">
         <div class="eyebrow"><i></i>currently under construction</div>
         <h1>Good things<br>are <span>coming.</span></h1>
@@ -343,7 +569,11 @@
         <form class="notify" action="mailto:me@loew.fi" method="GET" enctype="text/plain">
           <input type="hidden" name="subject" value="A word of encouragement — loew.fi">
           <input type="text" name="body" placeholder="Talk to me nice..." required>
-          <button type="submit">Send</button>
+          <button type="submit" aria-label="Send">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 19 19 5M19 5H9M19 5v10" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
         </form>
       </div>
     </div>
@@ -355,29 +585,41 @@
   </footer>
 
 <script>
-  // Once the card's entrance animation finishes, drop it so its transform is
-  // free again for the hover-tilt below to control — a filled animation
-  // otherwise permanently wins the cascade for that property, even over
-  // inline styles. (Only .card needs this: it's the only element anything
-  // touches `transform` on again after entrance. Card *children* keep their
-  // fill-mode indefinitely on purpose — they also carry a static opacity:0
-  // as an entrance-delay guard, so clearing their animation would strip the
-  // filled opacity:1 and re-expose that opacity:0, hiding them for good.)
+  // .card itself is never touched by JS anymore — it just sits at its
+  // permanent resting rotate(-3deg) (set in CSS) for the whole page's life,
+  // so there's nothing to "free up" after the entrance animation this time.
+  //
+  // The mouse-tilt now lives entirely on .card-surface, a layer that sits
+  // behind .card-content and carries the fill/shadow/glow. .card-content
+  // is never assigned a transform at all, so it can't inherit any part of
+  // the tilt — no rotation, no scale, no parallax drift — it just stays
+  // put while the surface underneath tilts on hover.
   var card = document.querySelector('.card');
-  var cardContent = document.querySelector('.card-content');
-  if (card) {
-    card.addEventListener('animationend', function handler(e){
-      if (e.target !== card) return; // ignore bubbled child animationend events
-      card.style.animation = 'none';
-      card.removeEventListener('animationend', handler);
+  var cardSurface = document.querySelector('.card-surface');
+
+  // Mobile nav dropdown: toggle open/closed, close on link click.
+  var navToggle = document.querySelector('.nav-toggle');
+  var navDropdown = document.querySelector('.nav-dropdown');
+  if (navToggle && navDropdown) {
+    navToggle.addEventListener('click', function(){
+      var isOpen = navDropdown.classList.toggle('is-open');
+      navToggle.classList.toggle('is-open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    navDropdown.addEventListener('click', function(e){
+      if (e.target.closest('a')) {
+        navDropdown.classList.remove('is-open');
+        navToggle.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 
-  // Subtle mouse-tilt on the card — skipped entirely for touch devices and
-  // for anyone who has motion reduced at the OS level.
+  // Subtle mouse-tilt on the card surface — skipped entirely for touch
+  // devices and for anyone who has motion reduced at the OS level.
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var canHover = window.matchMedia('(pointer: fine)').matches;
-  if (card && !reduceMotion && canHover) {
+  if (card && cardSurface && !reduceMotion && canHover) {
     var maxTilt = 4;
     card.addEventListener('mousemove', function(e){
       var r = card.getBoundingClientRect();
@@ -385,17 +627,12 @@
       var py = (e.clientY - r.top) / r.height - 0.5;
       var tiltX = -py * maxTilt;
       var tiltY = px * maxTilt;
-      card.style.transform =
-        'rotate(-3deg) scale(1.015) rotateX(' + tiltX.toFixed(2) + 'deg) ' +
+      cardSurface.style.transform =
+        'scale(1.015) rotateX(' + tiltX.toFixed(2) + 'deg) ' +
         'rotateY(' + tiltY.toFixed(2) + 'deg)';
-      // Counter-transform the content to stay flat
-      cardContent.style.transform =
-        'rotateX(' + (-tiltX).toFixed(2) + 'deg) ' +
-        'rotateY(' + (-tiltY).toFixed(2) + 'deg)';
     });
     card.addEventListener('mouseleave', function(){
-      card.style.transform = 'rotate(-3deg) scale(1)';
-      cardContent.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      cardSurface.style.transform = 'scale(1)';
     });
   }
 </script>
