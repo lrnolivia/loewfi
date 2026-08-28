@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Aveda Studio — loew.fi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .page-hero{ position:relative; height:58vh; min-height:420px; overflow:hidden; }
+  .page-hero .photo-fill{ background-image:url('assets/img/alex1.jpg'); background-position:center 25%; filter:grayscale(0.1) brightness(0.78) contrast(1.05); }
+  .page-hero-content{
+    position:relative; z-index:5; height:100%;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    max-width:var(--container); margin:0 auto; padding:0 var(--gutter) var(--space-4);
+  }
+  .page-hero h1{ font-size:clamp(38px,5.5vw,64px); margin:0 0 10px; letter-spacing:-0.02em; }
+  .page-hero .lede{ font-size:15.5px; color:var(--cream-dim); max-width:56ch; margin:0; }
+
+  .gwrap{ max-width:1520px; margin:0 auto; padding:var(--space-6) var(--gutter); }
+  .gnote{ font-family:'Space Mono',monospace; font-size:11px; color:var(--cream-dim); margin:0 0 4px; }
+</style>
+</head>
+<body>
+
+  <div class="nav-wrap">
+    <div class="nav-pill glass">
+      <div class="nav-pill__content">
+        <a href="index.html" class="brand">loew.fi</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Main</a></li>
+          <li class="nav-drop">
+            <a href="avedastudio.html" role="button">Photo <span class="caret"></span></a>
+            <div class="nav-drop__panel glass">
+              <a href="images/avedalife.html">Aveda Lifestyle</a>
+              <a href="avedastudio.html" aria-current="page">Aveda Studio</a>
+              <a href="images/islesashore.html">Isles Ashore</a>
+              <a href="images/magnoliafields.html">Magnolia Fields</a>
+              <a href="images/leavesleos.html">Leaves &amp; Leos</a>
+            </div>
+          </li>
+          <li class="nav-drop">
+            <a href="hydroviv.html" role="button">Design <span class="caret"></span></a>
+            <div class="nav-drop__panel glass">
+              <a href="hydroviv.html">Hydroviv</a>
+              <a href="graphics/delta-ascencion.html">Ascencion</a>
+              <a href="graphics/glorybe.html">Glory Be</a>
+              <a href="cksteele.html">CK Steele Plaza</a>
+              <a href="graphics/promotional.html">Promotional Material</a>
+              <a href="graphics/misc.html">Misc</a>
+            </div>
+          </li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <a href="contact.html" class="nav-cta">Contact</a>
+    </div>
+  </div>
+
+  <section class="page-hero">
+    <div class="photo-fill scrim-bottom"></div>
+    <div class="page-hero-content">
+      <div class="eyebrow on-dark mono"><i></i>photo — studio beauty</div>
+      <h1>Aveda Studio</h1>
+      <p class="lede">A season of studio beauty work — hair, light, and forty-four frames of it, shown here in a representative set of sixteen.</p>
+    </div>
+  </section>
+
+  <div class="gwrap">
+    <div class="gallery-bar">
+      <p class="gnote">16 of 44 — full set ships with the production build</p>
+      <div class="view-switch glass" role="group" aria-label="Gallery view">
+        <button type="button" data-set-view="grid" aria-pressed="true">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" stroke="currentColor"/><rect x="9" y="1" width="6" height="6" stroke="currentColor"/><rect x="1" y="9" width="6" height="6" stroke="currentColor"/><rect x="9" y="9" width="6" height="6" stroke="currentColor"/></svg>
+          Grid
+        </button>
+        <button type="button" data-set-view="natural" aria-pressed="false">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="9" stroke="currentColor"/><rect x="9" y="1" width="6" height="5" stroke="currentColor"/><rect x="9" y="8" width="6" height="7" stroke="currentColor"/></svg>
+          Natural
+        </button>
+        <button type="button" data-set-view="strip" aria-pressed="false">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="3" height="10" stroke="currentColor"/><rect x="6" y="3" width="4" height="10" stroke="currentColor"/><rect x="12" y="3" width="3" height="10" stroke="currentColor"/></svg>
+          Strip
+        </button>
+        <button type="button" data-set-view="story" aria-pressed="false">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="6" stroke="currentColor"/><rect x="2" y="9" width="12" height="6" stroke="currentColor"/></svg>
+          Story
+        </button>
+      </div>
+    </div>
+
+    <div class="gallery" data-view="grid" id="gallery">
+      <figure class="g-item"><img src="assets/img/alex1.jpg" alt="Aveda Studio — Alex, look 1"></figure>
+      <figure class="g-item"><img src="assets/img/alex4.jpg" alt="Aveda Studio — Alex, look 2"></figure>
+      <figure class="g-item"><img src="assets/img/alex6.jpg" alt="Aveda Studio — Alex, look 3"></figure>
+      <figure class="g-item"><img src="assets/img/ashelli2+(1).jpg" alt="Aveda Studio — Ashelli, look 1"><figcaption>Ashelli — updo detail</figcaption></figure>
+      <figure class="g-item"><img src="assets/img/ashelli4.jpg" alt="Aveda Studio — Ashelli, look 2"></figure>
+      <figure class="g-item"><img src="assets/img/brittany1.jpg" alt="Aveda Studio — Brittany, look 1"></figure>
+      <figure class="g-item"><img src="assets/img/brittany3.jpg" alt="Aveda Studio — Brittany, look 2"><figcaption>Brittany — studio light</figcaption></figure>
+      <figure class="g-item"><img src="assets/img/cori1.jpg" alt="Aveda Studio — Cori, look 1"></figure>
+      <figure class="g-item"><img src="assets/img/cori4.jpg" alt="Aveda Studio — Cori, look 2"></figure>
+      <figure class="g-item"><img src="assets/img/crystal2.jpg" alt="Aveda Studio — Crystal"></figure>
+      <figure class="g-item"><img src="assets/img/gabby2.jpg" alt="Aveda Studio — Gabby"><figcaption>Gabby — color work</figcaption></figure>
+      <figure class="g-item"><img src="assets/img/kat3.jpg" alt="Aveda Studio — Kat"></figure>
+      <figure class="g-item"><img src="assets/img/maria1.jpg" alt="Aveda Studio — Maria, look 1"></figure>
+      <figure class="g-item"><img src="assets/img/maria3.jpg" alt="Aveda Studio — Maria, look 2"></figure>
+      <figure class="g-item"><img src="assets/img/nina2.jpg" alt="Aveda Studio — Nina"><figcaption>Nina — braid detail</figcaption></figure>
+      <figure class="g-item"><img src="assets/img/shay5.jpg" alt="Aveda Studio — Shay"></figure>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 Lauren Olivia — loew.fi</span>
+    <span><a href="http://instagram.com/lrnolivia">Instagram</a> &nbsp;/&nbsp; <a href="mailto:me@loew.fi">Email</a></span>
+  </footer>
+
+<script>
+  // Pure layout switch — sets a data-attribute, CSS does the rest.
+  // No animation library, no scroll listeners: matches the brief's
+  // "don't build new animation for the mockups" instruction.
+  var gallery = document.getElementById('gallery');
+  var buttons = document.querySelectorAll('[data-set-view]');
+  buttons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      gallery.setAttribute('data-view', btn.dataset.setView);
+      buttons.forEach(function(b){ b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+    });
+  });
+</script>
+</body>
+</html>

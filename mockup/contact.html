@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Contact — loew.fi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .hero{
+    position:relative; min-height:100vh; display:flex; align-items:center; overflow:hidden;
+    padding-top:calc(var(--nav-height) + 8px);
+  }
+  .hero .photo-fill{ background-image:url('assets/img/contact-hero.jpg'); background-position:center 20%; }
+  .hero .tag-corner{ position:absolute; top:calc(var(--nav-top) + 8px); right:var(--gutter); z-index:2; }
+
+  .contact-panel{
+    position:relative; z-index:10;
+    max-width:640px; width:calc(100% - 2 * var(--gutter));
+    margin:0 auto;
+    padding:52px 48px;
+    border-radius:var(--radius-card);
+  }
+  .contact-panel .eyebrow{ justify-content:center; }
+  .contact-panel h1{
+    font-size:clamp(32px,4.4vw,50px); text-align:center; margin:0 0 14px; letter-spacing:-0.02em;
+  }
+  .contact-panel .sub{
+    text-align:center; font-size:15px; line-height:1.6; color:#3E3B33;
+    max-width:46ch; margin:0 auto 36px;
+  }
+  .contact-form{ display:flex; flex-direction:column; gap:14px; }
+  .contact-form .row{ display:flex; gap:14px; }
+  .contact-form label{
+    display:block; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em;
+    text-transform:uppercase; color:#7A6B45; margin-bottom:6px;
+  }
+  .contact-form input, .contact-form textarea{
+    width:100%; border:none; background:#DCD5C3; padding:13px 16px;
+    font-family:'Space Grotesk',sans-serif; font-size:14px; color:var(--ink); outline:none;
+    border-radius:10px;
+  }
+  .contact-form textarea{ min-height:110px; resize:vertical; }
+  .contact-form .field{ flex:1; }
+  .contact-form button{
+    margin-top:6px; align-self:flex-start;
+    border:none; background:var(--ink); color:var(--cream);
+    font-family:'Space Mono',monospace; font-size:11.5px; letter-spacing:.05em; text-transform:uppercase;
+    padding:15px 28px; border-radius:100px; cursor:pointer;
+    transition:background .2s ease;
+  }
+  .contact-form button:hover{ background:#1C8C93; }
+
+  .direct{
+    display:flex; justify-content:center; gap:26px; margin-top:30px;
+    padding-top:24px; border-top:1px solid var(--line-on-cream);
+    font-family:'Space Mono',monospace; font-size:12px;
+  }
+  .direct a{ color:#3E3B33; text-decoration:none; border-bottom:1px solid var(--line-on-cream); padding-bottom:2px; }
+  .direct a:hover{ color:var(--ink); border-color:var(--ink); }
+
+  @media (max-width:640px){
+    .contact-panel{ padding:38px 26px; }
+    .contact-form .row{ flex-direction:column; }
+    .direct{ flex-direction:column; gap:10px; align-items:center; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="nav-wrap">
+    <div class="nav-pill glass">
+      <div class="nav-pill__content">
+        <a href="index.html" class="brand">loew.fi</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Main</a></li>
+          <li class="nav-drop">
+            <a href="images/avedalife.html" role="button">Photo <span class="caret"></span></a>
+            <div class="nav-drop__panel glass">
+              <a href="images/avedalife.html">Aveda Lifestyle</a>
+              <a href="avedastudio.html">Aveda Studio</a>
+              <a href="images/islesashore.html">Isles Ashore</a>
+              <a href="images/magnoliafields.html">Magnolia Fields</a>
+              <a href="images/leavesleos.html">Leaves &amp; Leos</a>
+            </div>
+          </li>
+          <li class="nav-drop">
+            <a href="hydroviv.html" role="button">Design <span class="caret"></span></a>
+            <div class="nav-drop__panel glass">
+              <a href="hydroviv.html">Hydroviv</a>
+              <a href="graphics/delta-ascencion.html">Ascencion</a>
+              <a href="graphics/glorybe.html">Glory Be</a>
+              <a href="cksteele.html">CK Steele Plaza</a>
+              <a href="graphics/promotional.html">Promotional Material</a>
+              <a href="graphics/misc.html">Misc</a>
+            </div>
+          </li>
+          <li><a href="about.html">About</a></li>
+        </ul>
+      </div>
+      <a href="contact.html" class="nav-cta">Contact</a>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="photo-fill scrim-full"></div>
+    <div class="grain-line" style="position:absolute; left:0; right:0; top:calc((var(--nav-top) * 2) + var(--nav-height)); z-index:5;"></div>
+    <div class="tag-corner mono">LOEW FIDELITY<br>GET IN TOUCH</div>
+
+    <div class="contact-panel paper">
+      <div class="eyebrow"><i></i>say hello</div>
+      <h1>Let's make<br>something.</h1>
+      <p class="sub">Print, brand, or photography — if it's a real problem with a real deadline, I'd like to hear about it.</p>
+
+      <form class="contact-form" action="mailto:me@loew.fi" method="GET" enctype="text/plain">
+        <div class="row">
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="message">What are you working on?</label>
+          <textarea id="message" name="body" required></textarea>
+        </div>
+        <button type="submit">Send it</button>
+      </form>
+
+      <div class="direct">
+        <a href="mailto:me@loew.fi">me@loew.fi</a>
+        <a href="tel:8505709019">850.570.9019</a>
+        <a href="http://instagram.com/lrnolivia">@lrnolivia</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Lauren Olivia — loew.fi</span>
+    <span><a href="http://instagram.com/lrnolivia">Instagram</a> &nbsp;/&nbsp; <a href="mailto:me@loew.fi">Email</a></span>
+  </footer>
+
+</body>
+</html>

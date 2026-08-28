@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About — loew.fi</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .page-hero{
+    position:relative; height:46vh; min-height:340px; overflow:hidden;
+  }
+  .page-hero .photo-fill{ background-image:url('assets/img/moss.jpg'); background-attachment:fixed; }
+  .page-hero-content{
+    position:relative; z-index:5; height:100%;
+    display:flex; flex-direction:column; justify-content:flex-end;
+    max-width:var(--container); margin:0 auto; padding:0 var(--gutter) var(--space-4);
+  }
+  .page-hero h1{ font-size:clamp(38px,5.5vw,64px); margin:0; letter-spacing:-0.02em; }
+
+  main{ padding-top:var(--space-6); padding-bottom:var(--space-6); }
+
+  .pull{
+    margin:var(--space-5) 0; position:relative;
+    aspect-ratio:16/8; overflow:hidden; border-radius:var(--radius-card);
+  }
+  .pull img{ width:100%; height:100%; object-fit:cover; filter:grayscale(0.15); }
+
+  .facts-plate{ margin-top:var(--space-4); }
+  .facts-plate .plate{ padding:18px 18px 20px; }
+  .facts-plate h4{
+    font-family:'Space Mono',monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color:#7A6B45; margin:0 0 10px;
+  }
+  .facts-plate ul{ margin:0; padding:0; list-style:none; }
+  .facts-plate li{ font-size:13.5px; color:#3E3B33; padding:6px 0; border-top:1px solid var(--line-on-cream); }
+  .facts-plate li:first-child{ border-top:none; }
+</style>
+</head>
+<body>
+
+  <div class="nav-wrap">
+    <div class="nav-pill glass">
+      <div class="nav-pill__content">
+        <a href="index.html" class="brand">loew.fi</a>
+        <ul class="nav-links">
+          <li><a href="index.html">Main</a></li>
+          <li class="nav-drop">
+            <a href="images/avedalife.html" role="button">Photo <span class="caret"></span></a>
+            <div class="nav-drop__panel glass">
+              <a href="images/avedalife.html">Aveda Lifestyle</a>
+              <a href="avedastudio.html">Aveda Studio</a>
+              <a href="images/islesashore.html">Isles Ashore</a>
+              <a href="images/magnoliafields.html">Magnolia Fields</a>
+              <a href="images/leavesleos.html">Leaves &amp; Leos</a>
+            </div>
+          </li>
+          <li class="nav-drop">
+            <a href="graphics/hydroviv.html" role="button">Design <span class="caret"></span></a>
+            <div class="nav-drop__panel glass">
+              <a href="hydroviv.html">Hydroviv</a>
+              <a href="graphics/delta-ascencion.html">Ascencion</a>
+              <a href="graphics/glorybe.html">Glory Be</a>
+              <a href="cksteele.html">CK Steele Plaza</a>
+              <a href="graphics/promotional.html">Promotional Material</a>
+              <a href="graphics/misc.html">Misc</a>
+            </div>
+          </li>
+          <li><a href="about.html" aria-current="page">About</a></li>
+        </ul>
+      </div>
+      <a href="contact.html" class="nav-cta">Contact</a>
+    </div>
+  </div>
+
+  <section class="page-hero">
+    <div class="photo-fill scrim-bottom"></div>
+    <div class="page-hero-content">
+      <div class="eyebrow on-dark mono"><i></i>about</div>
+      <h1>Lauren White</h1>
+    </div>
+  </section>
+
+  <main class="article">
+    <aside class="article__sidebar">
+      <dl>
+        <dt>Based</dt>
+        <dd>Tallahassee, FL</dd>
+        <dt>Disciplines</dt>
+        <dd>Design, art direction, photography</dd>
+        <dt>Selected clients</dt>
+        <dd>Hydroviv, Delta (student), Britney Spears / Glory (student)</dd>
+        <dt>Contact</dt>
+        <dd><a href="mailto:me@loew.fi" style="color:var(--cream); text-decoration:underline;">me@loew.fi</a></dd>
+      </dl>
+      <div class="facts-plate">
+        <div class="plate card-tilt" style="transform:rotate(-2deg);">
+          <h4>On the desk right now</h4>
+          <ul>
+            <li>Aveda Studio, season two</li>
+            <li>A print run for a friend's zine</li>
+            <li>This website</li>
+          </ul>
+        </div>
+      </div>
+      <nav aria-label="On this page">
+        <a href="#story" class="is-active">The short version</a>
+        <a href="#practice">How I work</a>
+        <a href="#now">What's next</a>
+      </nav>
+    </aside>
+
+    <div class="article__body">
+      <h1 style="font-size:clamp(28px,3.4vw,40px);">Twenty years of making things, most of them by hand first.</h1>
+      <p class="lede" id="story">I've been making things — collages, zines, posters, then album layouts and brand systems, then whatever a client actually needed — for about twenty years now. Some of it was for college. Some of it was for myself. A good amount of it, lately, is for people who need a system to sell water filters or fill a mural wall downtown.</p>
+
+      <p>I trained as a designer first, which is probably why even the photography leans toward composition and light over spontaneity — the beauty work in Aveda Studio is closer in spirit to the brand plates in Hydroviv than either of them is to a snapshot. I like problems with real constraints: a wall that's already there, a product that already exists, a client with an actual opinion about their own brand.</p>
+
+      <div class="pull">
+        <img src="assets/img/ashelli2+(1).jpg" alt="Studio portrait from the Aveda Studio series">
+      </div>
+
+      <h2 id="practice" style="font-size:22px; margin-top:var(--space-5);">How I work</h2>
+      <p>Most projects start on paper, not because it's precious but because it's faster to throw away. The CK Steele mural went through a dozen thumbnail passes before anyone saw a digital file. The same is mostly true of a shoot — I'd rather over-plan a set and improvise the actual frames than the other way around.</p>
+      <p>I still think in terms of print, even for screens — a page, a spread, a plate. It's part of why this site treats design work like objects on a table instead of tiles in a grid.</p>
+
+      <h2 id="now" style="font-size:22px; margin-top:var(--space-5);">What's next</h2>
+      <p>A second season of studio work with Aveda, and slowly getting the rest of the archive — Glory Be, the Ascencion brand exercise, a decade of miscellaneous print — properly organized here instead of scattered across old drives. If you've got a wall, a brand, or a water filter that needs a system, <a href="contact.html" style="color:var(--cream); text-decoration:underline;">say hello</a>.</p>
+    </div>
+  </main>
+
+  <footer>
+    <span>© 2026 Lauren Olivia — loew.fi</span>
+    <span><a href="http://instagram.com/lrnolivia">Instagram</a> &nbsp;/&nbsp; <a href="mailto:me@loew.fi">Email</a></span>
+  </footer>
+
+</body>
+</html>
