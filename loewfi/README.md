@@ -1,2 +1,0 @@
-# loewfi
-personal website/portfolio

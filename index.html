@@ -18,12 +18,6 @@
        the divider to the middle of the page and killed the hero's top padding. */
     --nav-top:26px;
     --nav-height:64px;
-    /* glow accents: cyan for hover states, red matching the badge's own
-       sienna fill, and a neutral greige matching the notify button's resting
-       color — all stored as unitless RGB for rgba(var(--x), alpha). */
-    --glow-cyan:28,140,147;
-    --glow-red:181,71,31;
-    --glow-neutral:140,132,116;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100%;}
@@ -44,68 +38,28 @@
   }
   .nav-pill{
     pointer-events:auto;
-    position:relative; isolation:isolate; overflow:hidden;
     display:flex; align-items:center; gap:30px;
-    color:var(--cream); /* was --ink: the pill is glass now, showing the dark photo through it,
-                            so nav text needs to sit light-on-dark instead of dark-on-cream */
+    background:var(--cream); color:var(--ink);
     padding:13px 28px; /* more horizontal padding */
     border-radius:100px;
-    border:1px solid rgba(241,236,223,0.16);
-    box-shadow:0 14px 34px rgba(0,0,0,0.35), inset 0 1px 0 rgba(241,236,223,0.18);
+    box-shadow:0 14px 34px rgba(0,0,0,0.35);
   }
-  /* ---- glass primitives: shared by .nav-pill and the nested .nav-cta badge ---- */
-  .glass__backdrop{
-    position:absolute; z-index:0;
-    background-image:url('/images/moss.jpg');
-    background-repeat:no-repeat; background-position:center center; background-size:cover;
-    background-attachment:fixed;
-    filter:grayscale(0.55) brightness(0.8) contrast(1.08);
-  }
-  .glass__tint{ position:absolute; inset:0; z-index:1; pointer-events:none; }
-  .glass__sheen{
-    position:absolute; inset:0; z-index:2; pointer-events:none;
-    background:linear-gradient(135deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.05) 32%, rgba(255,255,255,0) 55%);
-    mix-blend-mode:overlay;
-  }
-  .nav-pill .glass__tint{ background:rgba(241,236,223,0.10); }
-  .nav-pill__content{ position:relative; z-index:3; display:flex; align-items:center; gap:30px; }
   .nav-pill .brand{
     font-weight:700; font-size:19px; letter-spacing:-0.01em;
-    padding-right:8px; border-right:1px solid rgba(241,236,223,0.22);
+    padding-right:8px; border-right:1px solid rgba(20,20,16,0.18);
   }
   .nav-links{display:flex; gap:24px; list-style:none; margin:0; padding:0;}
   .nav-links a{
-    color:var(--cream); text-decoration:none; font-size:12px;
+    color:var(--ink); text-decoration:none; font-size:12px;
     letter-spacing:0.05em; text-transform:uppercase;
-    font-family:'Space Mono',monospace; opacity:0.55; /* inactive links — barely visible */
+    font-family:'Space Mono',monospace; opacity:0.35; /* inactive links — barely visible */
   }
   .nav-cta{
-    position:relative; isolation:isolate; overflow:hidden;
-    color:#fff; /* brick sienna, work-in-progress accent, now as tinted glass */
+    background:#B5471F; color:#fff; /* brick sienna, work-in-progress accent */
     font-family:'Space Mono',monospace; font-size:10px; font-weight:700; /* smaller, bolder for readability */
     text-transform:uppercase; letter-spacing:0.05em;
     padding:7px 14px; border-radius:100px; /* back to a full pill, ~20% smaller than before */
-    box-shadow:0 0 0 0 rgba(var(--glow-red),0);
-    transition:box-shadow .4s var(--ease);
   }
-  .nav-cta .glass__tint{ background:linear-gradient(135deg, rgba(var(--glow-red),0.78), rgba(var(--glow-red),0.55)); }
-  .nav-cta__label{ position:relative; z-index:4; }
-  /* same soft diffused glow + grain treatment as the notify form, but in the
-     badge's own red so it glows like an extension of itself, not the form */
-  .nav-cta:hover{
-    box-shadow:
-      0 0 16px 1px rgba(var(--glow-red),0.5),
-      0 0 42px 8px rgba(var(--glow-red),0.3),
-      0 0 84px 22px rgba(var(--glow-red),0.16);
-  }
-  .nav-cta::after{
-    content:'';
-    position:absolute; inset:0; border-radius:inherit; z-index:3;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity:0; mix-blend-mode:overlay; pointer-events:none;
-    transition:opacity .4s var(--ease);
-  }
-  .nav-cta:hover::after{ opacity:0.1; }
 
   /* HERO: adjust so content + footer + nav fit in one viewport by default */
   .hero{
@@ -159,38 +113,25 @@
      see the comments there. */
   .hero-tag-mobile{ display:none; }
 
-  /* CARD: right-shifted on desktop; content inside should be left-aligned.
-     Split into two layers so the mouse-tilt parallax stays purely physical:
-     .card is just a static, untransformed anchor (paper's resting -3deg tilt
-     lives here, permanently — it never receives the dynamic JS transform).
-     .card-surface is the layer the JS tilt/scale actually touches — it's the
-     "physical card" (fill + shadow + glow), absolutely filling .card behind
-     the copy. .card-content sits on top, in normal flow, and never receives
-     any transform at all, so the text/eyebrow/form stay crisp and fixed
-     regardless of how the surface underneath tilts on hover. */
+  /* CARD: right-shifted on desktop; content inside should be left-aligned */
   .card{
     position:relative; z-index:60;
     margin:0; /* we'll control placement with auto margins */
     max-width:560px; /* slightly reduced to help fit within viewport */
-    color:var(--ink);
+    background:var(--cream); color:var(--ink);
     transform:rotate(-3deg);
+    box-shadow:0 30px 70px rgba(0,0,0,0.45);
     /* place to the right while keeping a consistent right padding */
     margin-left:auto; /* push to the right */
     margin-right:6vw; /* ample padding from right edge */
     text-align:left; /* keep copy left-aligned even when card sits on right */
-    /* gives .card-surface's rotateX/rotateY real 3D depth */
+    /* preserve-3d allows the inner content wrapper to counter-transform */
     perspective:1000px;
   }
-  .card-surface{
-    position:absolute; inset:0;
-    background:var(--cream);
-    box-shadow:0 30px 70px rgba(0,0,0,0.45);
-    transition:box-shadow .3s ease, transform .15s ease-out;
-    will-change:transform;
-  }
   .card-content{
-    position:relative; z-index:1;
     padding:44px 40px 36px;
+    /* counter-transform to undo any parent tilt */
+    transform-style:preserve-3d;
   }
   .eyebrow{
     display:flex; align-items:center; gap:8px;
@@ -209,29 +150,7 @@
     font-size:15px; line-height:1.6; color:#3E3B33;
     max-width:440px; margin:0 0 30px;
   }
-  .notify{
-    display:flex; max-width:420px;
-    position:relative; border-radius:100px; /* treat input+button as one glowing pill */
-    /* resting state: barely-there neutral glow, in the button's own greige */
-    box-shadow:
-      0 0 10px 0px rgba(var(--glow-neutral),0.18),
-      0 0 24px 4px rgba(var(--glow-neutral),0.1);
-    transition:box-shadow .4s var(--ease);
-  }
-  /* hover/focus: glow shifts to cyan and blooms much larger */
-  .notify:hover, .notify:focus-within{
-    box-shadow:
-      0 0 20px 2px rgba(var(--glow-cyan),0.5),
-      0 0 56px 12px rgba(var(--glow-cyan),0.28),
-      0 0 110px 30px rgba(var(--glow-cyan),0.14);
-  }
-  /* soft grain so the glow reads as diffused light, not a flat gradient */
-  .notify::after{
-    content:'';
-    position:absolute; inset:0; border-radius:inherit;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity:0.06; mix-blend-mode:overlay; pointer-events:none;
-  }
+  .notify{ display:flex; max-width:420px; }
   .notify input{
     flex:1; border:none; background:#DCD5C3; padding:14px 16px; /* darker shade of the card's own cream, not grey */
     font-family:'Space Grotesk',sans-serif; font-size:14px; color:var(--ink); outline:none;
@@ -341,6 +260,7 @@
   @keyframes cardIn{ from{opacity:0; transform:translateY(54px) rotate(0deg) scale(.95);} to{opacity:1; transform:translateY(0) rotate(-3deg) scale(1);} }
   @keyframes kenBurns{ from{transform:scale(1);} to{transform:scale(1.07);} }
   @keyframes pulseDot{ 0%,100%{box-shadow:0 0 0 0 rgba(255,212,0,.55);} 50%{box-shadow:0 0 0 7px rgba(255,212,0,0);} }
+  @keyframes shine{ from{transform:translateX(-130%) skewX(-15deg);} to{transform:translateX(230%) skewX(-15deg);} }
 
   /* entrance stagger, top to bottom */
   .nav-wrap{ animation:fadeDown .8s var(--ease) both; }
@@ -348,7 +268,7 @@
   .hero-tag-mobile{ animation:fadeDown .8s var(--ease) .15s both; }
   .grain-line{ transform-origin:left center; animation:drawLine 1s var(--ease) .3s both; }
   .hero{ perspective:1200px; } /* gives the card's mouse-tilt (JS, below) real depth */
-  .card{ animation:cardIn 1s var(--ease) .4s both; }
+  .card{ animation:cardIn 1s var(--ease) .4s both; transition:transform .15s ease-out, box-shadow .3s ease; }
   .card-content > *{ opacity:0; animation:fadeUp .8s var(--ease) both; }
   .card-content .eyebrow{ animation-delay:.75s; }
   .card-content h1{ animation-delay:.85s; }
@@ -372,9 +292,16 @@
   .nav-cta{ transition:transform .3s var(--ease); }
   .nav-pill:hover .nav-cta{ transform:scale(1.05); }
 
-  .card:hover .card-surface{ box-shadow:0 40px 90px rgba(0,0,0,0.5); }
+  .card:hover{ box-shadow:0 40px 90px rgba(0,0,0,0.5); }
 
-  .notify button{ position:relative; transition:background .2s ease; }
+  .notify button{ position:relative; overflow:hidden; transition:background .2s ease, transform .25s var(--ease); }
+  .notify button:hover{ transform:translateY(-1px); }
+  .notify button::after{
+    content:''; position:absolute; top:0; left:0; width:40%; height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,.35), transparent);
+    transform:translateX(-130%) skewX(-15deg); pointer-events:none;
+  }
+  .notify button:hover::after{ animation:shine .8s var(--ease); }
 
   .notify input{ transition:box-shadow .25s var(--ease); }
   .notify input:focus{ box-shadow:inset 0 0 0 1.5px rgba(20,20,16,0.35); }
@@ -409,7 +336,6 @@
     <div class="hero-tag-mobile mono">LOEW FIDELITY<br>FIELD NOTES — VOL. 01</div>
 
     <div class="card">
-      <div class="card-surface"></div>
       <div class="card-content">
         <div class="eyebrow"><i></i>currently under construction</div>
         <h1>Good things<br>are <span>coming.</span></h1>
@@ -429,23 +355,29 @@
   </footer>
 
 <script>
-  // .card itself is never touched by JS anymore — it just sits at its
-  // permanent resting rotate(-3deg) (set in CSS) for the whole page's life,
-  // so there's nothing to "free up" after the entrance animation this time.
-  //
-  // The mouse-tilt now lives entirely on .card-surface, a layer that sits
-  // behind .card-content and carries the fill/shadow/glow. .card-content
-  // is never assigned a transform at all, so it can't inherit any part of
-  // the tilt — no rotation, no scale, no parallax drift — it just stays
-  // put while the surface underneath tilts on hover.
+  // Once the card's entrance animation finishes, drop it so its transform is
+  // free again for the hover-tilt below to control — a filled animation
+  // otherwise permanently wins the cascade for that property, even over
+  // inline styles. (Only .card needs this: it's the only element anything
+  // touches `transform` on again after entrance. Card *children* keep their
+  // fill-mode indefinitely on purpose — they also carry a static opacity:0
+  // as an entrance-delay guard, so clearing their animation would strip the
+  // filled opacity:1 and re-expose that opacity:0, hiding them for good.)
   var card = document.querySelector('.card');
-  var cardSurface = document.querySelector('.card-surface');
+  var cardContent = document.querySelector('.card-content');
+  if (card) {
+    card.addEventListener('animationend', function handler(e){
+      if (e.target !== card) return; // ignore bubbled child animationend events
+      card.style.animation = 'none';
+      card.removeEventListener('animationend', handler);
+    });
+  }
 
-  // Subtle mouse-tilt on the card surface — skipped entirely for touch
-  // devices and for anyone who has motion reduced at the OS level.
+  // Subtle mouse-tilt on the card — skipped entirely for touch devices and
+  // for anyone who has motion reduced at the OS level.
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var canHover = window.matchMedia('(pointer: fine)').matches;
-  if (card && cardSurface && !reduceMotion && canHover) {
+  if (card && !reduceMotion && canHover) {
     var maxTilt = 4;
     card.addEventListener('mousemove', function(e){
       var r = card.getBoundingClientRect();
@@ -453,12 +385,17 @@
       var py = (e.clientY - r.top) / r.height - 0.5;
       var tiltX = -py * maxTilt;
       var tiltY = px * maxTilt;
-      cardSurface.style.transform =
-        'scale(1.015) rotateX(' + tiltX.toFixed(2) + 'deg) ' +
+      card.style.transform =
+        'rotate(-3deg) scale(1.015) rotateX(' + tiltX.toFixed(2) + 'deg) ' +
         'rotateY(' + tiltY.toFixed(2) + 'deg)';
+      // Counter-transform the content to stay flat
+      cardContent.style.transform =
+        'rotateX(' + (-tiltX).toFixed(2) + 'deg) ' +
+        'rotateY(' + (-tiltY).toFixed(2) + 'deg)';
     });
     card.addEventListener('mouseleave', function(){
-      cardSurface.style.transform = 'scale(1)';
+      card.style.transform = 'rotate(-3deg) scale(1)';
+      cardContent.style.transform = 'rotateX(0deg) rotateY(0deg)';
     });
   }
 </script>
