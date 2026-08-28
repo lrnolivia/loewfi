@@ -1,0 +1,194 @@
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-items-container {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item {
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-divider {
+  background-color: currentColor;
+  height: var(--accordion-divider-thickness);
+  opacity: var(--accordion-divider-opacity);
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-items-container:not([data-is-last-divider-visible='true']) .accordion-item:last-of-type .accordion-divider:not(.accordion-divider--top) {
+  display: none;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-items-container[data-is-first-divider-visible='true'] .accordion-item:first-of-type .accordion-divider.accordion-divider--top {
+  display: block;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__title-wrapper {
+  margin: 0;
+  padding: 0;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__title {
+  flex: 1;
+  overflow: hidden;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion [data-accordion-title-alignment='center'] .accordion-item__title {
+  text-align: center;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion [data-accordion-title-alignment='right'] .accordion-item__title {
+  text-align: right;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion [data-accordion-icon-placement='right'] .accordion-item__title {
+  padding-right: var(--accordion-icon-size);
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion [data-accordion-icon-placement='left'] .accordion-item__title {
+  padding-left: var(--accordion-icon-size);
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion [data-accordion-title-alignment='center'][data-accordion-icon-placement='right'] .accordion-item__title {
+  padding-left: calc(var(--accordion-icon-size) * 2);
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion [data-accordion-title-alignment='center'][data-accordion-icon-placement='left'] .accordion-item__title {
+  padding-right: calc(var(--accordion-icon-size) * 2);
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__click-target {
+  box-sizing: border-box;
+  width: 100%;
+  background: transparent;
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  -webkit-appearance: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-style: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+  touch-action: manipulation;
+  padding-top: var(--accordion-item-padding-top);
+  padding-bottom: var(--accordion-item-padding-bottom);
+  padding-left: var(--accordion-item-padding-left);
+  padding-right: var(--accordion-item-padding-right);
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__click-target:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion [data-accordion-icon-placement='left'] .accordion-item__click-target {
+  flex-direction: row-reverse;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__click-target > * {
+  margin: 0;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__dropdown {
+  box-sizing: border-box;
+  display: none;
+  overflow: hidden;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__dropdown--pre-open {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  visibility: hidden;
+  width: 100%;
+  transition: none;
+  height: auto;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__dropdown--open {
+  display: block;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__description {
+  box-sizing: border-box;
+  padding-top: var(--accordion-description-padding-top);
+  padding-bottom: var(--accordion-description-padding-bottom);
+  padding-left: var(--accordion-description-padding-left);
+  padding-right: var(--accordion-description-padding-right);
+  min-width: var(--accordion-description-width);
+  max-width: 300px;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion [data-accordion-description-placement='center'] .accordion-item__description {
+  margin-left: auto;
+  margin-right: auto;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion [data-accordion-description-placement='right'] .accordion-item__description {
+  margin-left: auto;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion [data-accordion-description-alignment='center'] .accordion-item__description {
+  text-align: center;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion [data-accordion-description-alignment='right'] .accordion-item__description {
+  text-align: right;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__title > :first-of-type,
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__description > :first-of-type {
+  margin-top: 0;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__title > :last-of-type,
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__description > :last-of-type {
+  margin-bottom: 0;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-icon-container {
+  position: relative;
+  height: var(--accordion-icon-size);
+  width: var(--accordion-icon-size);
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-icon-container > * {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .plus__horizontal-line,
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .plus__vertical-line {
+  display: block;
+  width: 100%;
+  background-color: currentColor;
+  transition: transform 0.25s;
+  position: absolute;
+  height: var(--accordion-icon-thickness);
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .plus__vertical-line {
+  transform: rotate(90deg);
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item[data-is-open='true'] .plus__vertical-line {
+  transform: rotate(0deg);
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .arrow-container {
+  transition: transform 0.25s;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item[data-is-open='true'] .arrow-container {
+  transform: rotate(-180deg);
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .arrow {
+  border-color: currentColor;
+  border-style: solid;
+  border-top: none;
+  border-left: none;
+  box-sizing: border-box;
+  transform: translateY(-25%) rotate(45deg);
+  border-width: var(--accordion-icon-thickness);
+  /*
+    We want the arrow to fill the width of the icon container.
+    Since this arrow is made from the right and bottom borders of a rotated square,
+    we want the length of the diagonal to be 100%, not the length of the sides.
+    To make the hypoteneuse 100%, a square's side length needs to be 70.71067%.
+    */
+  width: 70.71067%;
+  height: 70.71067%;
+}
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item[data-no-transition] .plus__horizontal-line,
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item[data-no-transition] .plus__vertical-line,
+.sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item[data-no-transition] .arrow-container {
+  transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .accordion-item__dropdown,
+  .sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .plus__vertical-line,
+  .sqs-block[data-definition-name="website.components.accordion"].sqs-block-accordion .arrow-container {
+    transition: none;
+  }
+}
+
