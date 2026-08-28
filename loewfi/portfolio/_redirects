@@ -1,0 +1,20 @@
+# Fallback safety net for clean URLs — Cloudflare Pages should
+# auto-resolve /path -> /path.html, but this covers nested paths
+# explicitly in case that behavior changes. Verify current behavior:
+# https://developers.cloudflare.com/pages/configuration/serving-pages/
+
+/ /index.html 200
+/contact /contact.html 200
+/photo /photo.html 200
+/avedastudio /avedastudio.html 200
+/cart /cart.html 200
+/images/avedalife /images/avedalife.html 200
+/images/islesashore /images/islesashore.html 200
+/images/leavesleos /images/leavesleos.html 200
+/images/magnoliafields /images/magnoliafields.html 200
+/graphics/glorybe /graphics/glorybe.html 200
+/graphics/cksteele /graphics/cksteele.html 200
+/graphics/misc /graphics/misc.html 200
+/graphics/delta-ascencion /graphics/delta-ascencion.html 200
+/graphics/hydroviv /graphics/hydroviv.html 200
+/graphics/promotional /graphics/promotional.html 200
