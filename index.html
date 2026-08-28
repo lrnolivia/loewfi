@@ -29,6 +29,15 @@
        an accent, a full-saturation one would just fight the button color */
     --pastel-red:255,214,199;
     --pastel-cyan:191,239,241;
+    /* unified solid-button system: every action button (badge + send) is a
+       flat fill in its own resting color, switches to a second solid color
+       on hover, and glows in whichever of the two is currently showing.
+       Icons/highlight are plain white blended with mix-blend-mode:overlay
+       so they pick up a tint of whatever color is under them automatically,
+       instead of needing separate icon colors per state. */
+    --btn-beige:203,184,142;   /* send button, resting — the card's own sand tone */
+    --btn-blue:64,133,214;     /* send button, hover */
+    --btn-red:181,71,31;       /* badge, both states */
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100%;}
@@ -89,10 +98,10 @@
   /* the brightening pass: the ORIGINAL flat navbar cream (also the card's
      fill) laid over the photo-glass as a blend layer instead of a flat
      tint — lifts it several stops without turning it into a solid chip.
-     overlay / 0.42 are the two knobs being A/B'd. */
+     __TINT_BLEND__ / __TINT_ALPHA__ are the two knobs being A/B'd. */
   .nav-pill .glass__tint{
-    background:rgba(241,236,223,0.42);
-    mix-blend-mode:overlay;
+    background:rgba(241,236,223,__TINT_ALPHA__);
+    mix-blend-mode:__TINT_BLEND__;
   }
   .nav-pill__content{ position:relative; z-index:4; display:flex; align-items:center; gap:30px; }
   .nav-pill .brand{
@@ -153,46 +162,45 @@
   .nav-dropdown a:active{ opacity:.7; }
   @media (min-width:761px){ .nav-dropdown{ display:none !important; } }
 
-  /* ---- .nav-cta: real colored liquid glass — its own backdrop (the same
-     patch of photo the nav pill is showing), distorted + chroma-fringed +
-     blurred + grained exactly like the pill, then tinted sienna. This is
-     what makes it read as a piece of glass rather than a flat chip. ---- */
-  .nav-cta{
+  /* ---- unified solid-button system, shared by .nav-cta and .notify button:
+     a flat color fill (no glass, no distortion), an overlay-blended white
+     highlight sheen and icon (so they automatically pick up a tint of
+     whatever fill color is currently showing), solid un-blended text for
+     guaranteed legibility, and a glow that matches the current fill color
+     exactly. Hover just swaps the fill/glow color — same shape throughout. ---- */
+  .btn-solid{
     position:relative; isolation:isolate; overflow:hidden;
+    border-radius:100px;
+    border:1px solid rgba(255,255,255,0.22);
+    transition:background .3s var(--ease), box-shadow .35s var(--ease), transform .3s var(--ease);
+  }
+  .btn-solid__highlight{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:radial-gradient(ellipse 70% 100% at 20% -10%, rgba(255,255,255,0.9), rgba(255,255,255,0) 65%);
+    mix-blend-mode:overlay;
+  }
+  .btn-solid__label{
+    position:relative; z-index:3; display:flex; align-items:center; gap:6px;
+    mix-blend-mode:normal; /* text is never blended — always solid, always legible */
+  }
+  .btn-solid__icon{
+    width:12px; height:12px; flex:0 0 auto;
+    color:#fff; mix-blend-mode:overlay; /* icon tints itself from whatever's under it */
+  }
+
+  .nav-cta{
     color:#fff;
     font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
     text-transform:uppercase; letter-spacing:0.05em;
-    padding:8px 16px; border-radius:100px;
-    border:1px solid rgba(255,255,255,0.22);
+    padding:8px 16px;
+    background:rgb(var(--btn-red));
     box-shadow:0 2px 8px rgba(0,0,0,0.3);
-    transition:box-shadow .35s var(--ease), transform .3s var(--ease);
   }
-  .nav-cta .glass__tint{
-    /* solid at rest — fully opaque, so it reads as a plain red pill and
-       completely hides the distorted backdrop underneath */
-    background:rgb(var(--glow-red));
-    transition:background .35s var(--ease);
-  }
-  .nav-cta:hover .glass__tint{
-    /* on hover it "opens up" into glass — alpha drops so the distorted,
-       chroma-fringed, grained backdrop shows through, paired with the glow */
-    background:linear-gradient(135deg, rgba(var(--glow-red),0.62), rgba(var(--glow-red),0.42));
-  }
-  .nav-cta .glass__specular{
-    background:radial-gradient(ellipse 70% 100% at 20% -10%, rgba(255,255,255,0.5), rgba(255,255,255,0) 65%);
-    opacity:0; /* no shine while it's a flat solid pill */
-    transition:opacity .35s var(--ease);
-  }
-  .nav-cta:hover .glass__specular{ opacity:1; } /* shine returns once it opens into glass */
-  .nav-cta__label{ position:relative; z-index:4; display:flex; align-items:center; gap:6px; }
-  .nav-cta__icon{ width:12px; height:12px; flex:0 0 auto; color:rgba(var(--pastel-red),0.95); }
   .nav-cta:hover{
-    /* soft pastel glow — a lighter tint of the button's own red, not the
-       saturated fill color, so the bloom reads gentle rather than neon */
     box-shadow:
-      0 0 14px 1px rgba(var(--pastel-red),0.45),
-      0 0 36px 10px rgba(var(--pastel-red),0.28),
-      0 0 70px 20px rgba(var(--pastel-red),0.14);
+      0 0 14px 1px rgba(var(--btn-red),0.55),
+      0 0 36px 10px rgba(var(--btn-red),0.35),
+      0 0 70px 20px rgba(var(--btn-red),0.18);
   }
 
   /* HERO: adjust so content + footer + nav fit in one viewport by default */
@@ -321,43 +329,34 @@
     border-radius:100px;
   }
   .notify input:focus{ box-shadow:inset 0 0 0 1.5px rgba(20,20,16,0.35); }
-  /* ---- send button: real colored liquid glass, same engine as the nav —
-     its own backdrop (a soft cream paper-grain texture standing in for
-     "whatever's behind it", since it sits on the card's opaque fill, not
-     the photo), distorted + chroma-fringed + blurred + grained, tinted in
-     the button's own resting/hover colors exactly like .nav-cta. ---- */
+  /* ---- send button: same unified solid-button system as .nav-cta —
+     flat beige at rest, flat blue on hover, overlay-blended icon/highlight,
+     solid un-blended text, glow matching whichever color is showing. ---- */
   .notify button{
     position:absolute; top:50%; right:6px; transform:translateY(-50%);
-    height:38px; min-width:64px; padding:0 20px; border-radius:100px;
+    height:38px; min-width:64px; padding:0 20px;
     display:flex; align-items:center; justify-content:center;
-    isolation:isolate; overflow:hidden;
-    border:1px solid rgba(255,255,255,0.22);
-    box-shadow:0 2px 8px rgba(0,0,0,0.25);
     cursor:pointer;
-    transition:box-shadow .35s var(--ease), transform .15s ease-out;
-  }
-  .notify button .glass__tint{
-    background:linear-gradient(135deg, rgba(var(--glow-neutral),0.75), rgba(var(--glow-neutral),0.55));
-    transition:background .3s var(--ease);
-  }
-  .notify button:hover .glass__tint, .notify button:focus-visible .glass__tint{
-    background:linear-gradient(135deg, rgba(var(--glow-cyan),0.92), rgba(var(--glow-cyan),0.72));
+    background:rgb(var(--btn-beige));
+    box-shadow:0 2px 8px rgba(0,0,0,0.25);
   }
   .notify button:hover, .notify button:focus-visible{
-    /* soft pastel glow — same logic as the badge: a light tint of the
-       hover color, not the saturated fill itself */
+    background:rgb(var(--btn-blue));
     box-shadow:
-      0 0 9px 2px rgba(var(--pastel-cyan),0.5),
-      0 0 22px 7px rgba(var(--pastel-cyan),0.32),
-      0 0 44px 14px rgba(var(--pastel-cyan),0.16);
+      0 0 9px 2px rgba(var(--btn-blue),0.55),
+      0 0 22px 7px rgba(var(--btn-blue),0.35),
+      0 0 44px 14px rgba(var(--btn-blue),0.18);
   }
   .notify button:active{ transform:translateY(-50%) scale(0.94); }
-  .notify button .btn-label{
-    position:relative; z-index:4; display:flex; align-items:center; gap:6px;
+  .notify button .btn-solid__label{
     font-family:'Space Mono',monospace; font-size:11px; font-weight:700;
-    letter-spacing:0.06em; text-transform:uppercase; color:rgba(255,255,255,0.92);
+    letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--ink); /* dark ink reads clearly on the light beige rest state */
   }
-  .btn-icon{ width:13px; height:13px; flex:0 0 auto; color:rgba(var(--pastel-cyan),0.95); transition:color .2s ease; }
+  .notify button:hover .btn-solid__label,
+  .notify button:focus-visible .btn-solid__label{
+    color:#fff; /* switches to white the moment the fill goes dark blue — still solid, never blended */
+  }
 
   footer{
     position:relative; z-index:2;
@@ -519,12 +518,10 @@
           <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navDropdown">
             <span></span><span></span><span></span>
           </button>
-          <div class="nav-cta">
-            <div class="glass__backdrop" data-glass="nav-cta"></div>
-            <div class="glass__tint"></div>
-            <div class="glass__specular"></div>
-            <span class="nav-cta__label">
-              <svg class="nav-cta__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <div class="nav-cta btn-solid">
+            <div class="btn-solid__highlight"></div>
+            <span class="btn-solid__label">
+              <svg class="btn-solid__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M12 3.5 21 19.5H3L12 3.5Z" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
                 <path d="M12 9.7v4.6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
                 <circle cx="12" cy="17" r="1.15" fill="currentColor"/>
@@ -561,12 +558,10 @@
         <form class="notify" action="mailto:me@loew.fi" method="GET" enctype="text/plain">
           <input type="hidden" name="subject" value="A word of encouragement — loew.fi">
           <input type="text" name="body" placeholder="Talk to me nice..." required>
-          <button type="submit" aria-label="Send">
-            <div class="glass__backdrop" data-glass="send-btn"></div>
-            <div class="glass__tint"></div>
-            <div class="glass__sheen"></div>
-            <span class="btn-label">
-              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <button type="submit" aria-label="Send" class="btn-solid">
+            <div class="btn-solid__highlight"></div>
+            <span class="btn-solid__label">
+              <svg class="btn-solid__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M21 3 3 10.8l7.3 2.9L13.2 21 21 3Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
                 <path d="M10.3 13.7 21 3" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
               </svg>
