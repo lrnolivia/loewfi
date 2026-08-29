@@ -22,7 +22,7 @@
   .gnote{ font-family:'Space Mono',monospace; font-size:11px; color:var(--cream-dim); margin:0 0 4px; }
 </style>
 </head>
-<body>
+<body class="cat-photo">
 
   <div class="nav-wrap">
     <div class="nav-pill glass">
@@ -33,22 +33,22 @@
           <li class="nav-drop">
             <a href="avedastudio.html" role="button">Photo <span class="caret"></span></a>
             <div class="nav-drop__panel glass">
-              <a href="images/avedalife.html">Aveda Lifestyle</a>
+              <a href="#">Aveda Lifestyle</a>
               <a href="avedastudio.html" aria-current="page">Aveda Studio</a>
-              <a href="images/islesashore.html">Isles Ashore</a>
-              <a href="images/magnoliafields.html">Magnolia Fields</a>
-              <a href="images/leavesleos.html">Leaves &amp; Leos</a>
+              <a href="#">Isles Ashore</a>
+              <a href="#">Magnolia Fields</a>
+              <a href="#">Leaves &amp; Leos</a>
             </div>
           </li>
           <li class="nav-drop">
             <a href="hydroviv.html" role="button">Design <span class="caret"></span></a>
             <div class="nav-drop__panel glass">
               <a href="hydroviv.html">Hydroviv</a>
-              <a href="graphics/delta-ascencion.html">Ascencion</a>
-              <a href="graphics/glorybe.html">Glory Be</a>
+              <a href="#">Ascencion</a>
+              <a href="#">Glory Be</a>
               <a href="cksteele.html">CK Steele Plaza</a>
-              <a href="graphics/promotional.html">Promotional Material</a>
-              <a href="graphics/misc.html">Misc</a>
+              <a href="#">Promotional Material</a>
+              <a href="#">Misc</a>
             </div>
           </li>
           <li><a href="about.html">About</a></li>
@@ -87,6 +87,10 @@
           <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="6" stroke="currentColor"/><rect x="2" y="9" width="12" height="6" stroke="currentColor"/></svg>
           Story
         </button>
+        <button type="button" data-set-view="carousel" aria-pressed="false">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="3" y="2" width="10" height="12" rx="1" stroke="currentColor"/><path d="M1 8h1.5M13.5 8H15" stroke="currentColor"/></svg>
+          Carousel
+        </button>
       </div>
     </div>
 
@@ -108,7 +112,14 @@
       <figure class="g-item"><img src="assets/img/nina2.jpg" alt="Aveda Studio — Nina"><figcaption>Nina — braid detail</figcaption></figure>
       <figure class="g-item"><img src="assets/img/shay5.jpg" alt="Aveda Studio — Shay"></figure>
     </div>
+
+    <div class="carousel-controls" id="carouselControls">
+      <button type="button" id="prevBtn" aria-label="Previous image">‹</button>
+      <span class="carousel-controls__count" id="carouselCount">1 / 16</span>
+      <button type="button" id="nextBtn" aria-label="Next image">›</button>
+    </div>
   </div>
+
 
   <footer>
     <span>© 2026 Lauren Olivia — loew.fi</span>
@@ -118,13 +129,32 @@
 <script>
   // Pure layout switch — sets a data-attribute, CSS does the rest.
   // No animation library, no scroll listeners: matches the brief's
-  // "don't build new animation for the mockups" instruction.
+  // "don't build new animation for the mockups" instruction. Carousel
+  // is the one mode that needs real state (which image is showing),
+  // handled with plain click handlers below — no timers, no autoplay.
   var gallery = document.getElementById('gallery');
   var buttons = document.querySelectorAll('[data-set-view]');
+  var items = gallery.querySelectorAll('.g-item');
+  var controls = document.getElementById('carouselControls');
+  var countEl = document.getElementById('carouselCount');
+  var current = 0;
+
+  function showCarouselItem(i){
+    current = (i + items.length) % items.length;
+    items.forEach(function(it, idx){ it.classList.toggle('is-active', idx === current); });
+    countEl.textContent = (current + 1) + ' / ' + items.length;
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', function(){ showCarouselItem(current - 1); });
+  document.getElementById('nextBtn').addEventListener('click', function(){ showCarouselItem(current + 1); });
+
   buttons.forEach(function(btn){
     btn.addEventListener('click', function(){
-      gallery.setAttribute('data-view', btn.dataset.setView);
+      var view = btn.dataset.setView;
+      gallery.setAttribute('data-view', view);
       buttons.forEach(function(b){ b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+      controls.classList.toggle('is-active', view === 'carousel');
+      if (view === 'carousel') showCarouselItem(current);
     });
   });
 </script>

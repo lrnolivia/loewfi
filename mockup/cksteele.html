@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="shared.css">
 <style>
   .page-hero{ position:relative; height:52vh; min-height:380px; overflow:hidden; background:#111; }
-  .page-hero .photo-fill{ background-image:url('assets/img/dt_starmetro_final_Page_7.jpg'); background-position:center 20%; filter:none; }
+  .page-hero .photo-fill{ background-image:url('assets/img/dt_starmetro_final_Page_7.jpg'); background-position:center 20%; }
   .page-hero-content{
     position:relative; z-index:5; height:100%;
     display:flex; flex-direction:column; justify-content:flex-end;
@@ -45,7 +45,7 @@
   @media (max-width:760px){ .panelStrip{ grid-template-columns:repeat(2,1fr); } }
 </style>
 </head>
-<body>
+<body class="cat-design">
 
   <div class="nav-wrap">
     <div class="nav-pill glass">
@@ -54,24 +54,24 @@
         <ul class="nav-links">
           <li><a href="index.html">Main</a></li>
           <li class="nav-drop">
-            <a href="images/avedalife.html" role="button">Photo <span class="caret"></span></a>
+            <a href="avedastudio.html" role="button">Photo <span class="caret"></span></a>
             <div class="nav-drop__panel glass">
-              <a href="images/avedalife.html">Aveda Lifestyle</a>
+              <a href="#">Aveda Lifestyle</a>
               <a href="avedastudio.html">Aveda Studio</a>
-              <a href="images/islesashore.html">Isles Ashore</a>
-              <a href="images/magnoliafields.html">Magnolia Fields</a>
-              <a href="images/leavesleos.html">Leaves &amp; Leos</a>
+              <a href="#">Isles Ashore</a>
+              <a href="#">Magnolia Fields</a>
+              <a href="#">Leaves &amp; Leos</a>
             </div>
           </li>
           <li class="nav-drop">
             <a href="hydroviv.html" role="button">Design <span class="caret"></span></a>
             <div class="nav-drop__panel glass">
               <a href="hydroviv.html">Hydroviv</a>
-              <a href="graphics/delta-ascencion.html">Ascencion</a>
-              <a href="graphics/glorybe.html">Glory Be</a>
+              <a href="#">Ascencion</a>
+              <a href="#">Glory Be</a>
               <a href="cksteele.html" aria-current="page">CK Steele Plaza</a>
-              <a href="graphics/promotional.html">Promotional Material</a>
-              <a href="graphics/misc.html">Misc</a>
+              <a href="#">Promotional Material</a>
+              <a href="#">Misc</a>
             </div>
           </li>
           <li><a href="about.html">About</a></li>
@@ -81,8 +81,8 @@
     </div>
   </div>
 
-  <section class="page-hero">
-    <div class="photo-fill scrim-bottom"></div>
+  <section class="page-hero hero-grain">
+    <div class="photo-fill photo-fill--soften scrim-bottom"></div>
     <div class="page-hero-content">
       <div class="eyebrow on-dark mono"><i></i>design — public mural, college project</div>
       <h1>CK Steele Plaza</h1>
@@ -144,6 +144,6 @@
     <span>© 2026 Lauren Olivia — loew.fi</span>
     <span><a href="http://instagram.com/lrnolivia">Instagram</a> &nbsp;/&nbsp; <a href="mailto:me@loew.fi">Email</a></span>
   </footer>
-
+  <script src="dynamic-color.js"></script>
 </body>
 </html>
