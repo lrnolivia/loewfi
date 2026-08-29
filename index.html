@@ -18,26 +18,9 @@
        the divider to the middle of the page and killed the hero's top padding. */
     --nav-top:26px;
     --nav-height:64px;
-    /* glow accents: cyan for hover states, red matching the badge's own
-       sienna fill, and a neutral greige matching the notify button's resting
-       color — all stored as unitless RGB for rgba(var(--x), alpha). */
-    --glow-cyan:28,140,147;
-    --glow-red:181,71,31;
-    --glow-neutral:140,132,116;
-    /* lighter pastel versions of the above, used only for small icon glyphs
-       sitting on top of the saturated glass fills — a pastel icon reads as
-       an accent, a full-saturation one would just fight the button color */
-    --pastel-red:255,214,199;
-    --pastel-cyan:191,239,241;
-    /* unified solid-button system: every action button (badge + send) is a
-       flat fill in its own resting color, switches to a second solid color
-       on hover, and glows in whichever of the two is currently showing.
-       Icons/highlight are plain white blended with mix-blend-mode:overlay
-       so they pick up a tint of whatever color is under them automatically,
-       instead of needing separate icon colors per state. */
-    --btn-beige:203,184,142;   /* send button, resting — the card's own sand tone */
-    --btn-blue:64,133,214;     /* send button, hover */
-    --btn-red:181,71,31;       /* badge, both states */
+    --btn-cyan-soft:102,211,218;
+    --btn-cyan-deep:0,217,255;
+    --btn-red:181,71,31;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100%;}
@@ -58,30 +41,52 @@
   }
   .nav-pill{
     pointer-events:auto;
-    position:relative; isolation:isolate; overflow:hidden;
+    position:relative; overflow:hidden;
     display:flex; align-items:center; gap:30px;
     color:var(--cream);
     padding:13px 28px;
     border-radius:100px;
-    border:1px solid rgba(241,236,223,0.16);
-    box-shadow:0 14px 34px rgba(0,0,0,0.35), inset 0 1px 0 rgba(241,236,223,0.18);
-    /* genuinely transparent glass — no cloned/sampled image anywhere.
-       backdrop-filter blurs whatever's REALLY behind the pill live, so it's
-       always correct (scroll, resize, any background) with zero JS. */
-    backdrop-filter:blur(16px) saturate(1.15);
-    -webkit-backdrop-filter:blur(16px) saturate(1.15);
+    background:rgba(28,27,23,0.24);
+    border:1px solid rgba(255,255,255,0.20);
+    box-shadow:
+      0 14px 36px rgba(0,0,0,0.28),
+      inset 0 1px 0 rgba(255,255,255,0.24),
+      inset 0 -1px 0 rgba(0,0,0,0.15);
+    backdrop-filter:blur(11px) saturate(1.28) contrast(1.04);
+    -webkit-backdrop-filter:blur(11px) saturate(1.28) contrast(1.04);
+    transition:background .35s var(--ease), border-color .35s var(--ease), box-shadow .4s var(--ease);
   }
-  /* the glaze: one layer combining the brightening tint + film grain,
-     both blended with mix-blend-mode so they read as part of the glass
-     rather than a flat sticker — sits behind .nav-pill__content so text
-     stays completely unaffected by the blend. */
+  .nav-pill:hover, .nav-pill:focus-within{
+    background:rgba(38,37,32,0.18);
+    border-color:rgba(255,255,255,0.30);
+    box-shadow:
+      0 16px 42px rgba(0,0,0,0.32),
+      0 0 28px rgba(215,229,222,0.10),
+      inset 0 1px 0 rgba(255,255,255,0.38),
+      inset 0 -1px 0 rgba(0,0,0,0.12);
+  }
+  /* Overlay lifts the live background and supplies the curved specular light;
+     text stays in its own unblended layer above it. */
   .nav-pill__glaze{
-    position:absolute; inset:0; z-index:1; pointer-events:none;
+    position:absolute; inset:1px; z-index:1; pointer-events:none;
+    border-radius:inherit;
     background:
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-      rgba(241,236,223,0.18);
-    mix-blend-mode:overlay;
-    opacity:0.9;
+      radial-gradient(ellipse 82% 120% at 18% -34%, rgba(255,255,255,0.34), transparent 62%),
+      linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.015) 45%, rgba(0,0,0,0.10));
+    background-blend-mode:overlay;
+    mix-blend-mode:normal;
+    opacity:0.78;
+    transition:opacity .35s var(--ease);
+  }
+  .nav-pill:hover .nav-pill__glaze,
+  .nav-pill:focus-within .nav-pill__glaze{ opacity:0.98; }
+  .nav-pill__glaze::after{
+    content:''; position:absolute; inset:0;
+    border-radius:inherit;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+    background-size:180px 180px;
+    mix-blend-mode:normal;
+    opacity:0.038;
   }
   .nav-pill__content{ position:relative; z-index:4; display:flex; align-items:center; gap:30px; }
   .nav-pill .brand{
@@ -139,24 +144,31 @@
   .nav-dropdown a:active{ opacity:.7; }
   @media (min-width:761px){ .nav-dropdown{ display:none !important; } }
 
-  /* ---- unified solid-button system, shared by .nav-cta and .notify button:
-     a flat color fill (no glass, no distortion), an overlay-blended white
-     highlight sheen and icon (so they automatically pick up a tint of
-     whatever fill color is currently showing), solid un-blended text for
-     guaranteed legibility, and a glow that matches the current fill color
-     exactly. Hover just swaps the fill/glow color — same shape throughout. ---- */
+  /* Flat at rest; hover adds a liquid-glass highlight, rim and colored glow. */
   .btn-solid{
-    position:relative; isolation:isolate; overflow:hidden;
+    --shine-x:22%;
+    --shine-y:18%;
+    position:relative; overflow:hidden;
     border-radius:100px;
-    border:1px solid rgba(255,255,255,0.22);
-    transition:background .3s var(--ease), box-shadow .35s var(--ease), transform .3s var(--ease);
+    border:1px solid rgba(255,255,255,0.30);
+    transition:background .28s var(--ease), border-color .28s var(--ease), box-shadow .35s var(--ease), transform .28s var(--ease);
   }
   .btn-solid__highlight{
-    position:absolute; inset:0; z-index:1; pointer-events:none;
-    background:radial-gradient(ellipse 70% 100% at 20% -10%, rgba(255,255,255,0.9), rgba(255,255,255,0) 65%);
-    mix-blend-mode:overlay;
-    opacity:0; /* no gloss while inactive — flat, matte color only */
-    transition:opacity .3s var(--ease);
+    position:absolute; inset:1px; z-index:1; pointer-events:none;
+    border-radius:inherit;
+    clip-path:inset(0 round 999px);
+    background:
+      radial-gradient(
+        circle 68px at var(--shine-x) var(--shine-y),
+        rgba(255,255,255,0.40),
+        rgba(255,255,255,0.16) 34%,
+        transparent 76%
+      ),
+      linear-gradient(180deg, rgba(0,217,255,0.16), rgba(0,70,92,0.08));
+    background-blend-mode:overlay;
+    mix-blend-mode:normal;
+    opacity:0;
+    transition:opacity .22s var(--ease);
   }
   .btn-solid:hover .btn-solid__highlight,
   .btn-solid:focus-visible .btn-solid__highlight{ opacity:1; }
@@ -166,7 +178,7 @@
   }
   .btn-solid__icon{
     width:12px; height:12px; flex:0 0 auto;
-    color:#fff; mix-blend-mode:soft-light; /* icon tints itself from whatever's under it */
+    color:#fff; mix-blend-mode:normal;
   }
 
   .nav-cta{
@@ -178,10 +190,10 @@
     box-shadow:0 2px 8px rgba(0,0,0,0.3);
   }
   .nav-cta:hover{
+    border-color:rgba(255,255,255,0.42);
     box-shadow:
-      0 0 14px 1px rgba(var(--btn-red),0.55),
-      0 0 36px 10px rgba(var(--btn-red),0.35),
-      0 0 70px 20px rgba(var(--btn-red),0.18);
+      0 0 13px rgba(var(--btn-red),0.46),
+      0 0 30px rgba(var(--btn-red),0.20);
   }
 
   /* HERO: adjust so content + footer + nav fit in one viewport by default */
@@ -297,9 +309,6 @@
     font-size:15px; line-height:1.6; color:#3E3B33;
     max-width:440px; margin:0 0 30px;
   }
-  /* the form itself is plain again — no sheen, no grain, no ambient glow.
-     All of that now lives on the send button alone (below), which is the
-     thing that's actually meant to read as a glass "object" */
   .notify{
     position:relative; max-width:420px;
   }
@@ -310,34 +319,30 @@
     border-radius:100px;
   }
   .notify input:focus{ box-shadow:inset 0 0 0 1.5px rgba(20,20,16,0.35); }
-  /* ---- send button: same unified solid-button system as .nav-cta —
-     flat beige at rest, flat blue on hover, overlay-blended icon/highlight,
-     solid un-blended text, glow matching whichever color is showing. ---- */
   .notify button{
     position:absolute; top:50%; right:6px; transform:translateY(-50%);
-    height:38px; min-width:64px; padding:0 20px;
+    width:38px; height:38px; min-width:38px; padding:0;
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
-    background:rgb(var(--btn-beige));
-    box-shadow:0 2px 8px rgba(0,0,0,0.25);
+    color:#fff;
+    background:rgb(var(--btn-cyan-soft));
+    box-shadow:0 2px 7px rgba(19,91,100,0.20), inset 0 1px 0 rgba(255,255,255,0.20);
   }
   .notify button:hover, .notify button:focus-visible{
-    background:rgb(var(--btn-blue));
+    background:radial-gradient(
+      circle at 50% 50%,
+      rgb(0,183,220) 0%,
+      rgb(0,196,231) 50%,
+      #00d9ff 78%,
+      rgb(128,244,255) 100%
+    );
+    border-color:rgba(190,249,255,0.72);
     box-shadow:
-      0 0 9px 2px rgba(var(--btn-blue),0.55),
-      0 0 22px 7px rgba(var(--btn-blue),0.35),
-      0 0 44px 14px rgba(var(--btn-blue),0.18);
+      0 0 13px rgba(var(--btn-cyan-deep),0.52),
+      0 0 30px rgba(var(--btn-cyan-deep),0.24);
   }
   .notify button:active{ transform:translateY(-50%) scale(0.94); }
-  .notify button .btn-solid__label{
-    font-family:'Space Mono',monospace; font-size:11px; font-weight:700;
-    letter-spacing:0.06em; text-transform:uppercase;
-    color:var(--ink); /* dark ink reads clearly on the light beige rest state */
-  }
-  .notify button:hover .btn-solid__label,
-  .notify button:focus-visible .btn-solid__label{
-    color:#fff; /* switches to white the moment the fill goes dark blue — still solid, never blended */
-  }
+  .notify button .btn-solid__icon{ width:17px; height:17px; }
 
   footer{
     position:relative; z-index:2;
@@ -467,8 +472,7 @@
   .nav-links a:hover{ opacity:.9; }
   .nav-links a:hover::after{ right:0; }
 
-  .nav-cta{ transition:transform .3s var(--ease); }
-  .nav-pill:hover .nav-cta{ transform:scale(1.05); }
+  .nav-cta{ transition:border-color .28s var(--ease), box-shadow .35s var(--ease); }
 
   .card:hover .card-surface{ box-shadow:0 40px 90px rgba(0,0,0,0.5); }
 
@@ -544,7 +548,6 @@
                 <path d="M21 3 3 10.8l7.3 2.9L13.2 21 21 3Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
                 <path d="M10.3 13.7 21 3" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
               </svg>
-              Send
             </span>
           </button>
         </form>
@@ -592,9 +595,32 @@
   // devices and for anyone who has motion reduced at the OS level.
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var canHover = window.matchMedia('(pointer: fine)').matches;
+
+  // Keep each glass highlight under the pointer. Touch devices retain the
+  // calm default highlight position and do not pay for pointer tracking.
+  if (canHover) {
+    document.querySelectorAll('.btn-solid').forEach(function(button){
+      button.addEventListener('pointermove', function(e){
+        var r = button.getBoundingClientRect();
+        button.style.setProperty('--shine-x', (e.clientX - r.left).toFixed(1) + 'px');
+        button.style.setProperty('--shine-y', (e.clientY - r.top).toFixed(1) + 'px');
+      });
+      button.addEventListener('pointerleave', function(){
+        button.style.removeProperty('--shine-x');
+        button.style.removeProperty('--shine-y');
+      });
+    });
+  }
+
   if (card && cardSurface && !reduceMotion && canHover) {
     var maxTilt = 4;
     card.addEventListener('mousemove', function(e){
+      // The form is a precision target; keep its surface steady while the
+      // pointer is interacting with the input or send button.
+      if (e.target.closest('.notify')) {
+        cardSurface.style.transform = 'scale(1)';
+        return;
+      }
       var r = card.getBoundingClientRect();
       var px = (e.clientX - r.left) / r.width - 0.5;
       var py = (e.clientY - r.top) / r.height - 0.5;
