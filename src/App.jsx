@@ -188,7 +188,9 @@ function Hero() {
 
   return (
     <section className="hero">
-      <div className="bg-photo" />
+      <div className="bg-scroll-layer" aria-hidden="true">
+        <div className="bg-photo" />
+      </div>
       <div className="grain-line" />
       <div className="tag-corner mono">LOEW FIDELITY<br />FIELD NOTES — VOL. 01</div>
       <div className="hero-tag-mobile mono">LOEW FIDELITY<br />FIELD NOTES — VOL. 01</div>
@@ -217,6 +219,24 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.glassEngine = 'samasante';
     try { localStorage.setItem('loew-glass-engine', 'samasante'); } catch { /* private mode */ }
+  }, []);
+
+  useEffect(() => {
+    let frame = 0;
+    const updateBackgroundScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        document.documentElement.style.setProperty('--mobile-bg-scroll', `${window.scrollY}px`);
+      });
+    };
+
+    updateBackgroundScroll();
+    window.addEventListener('scroll', updateBackgroundScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', updateBackgroundScroll);
+      document.documentElement.style.removeProperty('--mobile-bg-scroll');
+    };
   }, []);
 
   return (
