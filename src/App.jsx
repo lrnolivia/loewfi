@@ -38,9 +38,19 @@ const menuOptics = {
 
 const navOptics = {
   ...samOptics,
-  frost: 2.4,
-  brightness: 0.14,
-  saturate: 1.25,
+  strength: 0.2,
+  depth: 0.6,
+  curvature: 0.75,
+  dispersion: 0.2,
+  bend: 0.4,
+  bendWidth: 0.07,
+  sheen: 1.7,
+  sheenWidth: 3.5,
+  specular: 1.9,
+  sheenAngle: 85,
+  glow: 0.25,
+  frost: 1,
+  brightness: 0.1,
 };
 
 function useMeasuredBox() {
