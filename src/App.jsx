@@ -1,39 +1,20 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { LiquidGlass } from 'liquid-glass-web-react';
 import { Glass } from '@samasante/liquid-glass';
 
 const links = ['Home', 'About', 'Portfolio', 'Contact'];
 
-const pallavOptics = {
-  radius: 'auto',
-  strength: 0.18,
-  chromaticAberration: 0.82,
-  blur: 0.15,
-  depth: 16,
-  curvature: 0.78,
-  splay: 0.9,
-  glow: 0.14,
-  glowSpread: 0.9,
-  glowExponent: 1.8,
-  edgeHighlight: 0.32,
-  edgeWidth: 2.4,
-  edgeExponent: 1.7,
-  specular: 0.9,
-  specularAngle: 35,
-  quality: 512,
-};
-
 const samOptics = {
-  strength: 0.115,
-  depth: 0.78,
-  curvature: 0.76,
-  splay: 0.45,
-  dispersion: 1,
-  bend: 0.28,
-  bendWidth: 0.2,
-  frost: 0.15,
-  brightness: 0.035,
-  specular: 0.9,
+  strength: 0.145,
+  depth: 0.86,
+  curvature: 0.82,
+  splay: 0.55,
+  dispersion: 1.18,
+  bend: 0.72,
+  bendWidth: 0.25,
+  frost: 1.1,
+  saturate: 1.2,
+  brightness: 0.07,
+  specular: 1,
   sheenAngle: 35,
   sheen: 0.22,
   sheenWidth: 2.5,
@@ -65,48 +46,20 @@ function useMeasuredBox() {
   return [ref, size];
 }
 
-function NativeGlass({ engine, tone = 'nav' }) {
+function NativeGlass({ tone = 'nav' }) {
   const [measureRef, size] = useMeasuredBox();
-  const pallavRef = useRef(null);
-
-  const applyPallavBackdrop = () => {
-    requestAnimationFrame(() => {
-      const host = measureRef.current;
-      const filtered = pallavRef.current?.element?.firstElementChild;
-      const filter = filtered?.style.filter;
-      if (!host || !filter) return;
-      host.style.backdropFilter = `blur(0.15px) saturate(1.12) ${filter}`;
-      host.style.setProperty('-webkit-backdrop-filter', 'blur(0.15px) saturate(1.12)');
-    });
-  };
 
   return (
-    <div ref={measureRef} className={`native-glass-measure native-glass-measure--${engine} native-glass-measure--${tone}`} aria-hidden="true">
-      {engine === 'pallavag' ? (
-        <LiquidGlass
-          key="pallavag"
-          ref={pallavRef}
-          className="native-glass-layer native-glass--pallav"
-          width={size.width}
-          height={size.height}
-          {...pallavOptics}
-          shadow={false}
-          onMapGenerated={applyPallavBackdrop}
-        >
-          <span className="glass-material-fill" />
-        </LiquidGlass>
-      ) : (
-        <Glass
-          key="samasante"
-          className="native-glass-layer native-glass--sam"
-          width={size.width}
-          height={size.height}
-          radius={Math.min(size.height / 2, size.width / 2)}
-          optics={samOptics}
-        >
-          <span className="glass-material-fill" />
-        </Glass>
-      )}
+    <div ref={measureRef} className={`native-glass-measure native-glass-measure--sam native-glass-measure--${tone}`} aria-hidden="true">
+      <Glass
+        className="native-glass-layer native-glass--sam"
+        width={size.width}
+        height={size.height}
+        radius={Math.min(size.height / 2, size.width / 2)}
+        optics={samOptics}
+      >
+        <span className="glass-material-fill" />
+      </Glass>
     </div>
   );
 }
@@ -146,13 +99,13 @@ function SendIcon() {
   );
 }
 
-function Navbar({ engine }) {
+function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
     <div className="nav-wrap">
       <div className="nav-pill" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-        <NativeGlass engine={engine} />
+        <NativeGlass />
         <PointerHighlight />
         <div className="nav-pill__content">
           <div className="brand">loew.fi</div>
@@ -170,7 +123,7 @@ function Navbar({ engine }) {
               <span /><span /><span />
             </button>
             <div className="nav-cta btn-solid" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-              <NativeGlass engine={engine} tone="red" />
+              <NativeGlass tone="red" />
               <PointerHighlight />
               <span className="btn-solid__label"><WarningIcon />.workinprogress</span>
             </div>
@@ -186,7 +139,7 @@ function Navbar({ engine }) {
   );
 }
 
-function Hero({ engine }) {
+function Hero() {
   const surfaceRef = useRef(null);
   const canTilt = () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.matchMedia('(pointer: fine)').matches;
 
@@ -219,7 +172,7 @@ function Hero({ engine }) {
             <input type="hidden" name="subject" value="A word of encouragement — loew.fi" />
             <input type="text" name="body" placeholder="Talk to me nice..." required />
             <button type="submit" aria-label="Send" className="btn-solid" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-              <NativeGlass engine={engine} tone="cyan" />
+              <NativeGlass tone="cyan" />
               <PointerHighlight />
               <span className="btn-solid__label"><SendIcon /></span>
             </button>
@@ -230,38 +183,16 @@ function Hero({ engine }) {
   );
 }
 
-function EngineSwitch({ engine, onChange }) {
-  return (
-    <label className="glass-engine-control" title="Switch liquid-glass implementation">
-      <span className="glass-engine-control__pallav">Pallav</span>
-      <input
-        type="checkbox"
-        checked={engine === 'samasante'}
-        onChange={(event) => onChange(event.target.checked ? 'samasante' : 'pallavag')}
-        aria-label={`Liquid glass engine: ${engine === 'pallavag' ? 'Pallav Agarwal' : 'Sam Asante'}`}
-      />
-      <span className="glass-engine-control__track" aria-hidden="true" />
-      <span className="glass-engine-control__sam">Sam</span>
-    </label>
-  );
-}
-
 export default function App() {
-  const [engine, setEngine] = useState(() => {
-    try { return localStorage.getItem('loew-glass-engine') === 'samasante' ? 'samasante' : 'pallavag'; }
-    catch { return 'pallavag'; }
-  });
-
   useEffect(() => {
-    document.documentElement.dataset.glassEngine = engine;
-    try { localStorage.setItem('loew-glass-engine', engine); } catch { /* private mode */ }
-  }, [engine]);
+    document.documentElement.dataset.glassEngine = 'samasante';
+    try { localStorage.setItem('loew-glass-engine', 'samasante'); } catch { /* private mode */ }
+  }, []);
 
   return (
     <>
-      <Navbar engine={engine} />
-      <Hero engine={engine} />
-      <EngineSwitch engine={engine} onChange={setEngine} />
+      <Navbar />
+      <Hero />
       <footer>
         <span>© 2026 lauren olivia - loew.fi</span>
         <span><a href="http://instagram.com/lrnolivia">instagram</a> &nbsp;/&nbsp; <a href="mailto:me@loew.fi">email</a></span>
