@@ -65,22 +65,35 @@ function useMeasuredBox() {
   return [ref, size];
 }
 
-function NativeGlass({ engine, source, tone = 'nav' }) {
+function NativeGlass({ engine, tone = 'nav' }) {
   const [measureRef, size] = useMeasuredBox();
-  const sourceNode = <div className={`glass-source glass-source--${tone}`} />;
+  const pallavRef = useRef(null);
+
+  const applyPallavBackdrop = () => {
+    requestAnimationFrame(() => {
+      const host = measureRef.current;
+      const filtered = pallavRef.current?.element?.firstElementChild;
+      const filter = filtered?.style.filter;
+      if (!host || !filter) return;
+      host.style.backdropFilter = `blur(0.15px) saturate(1.12) ${filter}`;
+      host.style.setProperty('-webkit-backdrop-filter', 'blur(0.15px) saturate(1.12)');
+    });
+  };
 
   return (
-    <div ref={measureRef} className="native-glass-measure" aria-hidden="true">
+    <div ref={measureRef} className={`native-glass-measure native-glass-measure--${engine} native-glass-measure--${tone}`} aria-hidden="true">
       {engine === 'pallavag' ? (
         <LiquidGlass
           key="pallavag"
+          ref={pallavRef}
           className="native-glass-layer native-glass--pallav"
           width={size.width}
           height={size.height}
           {...pallavOptics}
           shadow={false}
+          onMapGenerated={applyPallavBackdrop}
         >
-          {sourceNode}
+          <span className="glass-material-fill" />
         </LiquidGlass>
       ) : (
         <Glass
@@ -89,11 +102,10 @@ function NativeGlass({ engine, source, tone = 'nav' }) {
           width={size.width}
           height={size.height}
           radius={Math.min(size.height / 2, size.width / 2)}
-          refract={sourceNode}
-          behind={source}
           optics={samOptics}
-          filterResolution={1}
-        />
+        >
+          <span className="glass-material-fill" />
+        </Glass>
       )}
     </div>
   );
@@ -140,7 +152,7 @@ function Navbar({ engine }) {
   return (
     <div className="nav-wrap">
       <div className="nav-pill" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-        <NativeGlass engine={engine} source="#141410" />
+        <NativeGlass engine={engine} />
         <PointerHighlight />
         <div className="nav-pill__content">
           <div className="brand">loew.fi</div>
@@ -158,7 +170,7 @@ function Navbar({ engine }) {
               <span /><span /><span />
             </button>
             <div className="nav-cta btn-solid" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-              <NativeGlass engine={engine} source="rgb(181,71,31)" tone="red" />
+              <NativeGlass engine={engine} tone="red" />
               <PointerHighlight />
               <span className="btn-solid__label"><WarningIcon />.workinprogress</span>
             </div>
@@ -207,7 +219,7 @@ function Hero({ engine }) {
             <input type="hidden" name="subject" value="A word of encouragement — loew.fi" />
             <input type="text" name="body" placeholder="Talk to me nice..." required />
             <button type="submit" aria-label="Send" className="btn-solid" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-              <NativeGlass engine={engine} source="#00d9ff" tone="cyan" />
+              <NativeGlass engine={engine} tone="cyan" />
               <PointerHighlight />
               <span className="btn-solid__label"><SendIcon /></span>
             </button>

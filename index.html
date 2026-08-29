@@ -74,26 +74,18 @@
   .native-glass-measure{
     position:absolute; inset:0; z-index:0; pointer-events:none;
     border-radius:inherit; overflow:hidden;
+    background:var(--glass-tint);
   }
+  .native-glass-measure--nav{ --glass-tint:rgba(20,20,16,.18); }
+  .native-glass-measure--red{ --glass-tint:rgba(var(--btn-red),.48); }
+  .native-glass-measure--cyan{ --glass-tint:rgba(var(--btn-cyan-deep),.38); }
+  .native-glass-measure--samasante{ background:transparent; }
+  .native-glass--sam{ background:var(--glass-tint); }
   .native-glass--pallav > div:first-child{
     position:absolute; inset:0; width:100%; height:100%;
     overflow:hidden; border-radius:inherit;
   }
-  .glass-source{
-    position:absolute; inset:-10px; border-radius:inherit;
-    transform:scale(1.04);
-  }
-  .glass-source--nav{
-    background:
-      radial-gradient(ellipse 360px 150px at var(--shine-x) var(--shine-y), rgba(255,255,255,.20), transparent 78%),
-      linear-gradient(rgba(20,20,16,.08), rgba(20,20,16,.24)),
-      url('images/moss.jpg') center/cover fixed no-repeat;
-    background-blend-mode:overlay,normal,normal;
-  }
-  .glass-source--red{ background:rgb(var(--btn-red)); }
-  .glass-source--cyan{
-    background:radial-gradient(circle at 50% 50%,rgb(0,204,236) 0%,#00d9ff 56%,rgb(50,230,255) 82%,rgb(151,247,255) 100%);
-  }
+  .glass-material-fill{ display:block; width:100%; height:100%; }
   .glass-pointer-highlight{
     position:absolute; inset:-1px; z-index:2; pointer-events:none; border-radius:inherit;
     background:radial-gradient(ellipse 360px 170px at var(--shine-x) var(--shine-y),rgba(255,255,255,.24),rgba(20,20,16,.10) 46%,rgba(255,255,255,.12) 76%,transparent 100%);
@@ -164,10 +156,10 @@
     border:1px solid rgba(255,255,255,0.30);
     transition:background .28s var(--ease), border-color .28s var(--ease), box-shadow .35s var(--ease), transform .28s var(--ease);
   }
-  .btn-solid .native-glass-layer,
+  .btn-solid .native-glass-measure,
   .btn-solid .glass-pointer-highlight{ opacity:0; transition:opacity .22s var(--ease); }
-  .btn-solid:hover .native-glass-layer,
-  .btn-solid:focus-visible .native-glass-layer{ opacity:.98; }
+  .btn-solid:hover .native-glass-measure,
+  .btn-solid:focus-visible .native-glass-measure{ opacity:.98; }
   .btn-solid:hover .glass-pointer-highlight,
   .btn-solid:focus-visible .glass-pointer-highlight{ opacity:.58; }
   .btn-solid__label{
@@ -564,7 +556,6 @@
       </ul>
     </nav>
     </div>
-  </template>
 
 
   <section class="hero">
@@ -608,7 +599,7 @@
     <span><a href="http://instagram.com/lrnolivia">instagram</a> &nbsp;/&nbsp; <a href="mailto:me@loew.fi">email</a></span>
   </footer>
 
-  </div>
+  </template>
 <script type="text/plain" data-retired-src="vendor/liquid-glass/bundle.js"></script>
 <script type="text/plain">
   // .card itself is never touched by JS anymore — it just sits at its
