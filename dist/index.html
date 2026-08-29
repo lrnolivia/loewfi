@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>loew.fi — good things are coming</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#141410;
+    --cream:#F1ECDF;
+    --cream-dim:#C9C3B2;
+    --sand:#CBB88E;
+    --line: rgba(241,236,223,0.16);
+    /* these are read by .nav-wrap, .hero, .grain-line and footer alike, so they
+       live on :root (not scoped to .nav-wrap) — that scoping was the bug that sent
+       the divider to the middle of the page and killed the hero's top padding. */
+    --nav-top:26px;
+    --nav-height:64px;
+    --btn-cyan-soft:102,211,218;
+    --btn-cyan-deep:0,217,255;
+    --btn-red:181,71,31;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:var(--ink);
+    color:var(--cream);
+    font-family:'Space Grotesk',sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  .mono{font-family:'Space Mono',monospace;}
+
+  /* NAV: left aligned with ample padding */
+  .nav-wrap{
+    position:fixed; top:var(--nav-top); left:6vw; right:6vw;
+    display:flex; justify-content:flex-start; z-index:60; pointer-events:none;
+  }
+  .nav-pill{
+    --shine-x:20%;
+    --shine-y:12%;
+    pointer-events:auto;
+    position:relative; isolation:isolate; overflow:hidden;
+    display:flex; align-items:center; gap:30px;
+    color:var(--cream);
+    padding:13px 28px;
+    border-radius:100px;
+    background:rgba(20,20,16,0.16);
+    border:1px solid rgba(255,255,255,0.20);
+    box-shadow:
+      0 14px 36px rgba(0,0,0,0.28),
+      inset 0 1px 0 rgba(255,255,255,0.24),
+      inset 0 -1px 0 rgba(0,0,0,0.15);
+    transition:background .35s var(--ease), border-color .35s var(--ease), box-shadow .4s var(--ease);
+  }
+  .nav-pill:hover, .nav-pill:focus-within{
+    background:rgba(38,37,32,0.18);
+    border-color:rgba(255,255,255,0.30);
+    box-shadow:
+      0 16px 42px rgba(0,0,0,0.32),
+      0 0 28px rgba(215,229,222,0.10),
+      inset 0 1px 0 rgba(255,255,255,0.38),
+      inset 0 -1px 0 rgba(0,0,0,0.12);
+  }
+  .native-glass-layer{
+    position:absolute !important; inset:0; z-index:0; pointer-events:none;
+    width:100% !important; height:100% !important;
+    border-radius:inherit; overflow:hidden !important;
+    opacity:.94;
+  }
+  .native-glass-measure{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    border-radius:inherit; overflow:hidden;
+  }
+  .native-glass--pallav > div:first-child{
+    position:absolute; inset:0; width:100%; height:100%;
+    overflow:hidden; border-radius:inherit;
+  }
+  .glass-source{
+    position:absolute; inset:-10px; border-radius:inherit;
+    transform:scale(1.04);
+  }
+  .glass-source--nav{
+    background:
+      radial-gradient(ellipse 360px 150px at var(--shine-x) var(--shine-y), rgba(255,255,255,.20), transparent 78%),
+      linear-gradient(rgba(20,20,16,.08), rgba(20,20,16,.24)),
+      url('/assets/moss-D9PeUeJ2.jpg') center/cover fixed no-repeat;
+    background-blend-mode:overlay,normal,normal;
+  }
+  .glass-source--red{ background:rgb(var(--btn-red)); }
+  .glass-source--cyan{
+    background:radial-gradient(circle at 50% 50%,rgb(0,204,236) 0%,#00d9ff 56%,rgb(50,230,255) 82%,rgb(151,247,255) 100%);
+  }
+  .glass-pointer-highlight{
+    position:absolute; inset:-1px; z-index:2; pointer-events:none; border-radius:inherit;
+    background:radial-gradient(ellipse 360px 170px at var(--shine-x) var(--shine-y),rgba(255,255,255,.24),rgba(20,20,16,.10) 46%,rgba(255,255,255,.12) 76%,transparent 100%);
+    mix-blend-mode:overlay; opacity:.48;
+  }
+  .nav-pill__content{ position:relative; z-index:4; display:flex; align-items:center; gap:30px; }
+  .nav-pill .brand{
+    font-weight:700; font-size:19px; letter-spacing:-0.01em;
+    padding-right:8px; border-right:1px solid rgba(241,236,223,0.22);
+  }
+  .nav-links{display:flex; gap:24px; list-style:none; margin:0; padding:0;}
+  .nav-links a{
+    color:var(--cream); text-decoration:none; font-size:12px;
+    letter-spacing:0.05em; text-transform:uppercase;
+    font-family:'Space Mono',monospace; opacity:0.55; /* inactive links — barely visible */
+  }
+
+  /* mobile-only hamburger + dropdown, revealing the links that .nav-links
+     hides below 760px (see the media query) */
+  .nav-actions{ display:flex; align-items:center; gap:14px; }
+  .nav-toggle{
+    display:none; position:relative; width:30px; height:30px;
+    border:none; background:transparent; padding:0; cursor:pointer; flex:0 0 auto;
+  }
+  .nav-toggle span{
+    position:absolute; left:5px; right:5px; height:2.5px; border-radius:2px;
+    background:var(--cream); transition:transform .3s var(--ease), opacity .2s ease;
+  }
+  .nav-toggle span:nth-child(1){ top:9px; }
+  .nav-toggle span:nth-child(2){ top:14px; }
+  .nav-toggle span:nth-child(3){ top:19px; }
+  .nav-toggle.is-open span:nth-child(1){ transform:translateY(5px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2){ opacity:0; }
+  .nav-toggle.is-open span:nth-child(3){ transform:translateY(-5px) rotate(-45deg); }
+
+  /* the dropdown itself: deliberately solid, not glass — needs to stay
+     readable regardless of what's behind it and what the glass is doing */
+  .nav-dropdown{
+    display:none;
+    position:absolute; left:0; right:0; pointer-events:auto;
+    top:calc((var(--nav-top) * 2) + var(--nav-height) + 14px);
+    background:var(--ink);
+    border:1px solid rgba(241,236,223,0.14);
+    border-radius:18px;
+    padding:6px;
+    box-shadow:0 24px 60px rgba(0,0,0,0.55);
+    z-index:59;
+  }
+  .nav-dropdown.is-open{ display:block; animation:fadeDown .35s var(--ease) both; }
+  .nav-dropdown ul{ list-style:none; margin:0; padding:0; }
+  .nav-dropdown a{
+    display:block; padding:14px 14px;
+    color:var(--cream); text-decoration:none;
+    font-family:'Space Mono',monospace; font-size:12.5px;
+    letter-spacing:0.05em; text-transform:uppercase;
+    border-bottom:1px solid rgba(241,236,223,0.08);
+  }
+  .nav-dropdown li:last-child a{ border-bottom:none; }
+  .nav-dropdown a:active{ opacity:.7; }
+  @media (min-width:761px){ .nav-dropdown{ display:none !important; } }
+
+  /* Flat at rest; hover adds a liquid-glass highlight, rim and colored glow. */
+  .btn-solid{
+    --shine-x:22%;
+    --shine-y:18%;
+    position:relative; overflow:hidden;
+    border-radius:100px;
+    border:1px solid rgba(255,255,255,0.30);
+    transition:background .28s var(--ease), border-color .28s var(--ease), box-shadow .35s var(--ease), transform .28s var(--ease);
+  }
+  .btn-solid .native-glass-layer,
+  .btn-solid .glass-pointer-highlight{ opacity:0; transition:opacity .22s var(--ease); }
+  .btn-solid:hover .native-glass-layer,
+  .btn-solid:focus-visible .native-glass-layer{ opacity:.98; }
+  .btn-solid:hover .glass-pointer-highlight,
+  .btn-solid:focus-visible .glass-pointer-highlight{ opacity:.58; }
+  .btn-solid__label{
+    position:relative; z-index:3; display:flex; align-items:center; gap:6px;
+    mix-blend-mode:normal; /* text is never blended — always solid, always legible */
+  }
+  .btn-solid__icon{
+    width:12px; height:12px; flex:0 0 auto;
+    color:#fff; mix-blend-mode:normal;
+  }
+
+  .nav-cta{
+    color:#fff;
+    font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.05em;
+    padding:8px 16px;
+    background:rgb(var(--btn-red));
+    box-shadow:0 2px 8px rgba(0,0,0,0.3);
+  }
+  .nav-cta:hover{
+    border-color:rgba(255,255,255,0.42);
+    box-shadow:
+      0 0 13px rgba(var(--btn-red),0.46),
+      0 0 30px rgba(var(--btn-red),0.20);
+  }
+
+  /* HERO: adjust so content + footer + nav fit in one viewport by default */
+  .hero{
+    position:relative;
+    /* reserve space for fixed nav + footer so page aims to fit in one viewport */
+    min-height:calc(100vh - var(--nav-height) - 72px - 8px);
+    display:flex; align-items:center; /* center vertically by default */
+    overflow:hidden;
+    background:url('/assets/moss-D9PeUeJ2.jpg') center/cover no-repeat;
+    /* keep some top padding so content doesn't sit beneath the nav visually */
+    padding-top:calc(var(--nav-height) + 8px);
+    flex:1 0 auto;
+  }
+  .bg-photo{
+    position:absolute; inset:0;
+    background:url('/assets/moss-D9PeUeJ2.jpg') center/cover no-repeat;
+    /* nudged brighter/flatter — the bulk of the dimming lives in the ::after
+       gradient below, which is where it's been pulled back */
+    filter:grayscale(0.55) brightness(0.94) contrast(1.05);
+  }
+  /* light film grain on the photo itself — same turbulence texture as the
+     glass's grain, just at a fraction of the opacity (0.035 vs the glass's
+     0.12) so it reads as photo texture, not competing with the glass */
+  .bg-photo::before{
+    content:'';
+    position:absolute; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:0.035; mix-blend-mode:overlay; pointer-events:none;
+  }
+  /* stronger top band so nav + tag look like a single dark row — every stop
+     pulled down from its old value so the glass has more light to bend */
+  .bg-photo::after{
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      0deg,
+      rgba(0,0,0,0.55) 0%,
+      rgba(0,0,0,0.55) 14%,
+      rgba(20,20,16,0.48) 18%,
+      rgba(20,20,16,0.14) 55%,
+      rgba(20,20,16,0.32) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* translucent divider - sits under the nav with the same gap below it
+     as the nav has above it (--nav-top), so the spacing reads as even */
+  .grain-line{
+    position:absolute; left:0; right:0; top:calc((var(--nav-top) * 2) + var(--nav-height));
+    height:1px; background:var(--line); z-index:55;
+  }
+  .tag-corner{
+    position:absolute; top:calc(var(--nav-top) + 8px); right:6vw; z-index:2;
+    font-family:'Space Mono',monospace; font-size:11.5px;
+    color:var(--cream-dim); text-align:right; line-height:1.7;
+  }
+
+  /* Mobile-only stand-in for .tag-corner (which hides below 760px because there's
+     no room for it beside a full-width nav pill). Hidden on desktop by default;
+     the mobile media query below turns it on and positions it one of two ways —
+     see the comments there. */
+  .hero-tag-mobile{ display:none; }
+
+  /* CARD: right-shifted on desktop; content inside should be left-aligned.
+     Split into two layers so the mouse-tilt parallax stays purely physical:
+     .card is just a static, untransformed anchor (paper's resting -3deg tilt
+     lives here, permanently — it never receives the dynamic JS transform).
+     .card-surface is the layer the JS tilt/scale actually touches — it's the
+     "physical card" (fill + shadow + glow), absolutely filling .card behind
+     the copy. .card-content sits on top, in normal flow, and never receives
+     any transform at all, so the text/eyebrow/form stay crisp and fixed
+     regardless of how the surface underneath tilts on hover. */
+  .card{
+    position:relative; z-index:60;
+    margin:0; /* we'll control placement with auto margins */
+    max-width:560px; /* slightly reduced to help fit within viewport */
+    color:var(--ink);
+    transform:rotate(-3deg);
+    /* place to the right while keeping a consistent right padding */
+    margin-left:auto; /* push to the right */
+    margin-right:6vw; /* ample padding from right edge */
+    text-align:left; /* keep copy left-aligned even when card sits on right */
+    /* gives .card-surface's rotateX/rotateY real 3D depth */
+    perspective:1000px;
+  }
+  .card-surface{
+    position:absolute; inset:0;
+    background:var(--cream);
+    box-shadow:0 30px 70px rgba(0,0,0,0.45);
+    transition:box-shadow .3s ease, transform .15s ease-out;
+    will-change:transform;
+  }
+  .card-content{
+    position:relative; z-index:1;
+    padding:44px 40px 36px;
+  }
+  .eyebrow{
+    display:flex; align-items:center; gap:8px;
+    font-family:'Space Mono',monospace; font-size:12px;
+    letter-spacing:0.08em; text-transform:uppercase;
+    color:#7A6B45; margin-bottom:20px;
+  }
+  .eyebrow i{width:7px;height:7px;border-radius:50%;background:#FFD400; display:inline-block;}
+  h1{
+    font-weight:700; letter-spacing:-0.02em;
+    font-size:clamp(36px, 4.8vw, 68px);
+    line-height:1.0; margin:0 0 20px;
+  }
+  h1 span{color:#8C8474;} /* greige — ties in with the new form palette below */
+  .sub{
+    font-size:15px; line-height:1.6; color:#3E3B33;
+    max-width:440px; margin:0 0 30px;
+  }
+  .notify{
+    position:relative; max-width:420px;
+  }
+  .notify input{
+    width:100%; border:none; background:#DCD5C3; /* darker shade of the card's own cream, not grey */
+    padding:15px 56px 15px 20px; /* extra right padding clears the round button */
+    font-family:'Space Grotesk',sans-serif; font-size:14px; color:var(--ink); outline:none;
+    border-radius:100px;
+  }
+  .notify input:focus{ box-shadow:inset 0 0 0 1.5px rgba(20,20,16,0.35); }
+  .notify button{
+    position:absolute; top:50%; right:6px; transform:translateY(-50%);
+    width:38px; height:38px; min-width:38px; padding:0;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    color:#fff;
+    background:rgb(var(--btn-cyan-soft));
+    box-shadow:0 2px 7px rgba(19,91,100,0.20), inset 0 1px 0 rgba(255,255,255,0.20);
+  }
+  .notify button:hover, .notify button:focus-visible{
+    background:radial-gradient(
+      circle at 50% 50%,
+      rgb(0,204,236) 0%,
+      #00d9ff 56%,
+      rgb(50,230,255) 82%,
+      rgb(151,247,255) 100%
+    );
+    border-color:rgba(190,249,255,0.72);
+    box-shadow:
+      0 0 13px rgba(var(--btn-cyan-deep),0.52),
+      0 0 30px rgba(var(--btn-cyan-deep),0.24);
+  }
+  .notify button:active{ transform:translateY(-50%) scale(0.94); }
+  .notify button .btn-solid__icon{ width:17px; height:17px; }
+
+  footer{
+    position:relative; z-index:2;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 6vw; /* reduced padding to save vertical space */
+    height:72px;
+    border-top:1px solid var(--line);
+    font-family:'Space Mono',monospace; font-size:11px;
+    color:var(--cream-dim);
+    flex-shrink:0;
+  }
+  footer a{color:var(--cream-dim); text-decoration:none;}
+
+  .glass-engine-control{
+    position:fixed; left:6vw; bottom:84px; z-index:90;
+    display:flex; align-items:center; gap:8px;
+    padding:7px 10px;
+    border:1px solid rgba(241,236,223,0.17);
+    border-radius:100px;
+    background:rgba(20,20,16,0.76);
+    box-shadow:0 8px 24px rgba(0,0,0,0.28);
+    font-family:'Space Mono',monospace; font-size:9px;
+    letter-spacing:0.05em; text-transform:uppercase;
+    color:rgba(241,236,223,0.58);
+  }
+  .glass-engine-control input{
+    position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;
+  }
+  .glass-engine-control__track{
+    position:relative; width:34px; height:18px; flex:0 0 auto;
+    border-radius:100px; cursor:pointer;
+    background:#3b403d;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.14);
+    transition:background .25s var(--ease);
+  }
+  .glass-engine-control__track::after{
+    content:''; position:absolute; width:14px; height:14px;
+    top:2px; left:2px; border-radius:50%;
+    background:var(--cream);
+    box-shadow:0 2px 6px rgba(0,0,0,0.35);
+    transition:transform .3s var(--ease);
+  }
+  .glass-engine-control input:checked + .glass-engine-control__track{ background:#287e87; }
+  .glass-engine-control input:checked + .glass-engine-control__track::after{ transform:translateX(16px); }
+  .glass-engine-control input:focus-visible + .glass-engine-control__track{
+    outline:2px solid #00d9ff; outline-offset:3px;
+  }
+  html[data-glass-engine="pallavag"] .glass-engine-control__pallav,
+  html[data-glass-engine="samasante"] .glass-engine-control__sam{ color:var(--cream); }
+
+  #root{ min-height:100vh; display:flex; flex-direction:column; }
+
+  /* MOBILE / narrow adjustments */
+  @media (max-width:760px){
+    /* set on :root (not .nav-wrap) so .hero / .grain-line / footer inherit the
+       same smaller nav measurements — this is the fix for the divider bug */
+    :root{ --nav-top:18px; --nav-height:56px; }
+
+    .nav-wrap{ left:4vw; right:4vw; top:var(--nav-top); }
+    .glass-engine-control{ left:4vw; bottom:82px; }
+    /* stretch the pill itself edge-to-edge across the nav-wrap; same look, just full-width */
+    .nav-pill{ width:100%; padding:10px 18px; }
+    /* space-between has to live on .nav-pill__content (the actual flex
+       parent of .brand/.nav-actions), not on .nav-pill itself — .nav-pill's
+       only in-flow child is .nav-pill__content, so space-between up there
+       had nothing to distribute space between and did nothing */
+    .nav-pill__content{ width:100%; justify-content:space-between; }
+    .nav-links{display:none;}
+    .nav-toggle{ display:block; }
+    .tag-corner{display:none;}
+
+    .card{
+      margin-left: auto; /* keep horizontal placement left under nav */
+      margin-right: auto;
+      transform:rotate(-3deg);
+      text-align:left; /* keep copy left-aligned on mobile */
+      margin-top:0;
+      max-width:calc(100% - 10vw);
+    }
+    .card-content{
+      padding:28px 22px 26px;
+    }
+
+    /* card is the only in-flow hero child again — centered same as before */
+    .hero{
+      align-items:center;
+      padding-top:calc(var(--nav-height) + 8px);
+      min-height:calc(100vh - var(--nav-height) - 72px - 8px);
+    }
+    .grain-line{ top:calc((var(--nav-top) * 2) + var(--nav-height)); }
+    .notify{ margin-left:0; }
+    h1{ font-size:clamp(32px,7.5vw,56px); }
+
+    /* ============================================================
+       Hero tag text on mobile — coded two ways. Option B is active;
+       to use Option A instead, delete/comment Option B's rule below
+       and un-comment Option A's.
+       ============================================================ */
+
+    /* Option A — inside the top bar, above the divider, vertically
+       centered with the nav row. Note: this only has room to breathe
+       if the pill ISN'T stretched full-width (comment out the
+       `.nav-pill{ width:100%; ... }` rule above if you use this). */
+    /*
+    .hero-tag-mobile{
+      display:flex; align-items:center;
+      position:absolute; top:var(--nav-top); height:var(--nav-height);
+      right:4vw; z-index:2;
+      font-family:'Space Mono',monospace; font-size:10.5px;
+      letter-spacing:0.05em; color:var(--cream-dim); text-align:right; line-height:1.5;
+    }
+    */
+
+    /* Option B (active) — just below the divider. Pinned with an absolute
+       top tied to the divider's own position (not to flex centering, which
+       is what made its distance from the divider accidental before) so it
+       always sits close to the divider and stays clear of the card. */
+    .hero-tag-mobile{
+      display:block;
+      position:absolute; z-index:3;
+      top:calc((var(--nav-top) * 2) + var(--nav-height) + 14px);
+      left:5vw; right:5vw;
+      font-family:'Space Mono',monospace; font-size:10.5px;
+      letter-spacing:0.05em; color:var(--cream-dim); line-height:1.6;
+    }
+  }
+
+  /* ============================================================
+     MOTION — entrance choreography + ambient/interactive polish.
+     Everything here is progressive enhancement: with JS or motion
+     disabled, every element still lands in its correct resting
+     state (see the prefers-reduced-motion block at the bottom).
+     ============================================================ */
+  :root{ --ease:cubic-bezier(.16,1,.3,1); }
+
+  @keyframes fadeDown{ from{opacity:0; transform:translateY(-18px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(26px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes drawLine{ from{transform:scaleX(0);} to{transform:scaleX(1);} }
+  @keyframes cardIn{ from{opacity:0; transform:translateY(54px) rotate(0deg) scale(.95);} to{opacity:1; transform:translateY(0) rotate(-3deg) scale(1);} }
+  @keyframes kenBurns{ from{transform:scale(1);} to{transform:scale(1.07);} }
+  @keyframes pulseDot{ 0%,100%{box-shadow:0 0 0 0 rgba(255,212,0,.55);} 50%{box-shadow:0 0 0 7px rgba(255,212,0,0);} }
+
+  /* entrance stagger, top to bottom */
+  .nav-wrap{ animation:fadeDown .8s var(--ease) both; }
+  .tag-corner{ animation:fadeDown .8s var(--ease) .15s both; }
+  .hero-tag-mobile{ animation:fadeDown .8s var(--ease) .15s both; }
+  .grain-line{ transform-origin:left center; animation:drawLine 1s var(--ease) .3s both; }
+  .hero{ perspective:1200px; } /* gives the card's mouse-tilt (JS, below) real depth */
+  .card{ animation:cardIn 1s var(--ease) .4s both; }
+  .card-content > *{ opacity:0; animation:fadeUp .8s var(--ease) both; }
+  .card-content .eyebrow{ animation-delay:.75s; }
+  .card-content h1{ animation-delay:.85s; }
+  .card-content .sub{ animation-delay:1s; }
+  .card-content .notify{ animation-delay:1.15s; }
+  footer{ animation:fadeUp .8s var(--ease) 1.3s both; }
+
+  /* ambient, ongoing */
+  .bg-photo{ animation:kenBurns 26s ease-in-out infinite alternate; }
+  .eyebrow i{ animation:pulseDot 2.4s ease-in-out infinite; }
+
+  /* interactive polish */
+  .nav-links a{ position:relative; transition:opacity .25s var(--ease); }
+  .nav-links a::after{
+    content:''; position:absolute; left:0; right:100%; bottom:-4px; height:1px;
+    background:#FFFFFF; transition:right .3s var(--ease);
+  }
+  .nav-links a:hover{ opacity:.9; }
+  .nav-links a:hover::after{ right:0; }
+
+  .nav-cta{ transition:border-color .28s var(--ease), box-shadow .35s var(--ease); }
+
+  .card:hover .card-surface{ box-shadow:0 40px 90px rgba(0,0,0,0.5); }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.01ms !important; animation-iteration-count:1 !important;
+      transition-duration:0.01ms !important; scroll-behavior:auto !important;
+    }
+  }
+</style>
+  <script type="module" crossorigin src="/assets/index-CyUktJp7.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <div class="legacy-static" hidden>
+
+  <div class="nav-wrap">
+    <div class="nav-pill">
+      <div class="nav-pill__refract" data-glass-target aria-hidden="true"></div>
+      <div class="nav-pill__content">
+        <div class="brand">loew.fi</div>
+        <ul class="nav-links">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Portfolio</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navDropdown">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="nav-cta btn-solid">
+            <span class="btn-solid__refract" data-glass-target aria-hidden="true"></span>
+            <span class="btn-solid__label">
+              <svg class="btn-solid__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 3.5 21 19.5H3L12 3.5Z" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
+                <path d="M12 9.7v4.6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+                <circle cx="12" cy="17" r="1.15" fill="currentColor"/>
+              </svg>
+              .workinprogress
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nav class="nav-dropdown" id="navDropdown">
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Portfolio</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+
+
+  <section class="hero">
+    <div class="bg-photo"></div>
+    <div class="grain-line"></div>
+    <div class="tag-corner mono">LOEW FIDELITY<br>FIELD NOTES — VOL. 01</div>
+    <div class="hero-tag-mobile mono">LOEW FIDELITY<br>FIELD NOTES — VOL. 01</div>
+
+    <div class="card">
+      <div class="card-surface"></div>
+      <div class="card-content">
+        <div class="eyebrow"><i></i>currently under construction</div>
+        <h1>Good things<br>are <span>coming.</span></h1>
+        <p class="sub">A girl, her dreams, delusions and her work gathered into one place. Send a word of encouragement while I work!</p>
+        <form class="notify" action="mailto:me@loew.fi" method="GET" enctype="text/plain">
+          <input type="hidden" name="subject" value="A word of encouragement — loew.fi">
+          <input type="text" name="body" placeholder="Talk to me nice..." required>
+          <button type="submit" aria-label="Send" class="btn-solid">
+            <span class="btn-solid__refract" data-glass-target aria-hidden="true"></span>
+            <span class="btn-solid__label">
+              <svg class="btn-solid__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M21 3 3 10.8l7.3 2.9L13.2 21 21 3Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+                <path d="M10.3 13.7 21 3" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <label class="glass-engine-control" title="Switch liquid-glass implementation">
+    <span class="glass-engine-control__pallav">Pallav</span>
+    <input id="glassEngineToggle" type="checkbox" aria-label="Liquid glass engine: Pallav Agarwal">
+    <span class="glass-engine-control__track" aria-hidden="true"></span>
+    <span class="glass-engine-control__sam">Sam</span>
+  </label>
+
+  <footer>
+    <span>© 2026 lauren olivia - loew.fi</span>
+    <span><a href="http://instagram.com/lrnolivia">instagram</a> &nbsp;/&nbsp; <a href="mailto:me@loew.fi">email</a></span>
+  </footer>
+
+  </div>
+<script type="text/plain" src="vendor/liquid-glass/bundle.js"></script>
+<script type="text/plain">
+  // .card itself is never touched by JS anymore — it just sits at its
+  // permanent resting rotate(-3deg) (set in CSS) for the whole page's life,
+  // so there's nothing to "free up" after the entrance animation this time.
+  //
+  // The mouse-tilt now lives entirely on .card-surface, a layer that sits
+  // behind .card-content and carries the fill/shadow/glow. .card-content
+  // is never assigned a transform at all, so it can't inherit any part of
+  // the tilt — no rotation, no scale, no parallax drift — it just stays
+  // put while the surface underneath tilts on hover.
+  var card = document.querySelector('.card');
+  var cardSurface = document.querySelector('.card-surface');
+  var glassToggle = document.getElementById('glassEngineToggle');
+  if (glassToggle && window.DualGlassController) {
+    try {
+      glassToggle.checked = localStorage.getItem('loew-glass-engine') === 'samasante';
+    } catch (e) {}
+    window.loewGlass = new window.DualGlassController(glassToggle);
+    glassToggle.addEventListener('change', function(){
+      try {
+        localStorage.setItem('loew-glass-engine', glassToggle.checked ? 'samasante' : 'pallavag');
+      } catch (e) {}
+    });
+  }
+
+  // Mobile nav dropdown: toggle open/closed, close on link click.
+  var navToggle = document.querySelector('.nav-toggle');
+  var navDropdown = document.querySelector('.nav-dropdown');
+  if (navToggle && navDropdown) {
+    navToggle.addEventListener('click', function(){
+      var isOpen = navDropdown.classList.toggle('is-open');
+      navToggle.classList.toggle('is-open', isOpen);
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    navDropdown.addEventListener('click', function(e){
+      if (e.target.closest('a')) {
+        navDropdown.classList.remove('is-open');
+        navToggle.classList.remove('is-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  // Subtle mouse-tilt on the card surface — skipped entirely for touch
+  // devices and for anyone who has motion reduced at the OS level.
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var canHover = window.matchMedia('(pointer: fine)').matches;
+
+  // Keep each glass highlight under the pointer. Touch devices retain the
+  // calm default highlight position and do not pay for pointer tracking.
+  if (canHover) {
+    document.querySelectorAll('.btn-solid, .nav-pill').forEach(function(glass){
+      glass.addEventListener('pointermove', function(e){
+        var r = glass.getBoundingClientRect();
+        glass.style.setProperty('--shine-x', (e.clientX - r.left).toFixed(1) + 'px');
+        glass.style.setProperty('--shine-y', (e.clientY - r.top).toFixed(1) + 'px');
+      });
+      glass.addEventListener('pointerleave', function(){
+        glass.style.removeProperty('--shine-x');
+        glass.style.removeProperty('--shine-y');
+      });
+    });
+  }
+
+  if (card && cardSurface && !reduceMotion && canHover) {
+    var maxTilt = 4;
+    card.addEventListener('mousemove', function(e){
+      // The form is a precision target; keep its surface steady while the
+      // pointer is interacting with the input or send button.
+      if (e.target.closest('.notify')) {
+        cardSurface.style.removeProperty('transform');
+        return;
+      }
+      var r = card.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width - 0.5;
+      var py = (e.clientY - r.top) / r.height - 0.5;
+      var tiltX = -py * maxTilt;
+      var tiltY = px * maxTilt;
+      cardSurface.style.transform =
+        'scale(1.015) rotateX(' + tiltX.toFixed(2) + 'deg) ' +
+        'rotateY(' + tiltY.toFixed(2) + 'deg)';
+    });
+    card.addEventListener('mouseleave', function(){
+      cardSurface.style.removeProperty('transform');
+    });
+  }
+</script>
+</body>
+</html>

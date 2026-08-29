@@ -40,20 +40,20 @@
     display:flex; justify-content:flex-start; z-index:60; pointer-events:none;
   }
   .nav-pill{
+    --shine-x:20%;
+    --shine-y:12%;
     pointer-events:auto;
-    position:relative; overflow:hidden;
+    position:relative; isolation:isolate; overflow:hidden;
     display:flex; align-items:center; gap:30px;
     color:var(--cream);
     padding:13px 28px;
     border-radius:100px;
-    background:rgba(28,27,23,0.24);
+    background:rgba(20,20,16,0.16);
     border:1px solid rgba(255,255,255,0.20);
     box-shadow:
       0 14px 36px rgba(0,0,0,0.28),
       inset 0 1px 0 rgba(255,255,255,0.24),
       inset 0 -1px 0 rgba(0,0,0,0.15);
-    backdrop-filter:blur(11px) saturate(1.28) contrast(1.04);
-    -webkit-backdrop-filter:blur(11px) saturate(1.28) contrast(1.04);
     transition:background .35s var(--ease), border-color .35s var(--ease), box-shadow .4s var(--ease);
   }
   .nav-pill:hover, .nav-pill:focus-within{
@@ -65,28 +65,39 @@
       inset 0 1px 0 rgba(255,255,255,0.38),
       inset 0 -1px 0 rgba(0,0,0,0.12);
   }
-  /* Overlay lifts the live background and supplies the curved specular light;
-     text stays in its own unblended layer above it. */
-  .nav-pill__glaze{
-    position:absolute; inset:1px; z-index:1; pointer-events:none;
-    border-radius:inherit;
-    background:
-      radial-gradient(ellipse 82% 120% at 18% -34%, rgba(255,255,255,0.34), transparent 62%),
-      linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.015) 45%, rgba(0,0,0,0.10));
-    background-blend-mode:overlay;
-    mix-blend-mode:normal;
-    opacity:0.78;
-    transition:opacity .35s var(--ease);
+  .native-glass-layer{
+    position:absolute !important; inset:0; z-index:0; pointer-events:none;
+    width:100% !important; height:100% !important;
+    border-radius:inherit; overflow:hidden !important;
+    opacity:.94;
   }
-  .nav-pill:hover .nav-pill__glaze,
-  .nav-pill:focus-within .nav-pill__glaze{ opacity:0.98; }
-  .nav-pill__glaze::after{
-    content:''; position:absolute; inset:0;
-    border-radius:inherit;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
-    background-size:180px 180px;
-    mix-blend-mode:normal;
-    opacity:0.038;
+  .native-glass-measure{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    border-radius:inherit; overflow:hidden;
+  }
+  .native-glass--pallav > div:first-child{
+    position:absolute; inset:0; width:100%; height:100%;
+    overflow:hidden; border-radius:inherit;
+  }
+  .glass-source{
+    position:absolute; inset:-10px; border-radius:inherit;
+    transform:scale(1.04);
+  }
+  .glass-source--nav{
+    background:
+      radial-gradient(ellipse 360px 150px at var(--shine-x) var(--shine-y), rgba(255,255,255,.20), transparent 78%),
+      linear-gradient(rgba(20,20,16,.08), rgba(20,20,16,.24)),
+      url('images/moss.jpg') center/cover fixed no-repeat;
+    background-blend-mode:overlay,normal,normal;
+  }
+  .glass-source--red{ background:rgb(var(--btn-red)); }
+  .glass-source--cyan{
+    background:radial-gradient(circle at 50% 50%,rgb(0,204,236) 0%,#00d9ff 56%,rgb(50,230,255) 82%,rgb(151,247,255) 100%);
+  }
+  .glass-pointer-highlight{
+    position:absolute; inset:-1px; z-index:2; pointer-events:none; border-radius:inherit;
+    background:radial-gradient(ellipse 360px 170px at var(--shine-x) var(--shine-y),rgba(255,255,255,.24),rgba(20,20,16,.10) 46%,rgba(255,255,255,.12) 76%,transparent 100%);
+    mix-blend-mode:overlay; opacity:.48;
   }
   .nav-pill__content{ position:relative; z-index:4; display:flex; align-items:center; gap:30px; }
   .nav-pill .brand{
@@ -153,25 +164,12 @@
     border:1px solid rgba(255,255,255,0.30);
     transition:background .28s var(--ease), border-color .28s var(--ease), box-shadow .35s var(--ease), transform .28s var(--ease);
   }
-  .btn-solid__highlight{
-    position:absolute; inset:1px; z-index:1; pointer-events:none;
-    border-radius:inherit;
-    clip-path:inset(0 round 999px);
-    background:
-      radial-gradient(
-        circle 68px at var(--shine-x) var(--shine-y),
-        rgba(255,255,255,0.40),
-        rgba(255,255,255,0.16) 34%,
-        transparent 76%
-      ),
-      linear-gradient(180deg, rgba(0,217,255,0.16), rgba(0,70,92,0.08));
-    background-blend-mode:overlay;
-    mix-blend-mode:normal;
-    opacity:0;
-    transition:opacity .22s var(--ease);
-  }
-  .btn-solid:hover .btn-solid__highlight,
-  .btn-solid:focus-visible .btn-solid__highlight{ opacity:1; }
+  .btn-solid .native-glass-layer,
+  .btn-solid .glass-pointer-highlight{ opacity:0; transition:opacity .22s var(--ease); }
+  .btn-solid:hover .native-glass-layer,
+  .btn-solid:focus-visible .native-glass-layer{ opacity:.98; }
+  .btn-solid:hover .glass-pointer-highlight,
+  .btn-solid:focus-visible .glass-pointer-highlight{ opacity:.58; }
   .btn-solid__label{
     position:relative; z-index:3; display:flex; align-items:center; gap:6px;
     mix-blend-mode:normal; /* text is never blended — always solid, always legible */
@@ -203,14 +201,14 @@
     min-height:calc(100vh - var(--nav-height) - 72px - 8px);
     display:flex; align-items:center; /* center vertically by default */
     overflow:hidden;
-    background:url('/images/moss.jpg') center/cover no-repeat;
+    background:url('images/moss.jpg') center/cover no-repeat;
     /* keep some top padding so content doesn't sit beneath the nav visually */
     padding-top:calc(var(--nav-height) + 8px);
     flex:1 0 auto;
   }
   .bg-photo{
     position:absolute; inset:0;
-    background:url('/images/moss.jpg') center/cover no-repeat;
+    background:url('images/moss.jpg') center/cover no-repeat;
     /* nudged brighter/flatter — the bulk of the dimming lives in the ::after
        gradient below, which is where it's been pulled back */
     filter:grayscale(0.55) brightness(0.94) contrast(1.05);
@@ -331,10 +329,10 @@
   .notify button:hover, .notify button:focus-visible{
     background:radial-gradient(
       circle at 50% 50%,
-      rgb(0,183,220) 0%,
-      rgb(0,196,231) 50%,
-      #00d9ff 78%,
-      rgb(128,244,255) 100%
+      rgb(0,204,236) 0%,
+      #00d9ff 56%,
+      rgb(50,230,255) 82%,
+      rgb(151,247,255) 100%
     );
     border-color:rgba(190,249,255,0.72);
     box-shadow:
@@ -356,6 +354,45 @@
   }
   footer a{color:var(--cream-dim); text-decoration:none;}
 
+  .glass-engine-control{
+    position:fixed; left:6vw; bottom:84px; z-index:90;
+    display:flex; align-items:center; gap:8px;
+    padding:7px 10px;
+    border:1px solid rgba(241,236,223,0.17);
+    border-radius:100px;
+    background:rgba(20,20,16,0.76);
+    box-shadow:0 8px 24px rgba(0,0,0,0.28);
+    font-family:'Space Mono',monospace; font-size:9px;
+    letter-spacing:0.05em; text-transform:uppercase;
+    color:rgba(241,236,223,0.58);
+  }
+  .glass-engine-control input{
+    position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;
+  }
+  .glass-engine-control__track{
+    position:relative; width:34px; height:18px; flex:0 0 auto;
+    border-radius:100px; cursor:pointer;
+    background:#3b403d;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.14);
+    transition:background .25s var(--ease);
+  }
+  .glass-engine-control__track::after{
+    content:''; position:absolute; width:14px; height:14px;
+    top:2px; left:2px; border-radius:50%;
+    background:var(--cream);
+    box-shadow:0 2px 6px rgba(0,0,0,0.35);
+    transition:transform .3s var(--ease);
+  }
+  .glass-engine-control input:checked + .glass-engine-control__track{ background:#287e87; }
+  .glass-engine-control input:checked + .glass-engine-control__track::after{ transform:translateX(16px); }
+  .glass-engine-control input:focus-visible + .glass-engine-control__track{
+    outline:2px solid #00d9ff; outline-offset:3px;
+  }
+  html[data-glass-engine="pallavag"] .glass-engine-control__pallav,
+  html[data-glass-engine="samasante"] .glass-engine-control__sam{ color:var(--cream); }
+
+  #root{ min-height:100vh; display:flex; flex-direction:column; }
+
   /* MOBILE / narrow adjustments */
   @media (max-width:760px){
     /* set on :root (not .nav-wrap) so .hero / .grain-line / footer inherit the
@@ -363,6 +400,7 @@
     :root{ --nav-top:18px; --nav-height:56px; }
 
     .nav-wrap{ left:4vw; right:4vw; top:var(--nav-top); }
+    .glass-engine-control{ left:4vw; bottom:82px; }
     /* stretch the pill itself edge-to-edge across the nav-wrap; same look, just full-width */
     .nav-pill{ width:100%; padding:10px 18px; }
     /* space-between has to live on .nav-pill__content (the actual flex
@@ -485,10 +523,12 @@
 </style>
 </head>
 <body>
+  <div id="root"></div>
+  <template id="legacy-static">
 
   <div class="nav-wrap">
     <div class="nav-pill">
-      <div class="nav-pill__glaze"></div>
+      <div class="nav-pill__refract" data-glass-target aria-hidden="true"></div>
       <div class="nav-pill__content">
         <div class="brand">loew.fi</div>
         <ul class="nav-links">
@@ -502,7 +542,7 @@
             <span></span><span></span><span></span>
           </button>
           <div class="nav-cta btn-solid">
-            <div class="btn-solid__highlight"></div>
+            <span class="btn-solid__refract" data-glass-target aria-hidden="true"></span>
             <span class="btn-solid__label">
               <svg class="btn-solid__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M12 3.5 21 19.5H3L12 3.5Z" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
@@ -523,7 +563,7 @@
         <li><a href="#">Contact</a></li>
       </ul>
     </nav>
-  </div>
+  </template>
 
 
   <section class="hero">
@@ -542,7 +582,7 @@
           <input type="hidden" name="subject" value="A word of encouragement — loew.fi">
           <input type="text" name="body" placeholder="Talk to me nice..." required>
           <button type="submit" aria-label="Send" class="btn-solid">
-            <div class="btn-solid__highlight"></div>
+            <span class="btn-solid__refract" data-glass-target aria-hidden="true"></span>
             <span class="btn-solid__label">
               <svg class="btn-solid__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M21 3 3 10.8l7.3 2.9L13.2 21 21 3Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
@@ -555,12 +595,21 @@
     </div>
   </section>
 
+  <label class="glass-engine-control" title="Switch liquid-glass implementation">
+    <span class="glass-engine-control__pallav">Pallav</span>
+    <input id="glassEngineToggle" type="checkbox" aria-label="Liquid glass engine: Pallav Agarwal">
+    <span class="glass-engine-control__track" aria-hidden="true"></span>
+    <span class="glass-engine-control__sam">Sam</span>
+  </label>
+
   <footer>
     <span>© 2026 lauren olivia - loew.fi</span>
     <span><a href="http://instagram.com/lrnolivia">instagram</a> &nbsp;/&nbsp; <a href="mailto:me@loew.fi">email</a></span>
   </footer>
 
-<script>
+  </div>
+<script type="text/plain" data-retired-src="vendor/liquid-glass/bundle.js"></script>
+<script type="text/plain">
   // .card itself is never touched by JS anymore — it just sits at its
   // permanent resting rotate(-3deg) (set in CSS) for the whole page's life,
   // so there's nothing to "free up" after the entrance animation this time.
@@ -572,6 +621,18 @@
   // put while the surface underneath tilts on hover.
   var card = document.querySelector('.card');
   var cardSurface = document.querySelector('.card-surface');
+  var glassToggle = document.getElementById('glassEngineToggle');
+  if (glassToggle && window.DualGlassController) {
+    try {
+      glassToggle.checked = localStorage.getItem('loew-glass-engine') === 'samasante';
+    } catch (e) {}
+    window.loewGlass = new window.DualGlassController(glassToggle);
+    glassToggle.addEventListener('change', function(){
+      try {
+        localStorage.setItem('loew-glass-engine', glassToggle.checked ? 'samasante' : 'pallavag');
+      } catch (e) {}
+    });
+  }
 
   // Mobile nav dropdown: toggle open/closed, close on link click.
   var navToggle = document.querySelector('.nav-toggle');
@@ -599,15 +660,15 @@
   // Keep each glass highlight under the pointer. Touch devices retain the
   // calm default highlight position and do not pay for pointer tracking.
   if (canHover) {
-    document.querySelectorAll('.btn-solid').forEach(function(button){
-      button.addEventListener('pointermove', function(e){
-        var r = button.getBoundingClientRect();
-        button.style.setProperty('--shine-x', (e.clientX - r.left).toFixed(1) + 'px');
-        button.style.setProperty('--shine-y', (e.clientY - r.top).toFixed(1) + 'px');
+    document.querySelectorAll('.btn-solid, .nav-pill').forEach(function(glass){
+      glass.addEventListener('pointermove', function(e){
+        var r = glass.getBoundingClientRect();
+        glass.style.setProperty('--shine-x', (e.clientX - r.left).toFixed(1) + 'px');
+        glass.style.setProperty('--shine-y', (e.clientY - r.top).toFixed(1) + 'px');
       });
-      button.addEventListener('pointerleave', function(){
-        button.style.removeProperty('--shine-x');
-        button.style.removeProperty('--shine-y');
+      glass.addEventListener('pointerleave', function(){
+        glass.style.removeProperty('--shine-x');
+        glass.style.removeProperty('--shine-y');
       });
     });
   }
@@ -618,7 +679,7 @@
       // The form is a precision target; keep its surface steady while the
       // pointer is interacting with the input or send button.
       if (e.target.closest('.notify')) {
-        cardSurface.style.transform = 'scale(1)';
+        cardSurface.style.removeProperty('transform');
         return;
       }
       var r = card.getBoundingClientRect();
@@ -631,11 +692,10 @@
         'rotateY(' + tiltY.toFixed(2) + 'deg)';
     });
     card.addEventListener('mouseleave', function(){
-      cardSurface.style.transform = 'scale(1)';
+      cardSurface.style.removeProperty('transform');
     });
   }
 </script>
-
-
+<script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
