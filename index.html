@@ -106,6 +106,16 @@
       linear-gradient(var(--glass-tint),var(--glass-tint));
     background-blend-mode:screen,normal;
   }
+  .native-glass-measure::before{
+    content:''; position:absolute; inset:-2px; z-index:1; pointer-events:none;
+    border-radius:inherit;
+    background:
+      radial-gradient(ellipse 62% 15px at 44% 1px,rgba(255,255,255,.25),rgba(255,255,255,.09) 38%,transparent 78%),
+      radial-gradient(ellipse 62% 15px at 56% calc(100% - 1px),rgba(255,255,255,.17),rgba(255,255,255,.065) 38%,transparent 78%);
+    filter:blur(2.6px);
+    mix-blend-mode:screen;
+    opacity:.66;
+  }
   .native-glass-measure::after{
     content:''; position:absolute; inset:0; z-index:2; pointer-events:none;
     border-radius:inherit;
