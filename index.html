@@ -13,8 +13,8 @@
     --cream-dim:#C9C3B2;
     --sand:#CBB88E;
     --line: rgba(241,236,223,0.16);
-    /* these are read by .nav-wrap, .hero, .grain-line and footer alike, so they
-       live on :root (not scoped to .nav-wrap) — that scoping was the bug that sent
+    /* these are read by the navbar, hero, divider and footer alike, so they
+       live on :root — component scoping once sent
        the divider to the middle of the page and killed the hero's top padding. */
     --nav-top:26px;
     --nav-height:64px;
@@ -34,16 +34,14 @@
   }
   .mono{font-family:'Space Mono',monospace;}
 
-  /* NAV: left aligned with ample padding */
-  .nav-wrap{
-    position:fixed; top:var(--nav-top); left:6vw; right:6vw;
-    display:flex; justify-content:flex-start; z-index:60; pointer-events:none;
-  }
+  /* NAV: a direct child of #root so the real WebGL renderer can sample the
+     moving hero behind it. */
   .nav-pill{
     --shine-x:20%;
     --shine-y:12%;
     pointer-events:auto;
-    position:relative; isolation:isolate; overflow:hidden;
+    position:fixed; top:var(--nav-top); left:6vw; z-index:60;
+    isolation:isolate; overflow:visible;
     display:flex; align-items:center; gap:30px;
     color:var(--cream);
     padding:13px 28px;
@@ -65,68 +63,18 @@
       inset 0 1px 0 rgba(255,255,255,0.38),
       inset 0 -1px 0 rgba(0,0,0,0.12);
   }
-  .native-glass-layer{
-    position:absolute !important; inset:0; z-index:0; pointer-events:none;
-    width:100% !important; height:100% !important;
-    border-radius:inherit; overflow:hidden !important;
-    opacity:.94;
-  }
-  .native-glass-measure{
-    position:absolute; inset:0; z-index:0; pointer-events:none;
-    border-radius:inherit; overflow:hidden;
-    --glass-cream:rgba(241,236,223,.16);
-  }
-  .native-glass-measure--nav{
-    --glass-tint:transparent;
-    --glass-cream:transparent;
-  }
-  .native-glass-measure--red{ --glass-tint:rgba(var(--btn-red),.48); }
-  .native-glass-measure--cyan{ --glass-tint:rgba(var(--btn-cyan-deep),.38); }
-  .native-glass-measure--menu{
-    --glass-tint:rgba(4,5,4,.78);
-    --glass-cream:transparent;
-  }
-  .native-glass-measure--menu::after{
-    background:
-      repeating-radial-gradient(circle at 18% 27%,rgba(255,255,255,.075) 0 .4px,transparent .65px 2.4px),
-      repeating-radial-gradient(circle at 72% 64%,rgba(0,0,0,.18) 0 .45px,transparent .7px 2.9px);
-    background-size:5px 5px,7px 7px;
-    opacity:.28;
-  }
-  .native-glass-measure--nav::after{
-    background:
-      repeating-radial-gradient(circle at 16% 24%,rgba(255,255,255,.09) 0 .4px,transparent .65px 2.35px),
-      repeating-radial-gradient(circle at 74% 68%,rgba(0,0,0,.14) 0 .45px,transparent .7px 2.85px);
-    background-size:5px 5px,7px 7px;
-    opacity:.3;
-  }
-  .native-glass--sam{
-    background:
-      linear-gradient(var(--glass-cream),var(--glass-cream)),
-      linear-gradient(var(--glass-tint),var(--glass-tint));
-    background-blend-mode:screen,normal;
-  }
-  .native-glass-measure::before{
-    content:''; position:absolute; inset:-2px; z-index:1; pointer-events:none;
-    border-radius:inherit;
-    background:
-      radial-gradient(ellipse 62% 15px at 44% 1px,rgba(255,255,255,.25),rgba(255,255,255,.09) 38%,transparent 78%),
-      radial-gradient(ellipse 62% 15px at 56% calc(100% - 1px),rgba(255,255,255,.17),rgba(255,255,255,.065) 38%,transparent 78%);
-    filter:blur(2.6px);
-    mix-blend-mode:screen;
-    opacity:.66;
-  }
-  .native-glass-measure::after{
-    content:''; position:absolute; inset:0; z-index:2; pointer-events:none;
+  .ybouane-glass{ isolation:isolate; background:transparent; }
+  .ybouane-glass > canvas{ border-radius:inherit; }
+  .glass-grain{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
     border-radius:inherit;
     background:
       repeating-radial-gradient(circle at 18% 27%,rgba(241,236,223,.16) 0 .45px,transparent .65px 2.25px),
       repeating-radial-gradient(circle at 72% 64%,rgba(20,20,16,.12) 0 .4px,transparent .65px 2.8px);
     background-size:5px 5px,7px 7px;
     mix-blend-mode:overlay;
-    opacity:.34;
+    opacity:.28;
   }
-  .glass-material-fill{ display:block; width:100%; height:100%; }
   .glass-pointer-highlight{
     position:absolute; inset:-1px; z-index:2; pointer-events:none; border-radius:inherit;
     background:radial-gradient(ellipse 360px 170px at var(--shine-x) var(--shine-y),rgba(255,255,255,.24),rgba(20,20,16,.10) 46%,rgba(255,255,255,.12) 76%,transparent 100%);
@@ -162,13 +110,13 @@
   .nav-toggle.is-open span:nth-child(2){ opacity:0; }
   .nav-toggle.is-open span:nth-child(3){ transform:translateY(-5px) rotate(-45deg); }
 
-  /* The menu grows directly from the navbar edge and uses the same live Sam
-     material, with a much darker tint so the links stay legible. */
+  /* The menu grows directly from the navbar edge. The pseudo-element is only
+     a neutral dark veil; the moving scene and refraction come from WebGL. */
   .nav-dropdown{
-    display:none;
-    position:absolute; left:0; right:0; pointer-events:auto;
-    top:calc(var(--nav-height) - 1px);
-    overflow:hidden; isolation:isolate;
+    display:block;
+    position:fixed; left:6vw; right:6vw; pointer-events:none;
+    top:calc(var(--nav-top) + var(--nav-height) - 1px);
+    overflow:visible; isolation:isolate;
     background:transparent;
     border:1px solid rgba(241,236,223,0.18);
     border-top-color:rgba(241,236,223,0.09);
@@ -176,8 +124,17 @@
     padding:13px 6px 6px;
     box-shadow:0 24px 60px rgba(0,0,0,0.55);
     z-index:59;
+    opacity:0; visibility:hidden; transform:translateY(-12px);
+    transition:opacity .25s var(--ease), transform .35s var(--ease), visibility 0s linear .35s;
   }
-  .nav-dropdown.is-open{ display:block; animation:fadeDown .35s var(--ease) both; }
+  .nav-dropdown::before{
+    content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+    border-radius:inherit; background:rgba(3,4,3,.64); mix-blend-mode:multiply;
+  }
+  .nav-dropdown.is-open{
+    opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto;
+    transition:opacity .25s var(--ease), transform .35s var(--ease), visibility 0s;
+  }
   .nav-dropdown ul{ position:relative; z-index:4; list-style:none; margin:0; padding:0; }
   .nav-dropdown a{
     display:block; padding:14px 14px;
@@ -199,10 +156,10 @@
     border:1px solid rgba(255,255,255,0.30);
     transition:background .28s var(--ease), border-color .28s var(--ease), box-shadow .35s var(--ease), transform .28s var(--ease);
   }
-  .btn-solid .native-glass-measure,
+  .btn-solid .glass-grain,
   .btn-solid .glass-pointer-highlight{ opacity:0; transition:opacity .22s var(--ease); }
-  .btn-solid:hover .native-glass-measure,
-  .btn-solid:focus-visible .native-glass-measure{ opacity:.98; }
+  .btn-solid:hover .glass-grain,
+  .btn-solid:focus-visible .glass-grain{ opacity:.32; }
   .btn-solid:hover .glass-pointer-highlight,
   .btn-solid:focus-visible .glass-pointer-highlight{ opacity:.58; }
   .btn-solid__label{
@@ -393,48 +350,11 @@
   }
   footer a{color:var(--cream-dim); text-decoration:none;}
 
-  .glass-engine-control{
-    position:fixed; left:6vw; bottom:84px; z-index:90;
-    display:flex; align-items:center; gap:8px;
-    padding:7px 10px;
-    border:1px solid rgba(241,236,223,0.17);
-    border-radius:100px;
-    background:rgba(20,20,16,0.76);
-    box-shadow:0 8px 24px rgba(0,0,0,0.28);
-    font-family:'Space Mono',monospace; font-size:9px;
-    letter-spacing:0.05em; text-transform:uppercase;
-    color:rgba(241,236,223,0.58);
-  }
-  .glass-engine-control input{
-    position:absolute; width:1px; height:1px; opacity:0; pointer-events:none;
-  }
-  .glass-engine-control__track{
-    position:relative; width:34px; height:18px; flex:0 0 auto;
-    border-radius:100px; cursor:pointer;
-    background:#3b403d;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,0.14);
-    transition:background .25s var(--ease);
-  }
-  .glass-engine-control__track::after{
-    content:''; position:absolute; width:14px; height:14px;
-    top:2px; left:2px; border-radius:50%;
-    background:var(--cream);
-    box-shadow:0 2px 6px rgba(0,0,0,0.35);
-    transition:transform .3s var(--ease);
-  }
-  .glass-engine-control input:checked + .glass-engine-control__track{ background:#287e87; }
-  .glass-engine-control input:checked + .glass-engine-control__track::after{ transform:translateX(16px); }
-  .glass-engine-control input:focus-visible + .glass-engine-control__track{
-    outline:2px solid #00d9ff; outline-offset:3px;
-  }
-  html[data-glass-engine="pallavag"] .glass-engine-control__pallav,
-  html[data-glass-engine="samasante"] .glass-engine-control__sam{ color:var(--cream); }
-
-  #root{ min-height:100vh; display:flex; flex-direction:column; }
+  #root{ position:relative; min-height:100vh; display:flex; flex-direction:column; }
 
   /* MOBILE / narrow adjustments */
   @media (max-width:760px){
-    /* set on :root (not .nav-wrap) so .hero / .grain-line / footer inherit the
+    /* set on :root so .hero / .grain-line / footer inherit the
        same smaller nav measurements — this is the fix for the divider bug */
     :root{ --nav-top:18px; --nav-height:56px; }
 
@@ -454,14 +374,12 @@
       min-height:0; overflow:hidden;
     }
 
-    .nav-wrap{ left:4vw; right:4vw; top:var(--nav-top); }
-    .glass-engine-control{ left:4vw; bottom:82px; }
-    /* stretch the pill itself edge-to-edge across the nav-wrap; same look, just full-width */
-    .nav-pill{ width:100%; padding:10px 18px; }
-    /* space-between has to live on .nav-pill__content (the actual flex
-       parent of .brand/.nav-actions), not on .nav-pill itself — .nav-pill's
-       only in-flow child is .nav-pill__content, so space-between up there
-       had nothing to distribute space between and did nothing */
+    .nav-pill{ left:4vw; right:4vw; top:var(--nav-top); }
+    .nav-dropdown{ left:4vw; right:4vw; }
+    /* stretch the fixed pill between the two mobile gutters */
+    .nav-pill{ width:auto; padding:10px 18px; }
+    /* space-between lives on the content row so the brand and actions stay
+       balanced inside the fixed glass shell. */
     .nav-pill__content{ width:100%; justify-content:space-between; }
     .nav-links{display:none;}
     .nav-toggle{ display:block; }
@@ -513,8 +431,7 @@
 
     /* Option A — inside the top bar, above the divider, vertically
        centered with the nav row. Note: this only has room to breathe
-       if the pill ISN'T stretched full-width (comment out the
-       `.nav-pill{ width:100%; ... }` rule above if you use this). */
+       if the pill ISN'T stretched full-width. */
     /*
     .hero-tag-mobile{
       display:flex; align-items:center;
@@ -555,7 +472,7 @@
   @keyframes pulseDot{ 0%,100%{box-shadow:0 0 0 0 rgba(255,212,0,.55);} 50%{box-shadow:0 0 0 7px rgba(255,212,0,0);} }
 
   /* entrance stagger, top to bottom */
-  .nav-wrap{ animation:fadeDown .8s var(--ease) both; }
+  .nav-pill{ animation:fadeDown .8s var(--ease) both; }
   .tag-corner{ animation:fadeDown .8s var(--ease) .15s both; }
   .hero-tag-mobile{ animation:fadeDown .8s var(--ease) .15s both; }
   .grain-line{ transform-origin:left center; animation:drawLine 1s var(--ease) .3s both; }
@@ -595,178 +512,6 @@
 </head>
 <body>
   <div id="root"></div>
-  <template id="legacy-static">
-
-  <div class="nav-wrap">
-    <div class="nav-pill">
-      <div class="nav-pill__refract" data-glass-target aria-hidden="true"></div>
-      <div class="nav-pill__content">
-        <div class="brand">loew.fi</div>
-        <ul class="nav-links">
-          <li><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Portfolio</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
-        <div class="nav-actions">
-          <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navDropdown">
-            <span></span><span></span><span></span>
-          </button>
-          <div class="nav-cta btn-solid">
-            <span class="btn-solid__refract" data-glass-target aria-hidden="true"></span>
-            <span class="btn-solid__label">
-              <svg class="btn-solid__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M12 3.5 21 19.5H3L12 3.5Z" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round"/>
-                <path d="M12 9.7v4.6" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-                <circle cx="12" cy="17" r="1.15" fill="currentColor"/>
-              </svg>
-              .workinprogress
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <nav class="nav-dropdown" id="navDropdown">
-      <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Portfolio</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-    </nav>
-    </div>
-
-
-  <section class="hero">
-    <div class="bg-photo"></div>
-    <div class="grain-line"></div>
-    <div class="tag-corner mono">LOEW FIDELITY<br>FIELD NOTES — VOL. 01</div>
-    <div class="hero-tag-mobile mono">LOEW FIDELITY<br>FIELD NOTES — VOL. 01</div>
-
-    <div class="card">
-      <div class="card-surface"></div>
-      <div class="card-content">
-        <div class="eyebrow"><i></i>currently under construction</div>
-        <h1>Good things<br>are <span>coming.</span></h1>
-        <p class="sub">A girl, her dreams, delusions and her work gathered into one place. Send a word of encouragement while I work!</p>
-        <form class="notify" action="mailto:me@loew.fi" method="GET" enctype="text/plain">
-          <input type="hidden" name="subject" value="A word of encouragement — loew.fi">
-          <input type="text" name="body" placeholder="Talk to me nice..." required>
-          <button type="submit" aria-label="Send" class="btn-solid">
-            <span class="btn-solid__refract" data-glass-target aria-hidden="true"></span>
-            <span class="btn-solid__label">
-              <svg class="btn-solid__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M21 3 3 10.8l7.3 2.9L13.2 21 21 3Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
-                <path d="M10.3 13.7 21 3" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-              </svg>
-            </span>
-          </button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <label class="glass-engine-control" title="Switch liquid-glass implementation">
-    <span class="glass-engine-control__pallav">Pallav</span>
-    <input id="glassEngineToggle" type="checkbox" aria-label="Liquid glass engine: Pallav Agarwal">
-    <span class="glass-engine-control__track" aria-hidden="true"></span>
-    <span class="glass-engine-control__sam">Sam</span>
-  </label>
-
-  <footer>
-    <span>© 2026 lauren olivia - loew.fi</span>
-    <span><a href="http://instagram.com/lrnolivia">instagram</a> &nbsp;/&nbsp; <a href="mailto:me@loew.fi">email</a></span>
-  </footer>
-
-  </template>
-<script type="text/plain" data-retired-src="vendor/liquid-glass/bundle.js"></script>
-<script type="text/plain">
-  // .card itself is never touched by JS anymore — it just sits at its
-  // permanent resting rotate(-3deg) (set in CSS) for the whole page's life,
-  // so there's nothing to "free up" after the entrance animation this time.
-  //
-  // The mouse-tilt now lives entirely on .card-surface, a layer that sits
-  // behind .card-content and carries the fill/shadow/glow. .card-content
-  // is never assigned a transform at all, so it can't inherit any part of
-  // the tilt — no rotation, no scale, no parallax drift — it just stays
-  // put while the surface underneath tilts on hover.
-  var card = document.querySelector('.card');
-  var cardSurface = document.querySelector('.card-surface');
-  var glassToggle = document.getElementById('glassEngineToggle');
-  if (glassToggle && window.DualGlassController) {
-    try {
-      glassToggle.checked = localStorage.getItem('loew-glass-engine') === 'samasante';
-    } catch (e) {}
-    window.loewGlass = new window.DualGlassController(glassToggle);
-    glassToggle.addEventListener('change', function(){
-      try {
-        localStorage.setItem('loew-glass-engine', glassToggle.checked ? 'samasante' : 'pallavag');
-      } catch (e) {}
-    });
-  }
-
-  // Mobile nav dropdown: toggle open/closed, close on link click.
-  var navToggle = document.querySelector('.nav-toggle');
-  var navDropdown = document.querySelector('.nav-dropdown');
-  if (navToggle && navDropdown) {
-    navToggle.addEventListener('click', function(){
-      var isOpen = navDropdown.classList.toggle('is-open');
-      navToggle.classList.toggle('is-open', isOpen);
-      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-    });
-    navDropdown.addEventListener('click', function(e){
-      if (e.target.closest('a')) {
-        navDropdown.classList.remove('is-open');
-        navToggle.classList.remove('is-open');
-        navToggle.setAttribute('aria-expanded', 'false');
-      }
-    });
-  }
-
-  // Subtle mouse-tilt on the card surface — skipped entirely for touch
-  // devices and for anyone who has motion reduced at the OS level.
-  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var canHover = window.matchMedia('(pointer: fine)').matches;
-
-  // Keep each glass highlight under the pointer. Touch devices retain the
-  // calm default highlight position and do not pay for pointer tracking.
-  if (canHover) {
-    document.querySelectorAll('.btn-solid, .nav-pill').forEach(function(glass){
-      glass.addEventListener('pointermove', function(e){
-        var r = glass.getBoundingClientRect();
-        glass.style.setProperty('--shine-x', (e.clientX - r.left).toFixed(1) + 'px');
-        glass.style.setProperty('--shine-y', (e.clientY - r.top).toFixed(1) + 'px');
-      });
-      glass.addEventListener('pointerleave', function(){
-        glass.style.removeProperty('--shine-x');
-        glass.style.removeProperty('--shine-y');
-      });
-    });
-  }
-
-  if (card && cardSurface && !reduceMotion && canHover) {
-    var maxTilt = 4;
-    card.addEventListener('mousemove', function(e){
-      // The form is a precision target; keep its surface steady while the
-      // pointer is interacting with the input or send button.
-      if (e.target.closest('.notify')) {
-        cardSurface.style.removeProperty('transform');
-        return;
-      }
-      var r = card.getBoundingClientRect();
-      var px = (e.clientX - r.left) / r.width - 0.5;
-      var py = (e.clientY - r.top) / r.height - 0.5;
-      var tiltX = -py * maxTilt;
-      var tiltY = px * maxTilt;
-      cardSurface.style.transform =
-        'scale(1.015) rotateX(' + tiltX.toFixed(2) + 'deg) ' +
-        'rotateY(' + tiltY.toFixed(2) + 'deg)';
-    });
-    card.addEventListener('mouseleave', function(){
-      cardSurface.style.removeProperty('transform');
-    });
-  }
-</script>
 <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>

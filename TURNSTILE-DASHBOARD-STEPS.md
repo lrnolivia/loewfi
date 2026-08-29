@@ -34,4 +34,4 @@ That is all I need to do in the dashboard. Codex handles the website code, serve
 
 ## Liquid-glass reference
 
-[Sam Asante’s liquid-glass live demo and documentation](https://glass.samasante.com/)
+[Yassine Bouane’s liquid-glass live demo and documentation](https://liquid-glass.ybouane.com/)

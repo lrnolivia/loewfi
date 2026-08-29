@@ -6,8 +6,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      'liquid-glass-web-react': fileURLToPath(new URL('./vendor/liquid-glass/pallavag/src/index.ts', import.meta.url)),
-      '@samasante/liquid-glass': fileURLToPath(new URL('./vendor/liquid-glass/samasante/src/index.ts', import.meta.url))
+      '@ybouane/liquidglass': fileURLToPath(new URL('./vendor/liquid-glass/ybouane/dist/index.js', import.meta.url))
     }
   },
   build: {

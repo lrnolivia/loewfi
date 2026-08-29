@@ -1,96 +1,55 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Glass } from '@samasante/liquid-glass';
+import { useEffect, useRef, useState } from 'react';
+import { LiquidGlass } from '@ybouane/liquidglass';
 
 const links = ['Home', 'About', 'Portfolio', 'Contact'];
 
-const samOptics = {
-  strength: 0.145,
-  depth: 0.86,
-  curvature: 0.82,
-  splay: 0.55,
-  dispersion: 1.18,
-  bend: 0.72,
-  bendWidth: 0.25,
-  frost: 1.1,
-  saturate: 1.2,
-  brightness: 0.07,
-  specular: 1,
-  sheenAngle: 35,
-  sheen: 0.14,
-  sheenWidth: 3.5,
-  sheenFalloff: 1.35,
-  glow: 0.1,
-  glowSpread: 0.9,
-  glowFalloff: 0.65,
+const navGlass = {
+  blurAmount: 0.075, refraction: 0.86, chromAberration: 0.18,
+  edgeHighlight: 0.12, specular: 0.14, fresnel: 1.15, distortion: 0.012,
+  cornerRadius: 100, zRadius: 46, opacity: 1, saturation: 0.08,
+  tintStrength: 0, brightness: 0.04, shadowOpacity: 0.28,
+  shadowSpread: 13, shadowOffsetY: 3,
 };
 
-const menuOptics = {
-  ...samOptics,
-  strength: 0.12,
-  dispersion: 0.82,
-  bend: 0.62,
-  frost: 2.2,
-  saturate: 0.88,
-  brightness: -0.08,
-  sheen: 0.16,
-  glow: 0.07,
+const menuGlass = {
+  ...navGlass, blurAmount: 0.12, refraction: 0.68, chromAberration: 0.11,
+  edgeHighlight: 0.08, specular: 0.08, cornerRadius: 20, zRadius: 20,
+  brightness: -0.06, shadowOpacity: 0.48, shadowSpread: 18, shadowOffsetY: 8,
 };
 
-const navOptics = {
-  ...samOptics,
-  strength: 0.2,
-  depth: 0.6,
-  curvature: 0.75,
-  dispersion: 0.2,
-  bend: 0.4,
-  bendWidth: 0.07,
-  sheen: 1.7,
-  sheenWidth: 3.5,
-  specular: 1.9,
-  sheenAngle: 85,
-  glow: 0.25,
-  frost: 1,
-  brightness: 0.1,
+const buttonGlass = {
+  blurAmount: 0.055, refraction: 0.92, chromAberration: 0.22,
+  edgeHighlight: 0.18, specular: 0.22, fresnel: 1.2, distortion: 0.018,
+  cornerRadius: 40, zRadius: 26, opacity: 1, saturation: 0.2,
+  tintStrength: 0, brightness: 0.08, shadowOpacity: 0.24,
+  shadowSpread: 9, shadowOffsetY: 2, button: true,
 };
 
-function useMeasuredBox() {
-  const ref = useRef(null);
-  const [size, setSize] = useState({ width: 1, height: 1 });
+function initLiquidGlass({ root, glassElements, defaults, onReady }) {
+  let disposed = false;
+  let instance;
 
-  useLayoutEffect(() => {
-    const node = ref.current;
-    if (!node) return undefined;
-    const measure = () => {
-      const rect = node.getBoundingClientRect();
-      if (rect.width > 0 && rect.height > 0) {
-        setSize({ width: Math.round(rect.width), height: Math.round(rect.height) });
+  const start = async () => {
+    try {
+      if (document.fonts?.ready) await document.fonts.ready;
+      const created = await LiquidGlass.init({ root, glassElements, defaults });
+      if (disposed) {
+        created.destroy();
+        return;
       }
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
+      instance = created;
+      onReady?.(created);
+    } catch (error) {
+      console.warn('Liquid glass could not start; CSS fallback remains active.', error);
+    }
+  };
 
-  return [ref, size];
-}
-
-function NativeGlass({ tone = 'nav' }) {
-  const [measureRef, size] = useMeasuredBox();
-
-  return (
-    <div ref={measureRef} className={`native-glass-measure native-glass-measure--sam native-glass-measure--${tone}`} aria-hidden="true">
-      <Glass
-        className="native-glass-layer native-glass--sam"
-        width={size.width}
-        height={size.height}
-        radius={tone === 'menu' ? 20 : Math.min(size.height / 2, size.width / 2)}
-        optics={tone === 'menu' ? menuOptics : tone === 'nav' ? navOptics : samOptics}
-      >
-        <span className="glass-material-fill" />
-      </Glass>
-    </div>
-  );
+  start();
+  return () => {
+    disposed = true;
+    instance?.destroy();
+    onReady?.(null);
+  };
 }
 
 function PointerHighlight() {
@@ -132,10 +91,16 @@ function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="nav-wrap">
-      <div className="nav-pill" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-        <NativeGlass />
+    <>
+      <div
+        className="nav-pill ybouane-glass"
+        data-liquid-glass
+        data-config={JSON.stringify(navGlass)}
+        onPointerMove={trackHighlight}
+        onPointerLeave={clearHighlight}
+      >
         <PointerHighlight />
+        <div className="glass-grain" aria-hidden="true" />
         <div className="nav-pill__content">
           <div className="brand">loew.fi</div>
           <ul className="nav-links">
@@ -152,26 +117,42 @@ function Navbar() {
               <span /><span /><span />
             </button>
             <div className="nav-cta btn-solid" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-              <NativeGlass tone="red" />
               <PointerHighlight />
               <span className="btn-solid__label"><WarningIcon />.workinprogress</span>
             </div>
           </div>
         </div>
       </div>
-      <nav className={`nav-dropdown${open ? ' is-open' : ''}`} id="navDropdown">
-        <NativeGlass tone="menu" />
+      <nav
+        className={`nav-dropdown ybouane-glass${open ? ' is-open' : ''}`}
+        id="navDropdown"
+        data-liquid-glass
+        data-config={JSON.stringify(menuGlass)}
+        aria-hidden={!open}
+      >
+        <div className="glass-grain" aria-hidden="true" />
         <ul>
           {links.map((link) => <li key={link}><a href="#" onClick={() => setOpen(false)}>{link}</a></li>)}
         </ul>
       </nav>
-    </div>
+    </>
   );
 }
 
 function Hero() {
   const surfaceRef = useRef(null);
+  const formRef = useRef(null);
+  const sendRef = useRef(null);
   const canTilt = () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.matchMedia('(pointer: fine)').matches;
+
+  useEffect(() => {
+    if (!formRef.current || !sendRef.current) return undefined;
+    return initLiquidGlass({
+      root: formRef.current,
+      glassElements: [sendRef.current],
+      defaults: buttonGlass,
+    });
+  }, []);
 
   const handleCardMove = (event) => {
     const surface = surfaceRef.current;
@@ -200,12 +181,20 @@ function Hero() {
           <div className="eyebrow"><i />currently under construction</div>
           <h1>Good things<br />are <span>coming.</span></h1>
           <p className="sub">A girl, her dreams, delusions and her work gathered into one place. Send a word of encouragement while I work!</p>
-          <form className="notify" action="mailto:me@loew.fi" method="GET" encType="text/plain">
+          <form ref={formRef} className="notify" action="mailto:me@loew.fi" method="GET" encType="text/plain">
             <input type="hidden" name="subject" value="A word of encouragement — loew.fi" />
             <input type="text" name="body" placeholder="Talk to me nice..." required />
-            <button type="submit" aria-label="Send" className="btn-solid" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-              <NativeGlass tone="cyan" />
+            <button
+              ref={sendRef}
+              type="submit"
+              aria-label="Send"
+              className="btn-solid ybouane-glass"
+              data-config={JSON.stringify(buttonGlass)}
+              onPointerMove={trackHighlight}
+              onPointerLeave={clearHighlight}
+            >
               <PointerHighlight />
+              <span className="glass-grain" aria-hidden="true" />
               <span className="btn-solid__label"><SendIcon /></span>
             </button>
           </form>
@@ -216,9 +205,19 @@ function Hero() {
 }
 
 export default function App() {
+  const pageGlassRef = useRef(null);
+
   useEffect(() => {
-    document.documentElement.dataset.glassEngine = 'samasante';
-    try { localStorage.setItem('loew-glass-engine', 'samasante'); } catch { /* private mode */ }
+    document.documentElement.dataset.glassEngine = 'ybouane';
+    const root = document.getElementById('root');
+    if (!root) return undefined;
+    const glassElements = Array.from(root.children).filter((element) => element.hasAttribute('data-liquid-glass'));
+    return initLiquidGlass({
+      root,
+      glassElements,
+      defaults: navGlass,
+      onReady: (instance) => { pageGlassRef.current = instance; },
+    });
   }, []);
 
   useEffect(() => {
@@ -227,6 +226,8 @@ export default function App() {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         document.documentElement.style.setProperty('--mobile-bg-scroll', `${window.scrollY}px`);
+        const hero = document.querySelector('.hero');
+        if (hero) pageGlassRef.current?.markChanged(hero);
       });
     };
 
@@ -241,8 +242,8 @@ export default function App() {
 
   return (
     <>
-      <Navbar />
       <Hero />
+      <Navbar />
       <footer>
         <span>© 2026 lauren olivia - loew.fi</span>
         <span><a href="http://instagram.com/lrnolivia">instagram</a> &nbsp;/&nbsp; <a href="mailto:me@loew.fi">email</a></span>
