@@ -79,6 +79,17 @@
   .native-glass-measure--nav{ --glass-tint:rgba(20,20,16,.18); }
   .native-glass-measure--red{ --glass-tint:rgba(var(--btn-red),.48); }
   .native-glass-measure--cyan{ --glass-tint:rgba(var(--btn-cyan-deep),.38); }
+  .native-glass-measure--menu{
+    --glass-tint:rgba(4,5,4,.78);
+    --glass-cream:transparent;
+  }
+  .native-glass-measure--menu::after{
+    background:
+      repeating-radial-gradient(circle at 18% 27%,rgba(255,255,255,.075) 0 .4px,transparent .65px 2.4px),
+      repeating-radial-gradient(circle at 72% 64%,rgba(0,0,0,.18) 0 .45px,transparent .7px 2.9px);
+    background-size:5px 5px,7px 7px;
+    opacity:.28;
+  }
   .native-glass--sam{
     background:
       linear-gradient(var(--glass-cream),var(--glass-cream)),
@@ -131,21 +142,23 @@
   .nav-toggle.is-open span:nth-child(2){ opacity:0; }
   .nav-toggle.is-open span:nth-child(3){ transform:translateY(-5px) rotate(-45deg); }
 
-  /* the dropdown itself: deliberately solid, not glass — needs to stay
-     readable regardless of what's behind it and what the glass is doing */
+  /* The menu grows directly from the navbar edge and uses the same live Sam
+     material, with a much darker tint so the links stay legible. */
   .nav-dropdown{
     display:none;
     position:absolute; left:0; right:0; pointer-events:auto;
-    top:calc((var(--nav-top) * 2) + var(--nav-height) + 14px);
-    background:var(--ink);
-    border:1px solid rgba(241,236,223,0.14);
-    border-radius:18px;
-    padding:6px;
+    top:calc(var(--nav-height) - 1px);
+    overflow:hidden; isolation:isolate;
+    background:transparent;
+    border:1px solid rgba(241,236,223,0.18);
+    border-top-color:rgba(241,236,223,0.09);
+    border-radius:0 0 20px 20px;
+    padding:13px 6px 6px;
     box-shadow:0 24px 60px rgba(0,0,0,0.55);
     z-index:59;
   }
   .nav-dropdown.is-open{ display:block; animation:fadeDown .35s var(--ease) both; }
-  .nav-dropdown ul{ list-style:none; margin:0; padding:0; }
+  .nav-dropdown ul{ position:relative; z-index:4; list-style:none; margin:0; padding:0; }
   .nav-dropdown a{
     display:block; padding:14px 14px;
     color:var(--cream); text-decoration:none;

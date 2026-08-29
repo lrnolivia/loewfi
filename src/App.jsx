@@ -24,6 +24,18 @@ const samOptics = {
   glowFalloff: 0.65,
 };
 
+const menuOptics = {
+  ...samOptics,
+  strength: 0.12,
+  dispersion: 0.82,
+  bend: 0.62,
+  frost: 2.2,
+  saturate: 0.88,
+  brightness: -0.08,
+  sheen: 0.16,
+  glow: 0.07,
+};
+
 function useMeasuredBox() {
   const ref = useRef(null);
   const [size, setSize] = useState({ width: 1, height: 1 });
@@ -55,8 +67,8 @@ function NativeGlass({ tone = 'nav' }) {
         className="native-glass-layer native-glass--sam"
         width={size.width}
         height={size.height}
-        radius={Math.min(size.height / 2, size.width / 2)}
-        optics={samOptics}
+        radius={tone === 'menu' ? 20 : Math.min(size.height / 2, size.width / 2)}
+        optics={tone === 'menu' ? menuOptics : samOptics}
       >
         <span className="glass-material-fill" />
       </Glass>
@@ -131,6 +143,7 @@ function Navbar() {
         </div>
       </div>
       <nav className={`nav-dropdown${open ? ' is-open' : ''}`} id="navDropdown">
+        <NativeGlass tone="menu" />
         <ul>
           {links.map((link) => <li key={link}><a href="#" onClick={() => setOpen(false)}>{link}</a></li>)}
         </ul>
