@@ -65,57 +65,34 @@
     border-radius:100px;
     border:1px solid rgba(241,236,223,0.16);
     box-shadow:0 14px 34px rgba(0,0,0,0.35), inset 0 1px 0 rgba(241,236,223,0.18);
+    /* genuinely transparent glass — no cloned/sampled image anywhere.
+       backdrop-filter blurs whatever's REALLY behind the pill live, so it's
+       always correct (scroll, resize, any background) with zero JS. */
+    backdrop-filter:blur(16px) saturate(1.15);
+    -webkit-backdrop-filter:blur(16px) saturate(1.15);
   }
-  /* ---- glass primitives: shared by every liquid-glass element (nav pill,
-     the .workinprogress badge, the send button). Layer stack, all absolute:
-       0  backdrop   — a copy of whatever's really behind the element,
-                       run through the SVG displacement/chroma/blur/grain
-                       filter in glass-engine.js. Never the live pixels
-                       themselves — that's what keeps this cross-browser.
-       1  tint       — the glass's own color cast.
-       2  sheen       — a broad diagonal specular sweep.
-       2  specular    — a tighter catch-light (badge/button only).
-       3+ content     — real content; never filtered, so it stays sharp.
-     Backdrop images + the filter itself are assigned in JS (glass-engine),
-     since each instance needs its own displacement map + its own unique
-     filter id (Safari caches by id, so a fresh id per resize is required). */
-  .glass__backdrop{
-    position:absolute; z-index:0;
-    background-repeat:no-repeat; background-position:center center; background-size:cover;
-    background-attachment:fixed;
-  }
-  .glass__tint{ position:absolute; inset:0; z-index:1; pointer-events:none; }
-  .glass__sheen{
-    position:absolute; inset:0; z-index:2; pointer-events:none;
-    background:linear-gradient(135deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.05) 32%, rgba(255,255,255,0) 55%);
+  /* the glaze: one layer combining the brightening tint + film grain,
+     both blended with mix-blend-mode so they read as part of the glass
+     rather than a flat sticker — sits behind .nav-pill__content so text
+     stays completely unaffected by the blend. */
+  .nav-pill__glaze{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      rgba(241,236,223,0.18);
     mix-blend-mode:overlay;
-  }
-  .glass__specular{
-    position:absolute; inset:0; z-index:2; pointer-events:none;
-    background:radial-gradient(ellipse 55% 85% at 12% 0%, rgba(255,255,255,0.7), rgba(255,255,255,0) 70%);
-    mix-blend-mode:screen;
-  }
-  /* the brightening pass: the ORIGINAL flat navbar cream (also the card's
-     fill) laid over the photo-glass as a blend layer instead of a flat
-     tint — lifts it several stops without turning it into a solid chip.
-     __TINT_BLEND__ / __TINT_ALPHA__ are the two knobs being A/B'd. */
-  .nav-pill .glass__tint{
-    background:rgba(241,236,223,__TINT_ALPHA__);
-    mix-blend-mode:__TINT_BLEND__;
+    opacity:0.9;
   }
   .nav-pill__content{ position:relative; z-index:4; display:flex; align-items:center; gap:30px; }
   .nav-pill .brand{
     font-weight:700; font-size:19px; letter-spacing:-0.01em;
-    padding-right:8px; border-right:1px solid rgba(255,255,255,0.3);
-    color:#FFFFFF;
-    text-shadow:0 1px 8px rgba(0,0,0,0.55);
+    padding-right:8px; border-right:1px solid rgba(241,236,223,0.22);
   }
   .nav-links{display:flex; gap:24px; list-style:none; margin:0; padding:0;}
   .nav-links a{
-    color:#FFFFFF; text-decoration:none; font-size:12px;
+    color:var(--cream); text-decoration:none; font-size:12px;
     letter-spacing:0.05em; text-transform:uppercase;
-    font-family:'Space Mono',monospace; opacity:0.82;
-    text-shadow:0 1px 6px rgba(0,0,0,0.5);
+    font-family:'Space Mono',monospace; opacity:0.55; /* inactive links — barely visible */
   }
 
   /* mobile-only hamburger + dropdown, revealing the links that .nav-links
@@ -178,14 +155,18 @@
     position:absolute; inset:0; z-index:1; pointer-events:none;
     background:radial-gradient(ellipse 70% 100% at 20% -10%, rgba(255,255,255,0.9), rgba(255,255,255,0) 65%);
     mix-blend-mode:overlay;
+    opacity:0; /* no gloss while inactive — flat, matte color only */
+    transition:opacity .3s var(--ease);
   }
+  .btn-solid:hover .btn-solid__highlight,
+  .btn-solid:focus-visible .btn-solid__highlight{ opacity:1; }
   .btn-solid__label{
     position:relative; z-index:3; display:flex; align-items:center; gap:6px;
     mix-blend-mode:normal; /* text is never blended — always solid, always legible */
   }
   .btn-solid__icon{
     width:12px; height:12px; flex:0 0 auto;
-    color:#fff; mix-blend-mode:overlay; /* icon tints itself from whatever's under it */
+    color:#fff; mix-blend-mode:soft-light; /* icon tints itself from whatever's under it */
   }
 
   .nav-cta{
@@ -483,7 +464,7 @@
     content:''; position:absolute; left:0; right:100%; bottom:-4px; height:1px;
     background:#FFFFFF; transition:right .3s var(--ease);
   }
-  .nav-links a:hover{ opacity:1; }
+  .nav-links a:hover{ opacity:.9; }
   .nav-links a:hover::after{ right:0; }
 
   .nav-cta{ transition:transform .3s var(--ease); }
@@ -503,9 +484,7 @@
 
   <div class="nav-wrap">
     <div class="nav-pill">
-      <div class="glass__backdrop" data-glass="nav-pill"></div>
-      <div class="glass__tint"></div>
-      <div class="glass__sheen"></div>
+      <div class="nav-pill__glaze"></div>
       <div class="nav-pill__content">
         <div class="brand">loew.fi</div>
         <ul class="nav-links">
@@ -631,316 +610,6 @@
   }
 </script>
 
-<script>
-/* ============================================================
-   LIQUID GLASS ENGINE — real feDisplacementMap refraction, not
-   backdrop-filter blur. Each glass element gets:
-     - a procedural displacement map (flat center, bending band at
-       the rim) sized to its own box, generated on a canvas
-     - chromatic aberration: R/G/B channels displaced by slightly
-       different amounts, then screened back together
-     - a touch of gaussian blur after the warp
-     - fine film grain blended over the top
-   Filter ids are regenerated (not reused) on every resize, which
-   is also what keeps Safari from freezing on a stale filter.
-   ============================================================ */
-(function(){
-  function sdRoundRect(x,y,hw,hh,r){
-    const qx = Math.abs(x)-hw+r;
-    const qy = Math.abs(y)-hh+r;
-    return Math.min(Math.max(qx,qy),0) + Math.hypot(Math.max(qx,0),Math.max(qy,0)) - r;
-  }
-  function smoothstep(a,b,t){
-    t = Math.min(Math.max((t-a)/(b-a),0),1);
-    return t*t*(3-2*t);
-  }
-  function buildDisplacementMap(canvasW, canvasH, shapeW, shapeH, radius, depth, strength){
-    const cv = document.createElement('canvas');
-    cv.width = Math.max(2, Math.round(canvasW));
-    cv.height = Math.max(2, Math.round(canvasH));
-    const ctx = cv.getContext('2d');
-    const img = ctx.createImageData(cv.width, cv.height);
-    const cx = cv.width/2, cy = cv.height/2;
-    const shw = shapeW/2, shh = shapeH/2;
-    for(let py=0; py<cv.height; py++){
-      for(let px=0; px<cv.width; px++){
-        const x = px-cx, y = py-cy;
-        const dist = sdRoundRect(x,y,shw,shh,radius);
-        const t = smoothstep(-depth, 0, dist);
-        let dx=0, dy=0;
-        if(t>0){
-          const len = Math.hypot(x,y) || 1;
-          dx = (x/len)*t*strength;
-          dy = (y/len)*t*strength;
-        }
-        const idx = (py*cv.width+px)*4;
-        img.data[idx]   = Math.max(0,Math.min(255,128+dx));
-        img.data[idx+1] = Math.max(0,Math.min(255,128+dy));
-        img.data[idx+2] = 128;
-        img.data[idx+3] = 255;
-      }
-    }
-    ctx.putImageData(img,0,0);
-    return cv.toDataURL();
-  }
-
-  function makePaperTexture(w,h){
-    const cv=document.createElement('canvas');
-    cv.width=Math.max(2,Math.round(w)); cv.height=Math.max(2,Math.round(h));
-    const ctx=cv.getContext('2d');
-    const g=ctx.createLinearGradient(0,0,w,h);
-    g.addColorStop(0,'#e9e1cd'); g.addColorStop(1,'#ddd3ba');
-    ctx.fillStyle=g; ctx.fillRect(0,0,cv.width,cv.height);
-    const img=ctx.getImageData(0,0,cv.width,cv.height);
-    for(let i=0;i<img.data.length;i+=4){
-      const n=(Math.random()-0.5)*10;
-      img.data[i]=Math.max(0,Math.min(255,img.data[i]+n));
-      img.data[i+1]=Math.max(0,Math.min(255,img.data[i+1]+n));
-      img.data[i+2]=Math.max(0,Math.min(255,img.data[i+2]+n));
-    }
-    ctx.putImageData(img,0,0);
-    return cv.toDataURL();
-  }
-
-  let filterCounter = 0;
-  const svgNS = 'http://www.w3.org/2000/svg';
-
-  function createGlassFilter(mapUrl, w, h, opts){
-    const id = 'glass-f-' + (filterCounter++) + '-' + Date.now();
-    const filter = document.createElementNS(svgNS,'filter');
-    filter.setAttribute('id', id);
-    filter.setAttribute('x','-30%'); filter.setAttribute('y','-30%');
-    filter.setAttribute('width','160%'); filter.setAttribute('height','160%');
-    filter.setAttribute('color-interpolation-filters','sRGB');
-
-    const feImage = document.createElementNS(svgNS,'feImage');
-    feImage.setAttributeNS('http://www.w3.org/1999/xlink','href', mapUrl);
-    feImage.setAttribute('href', mapUrl);
-    feImage.setAttribute('x','0'); feImage.setAttribute('y','0');
-    feImage.setAttribute('width', w); feImage.setAttribute('height', h);
-    feImage.setAttribute('result','map');
-    filter.appendChild(feImage);
-
-    const chroma = opts.chromaAmt;
-    const channels = [
-      {name:'dispR', scale: 255*(1+chroma)},
-      {name:'dispG', scale: 255},
-      {name:'dispB', scale: 255*(1-chroma)}
-    ];
-    channels.forEach(c=>{
-      const fe = document.createElementNS(svgNS,'feDisplacementMap');
-      fe.setAttribute('in','SourceGraphic');
-      fe.setAttribute('in2','map');
-      fe.setAttribute('scale', c.scale.toFixed(1));
-      fe.setAttribute('xChannelSelector','R');
-      fe.setAttribute('yChannelSelector','G');
-      fe.setAttribute('result', c.name);
-      filter.appendChild(fe);
-    });
-
-    function isolateChannel(inRes, resultName, matrix){
-      const fcm = document.createElementNS(svgNS,'feColorMatrix');
-      fcm.setAttribute('in', inRes);
-      fcm.setAttribute('type','matrix');
-      fcm.setAttribute('values', matrix);
-      fcm.setAttribute('result', resultName);
-      filter.appendChild(fcm);
-    }
-    isolateChannel('dispR','rOnly','1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0');
-    isolateChannel('dispG','gOnly','0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0');
-    isolateChannel('dispB','bOnly','0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0');
-
-    function blend(inA,inB,resultName,mode){
-      const fb = document.createElementNS(svgNS,'feBlend');
-      fb.setAttribute('in', inA); fb.setAttribute('in2', inB);
-      fb.setAttribute('mode', mode); fb.setAttribute('result', resultName);
-      filter.appendChild(fb);
-    }
-    blend('rOnly','gOnly','rg','screen');
-    blend('rg','bOnly','chroma','screen');
-
-    const gauss = document.createElementNS(svgNS,'feGaussianBlur');
-    gauss.setAttribute('in','chroma');
-    gauss.setAttribute('stdDeviation', opts.blurStd);
-    gauss.setAttribute('result','blurred');
-    filter.appendChild(gauss);
-
-    const turb = document.createElementNS(svgNS,'feTurbulence');
-    turb.setAttribute('type','fractalNoise');
-    turb.setAttribute('baseFrequency','0.85');
-    turb.setAttribute('numOctaves','2');
-    turb.setAttribute('stitchTiles','stitch');
-    turb.setAttribute('result','noiseRaw');
-    filter.appendChild(turb);
-
-    const desat = document.createElementNS(svgNS,'feColorMatrix');
-    desat.setAttribute('in','noiseRaw');
-    desat.setAttribute('type','saturate');
-    desat.setAttribute('values','0');
-    desat.setAttribute('result','noiseGrey');
-    filter.appendChild(desat);
-
-    const grainAlpha = document.createElementNS(svgNS,'feComponentTransfer');
-    grainAlpha.setAttribute('in','noiseGrey');
-    grainAlpha.setAttribute('result','noiseSubtle');
-    const funcA = document.createElementNS(svgNS,'feFuncA');
-    funcA.setAttribute('type','linear');
-    funcA.setAttribute('slope', opts.grainAmt);
-    funcA.setAttribute('intercept','0');
-    grainAlpha.appendChild(funcA);
-    filter.appendChild(grainAlpha);
-
-    const finalBlend = document.createElementNS(svgNS,'feBlend');
-    finalBlend.setAttribute('in','blurred');
-    finalBlend.setAttribute('in2','noiseSubtle');
-    finalBlend.setAttribute('mode','overlay');
-    filter.appendChild(finalBlend);
-
-    document.getElementById('glass-defs').appendChild(filter);
-    return id;
-  }
-
-  const glassInstances = [];
-
-  // background-attachment:fixed silently stops working (falls back to
-  // acting like `scroll`) on any element that has a CSS `filter` applied
-  // to itself or to an ancestor — and every glass backdrop gets a filter.
-  // That's what was showing a "smaller/zoomed" crop of moss.jpg instead of
-  // the real page background: the browser was covering the backdrop's own
-  // tiny padded box instead of the viewport.
-  //
-  // Fix: don't rely on fixed attachment at all. Instead, measure exactly
-  // how the real photo (`.bg-photo`) is rendered on screen (its cover-fit
-  // size + position), then give each glass backdrop the same background-size
-  // in real pixels and a background-position calculated from where that
-  // panel actually sits relative to the photo. This makes the backdrop a
-  // true window onto the real background instead of an independent image.
-  let mossNaturalW = 0, mossNaturalH = 0, mossReady = false;
-  const mossImg = new Image();
-  mossImg.onload = function(){
-    mossNaturalW = mossImg.naturalWidth;
-    mossNaturalH = mossImg.naturalHeight;
-    mossReady = true;
-    glassInstances.forEach(refreshGlass);
-  };
-  mossImg.src = '/images/moss.jpg';
-
-  function getCoverGeometry(containerRect, naturalW, naturalH){
-    const containerAspect = containerRect.width / containerRect.height;
-    const imgAspect = naturalW / naturalH;
-    let renderedW, renderedH;
-    if(imgAspect > containerAspect){
-      renderedH = containerRect.height;
-      renderedW = renderedH * imgAspect;
-    } else {
-      renderedW = containerRect.width;
-      renderedH = renderedW / imgAspect;
-    }
-    const imgLeft = containerRect.left + (containerRect.width - renderedW)/2;
-    const imgTop = containerRect.top + (containerRect.height - renderedH)/2;
-    return { renderedW, renderedH, imgLeft, imgTop };
-  }
-
-  function initGlass(wrapper, opts){
-    const backdrop = wrapper.querySelector(':scope > .glass__backdrop');
-    if(!backdrop) return;
-    const state = { wrapper, backdrop, opts, filterId:null };
-    glassInstances.push(state);
-    refreshGlass(state);
-    return state;
-  }
-
-  function refreshGlass(state){
-    const { wrapper, backdrop, opts } = state;
-    const rect = wrapper.getBoundingClientRect();
-    const w = Math.max(1, rect.width);
-    const h = Math.max(1, rect.height);
-    const pad = opts.padding;
-    const cw = w + pad*2, ch = h + pad*2;
-    const radius = opts.radius === 'auto' ? Math.min(w,h)/2 : opts.radius;
-
-    backdrop.style.left = (-pad) + 'px';
-    backdrop.style.top = (-pad) + 'px';
-    backdrop.style.width = cw + 'px';
-    backdrop.style.height = ch + 'px';
-
-    if(opts.matchElement){
-      // real-photo panels: sample the actual page background at this
-      // panel's actual screen position, instead of an independent crop.
-      const heroEl = document.querySelector(opts.matchElement);
-      if(heroEl && mossReady){
-        const heroRect = heroEl.getBoundingClientRect();
-        const geo = getCoverGeometry(heroRect, mossNaturalW, mossNaturalH);
-        const bgX = -(rect.left - pad - geo.imgLeft);
-        const bgY = -(rect.top - pad - geo.imgTop);
-        backdrop.style.backgroundImage = `url(${opts.image})`;
-        backdrop.style.backgroundSize = `${geo.renderedW}px ${geo.renderedH}px`;
-        backdrop.style.backgroundPosition = `${bgX}px ${bgY}px`;
-        backdrop.style.backgroundAttachment = 'scroll';
-      }
-    } else if(opts.image){
-      backdrop.style.backgroundImage = `url(${opts.image})`;
-    }
-
-    const mapUrl = buildDisplacementMap(cw, ch, w, h, radius, opts.depth, opts.strength);
-    const newId = createGlassFilter(mapUrl, cw, ch, opts);
-    const grade = opts.grade || '';
-    backdrop.style.filter = `${grade} url(#${newId})`;
-
-    if(state.filterId){
-      const old = document.getElementById(state.filterId);
-      if(old) old.remove();
-    }
-    state.filterId = newId;
-  }
-
-  function setup(){
-    const paperUrl = makePaperTexture(200,80);
-
-    const navPill = document.querySelector('.nav-pill');
-    if(navPill){
-      initGlass(navPill, {
-        radius:'auto', depth:18, strength:14, padding:26,
-        chromaAmt:0.30, blurStd:1.1, grainAmt:0.16,
-        image:'/images/moss.jpg', matchElement:'.bg-photo',
-        grade:'grayscale(0.5) brightness(0.85) contrast(1.05)'
-      });
-    }
-    const navCta = document.querySelector('.nav-cta');
-    if(navCta){
-      initGlass(navCta, {
-        radius:'auto', depth:10, strength:11, padding:18,
-        chromaAmt:0.38, blurStd:0.9, grainAmt:0.18,
-        image:'/images/moss.jpg', matchElement:'.bg-photo',
-        grade:'grayscale(0.5) brightness(0.85) contrast(1.05)'
-      });
-    }
-    const sendBtn = document.querySelector('.notify button');
-    if(sendBtn){
-      initGlass(sendBtn, {
-        radius:'auto', depth:9, strength:7, padding:14,
-        chromaAmt:0.28, blurStd:0.8, grainAmt:0.20,
-        image: paperUrl,
-        grade:''
-      });
-    }
-  }
-
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', setup);
-  } else {
-    setup();
-  }
-
-  let resizeTimer;
-  function scheduleRefresh(){
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(()=>{ glassInstances.forEach(refreshGlass); }, 120);
-  }
-  window.addEventListener('resize', scheduleRefresh);
-  window.addEventListener('scroll', scheduleRefresh, { passive:true });
-})();
-</script>
 
 </body>
 </html>
