@@ -32,24 +32,24 @@
           <li><a href="index.html">Main</a></li>
           <li class="nav-drop">
             <a href="avedastudio.html" role="button">Photo <span class="caret"></span></a>
-            <div class="nav-drop__panel glass">
+            <div class="nav-drop__panel-wrap"><div class="nav-drop__panel glass">
               <a href="#">Aveda Lifestyle</a>
               <a href="avedastudio.html" aria-current="page">Aveda Studio</a>
               <a href="#">Isles Ashore</a>
               <a href="#">Magnolia Fields</a>
               <a href="#">Leaves &amp; Leos</a>
-            </div>
+            </div></div>
           </li>
           <li class="nav-drop">
             <a href="hydroviv.html" role="button">Design <span class="caret"></span></a>
-            <div class="nav-drop__panel glass">
+            <div class="nav-drop__panel-wrap"><div class="nav-drop__panel glass">
               <a href="hydroviv.html">Hydroviv</a>
               <a href="#">Ascencion</a>
               <a href="#">Glory Be</a>
               <a href="cksteele.html">CK Steele Plaza</a>
               <a href="#">Promotional Material</a>
               <a href="#">Misc</a>
-            </div>
+            </div></div>
           </li>
           <li><a href="about.html">About</a></li>
         </ul>
@@ -118,6 +118,7 @@
       <span class="carousel-controls__count" id="carouselCount">1 / 16</span>
       <button type="button" id="nextBtn" aria-label="Next image">›</button>
     </div>
+    <div class="carousel-thumbs" id="carouselThumbs"></div>
   </div>
 
 
@@ -137,11 +138,30 @@
   var items = gallery.querySelectorAll('.g-item');
   var controls = document.getElementById('carouselControls');
   var countEl = document.getElementById('carouselCount');
+  var thumbsEl = document.getElementById('carouselThumbs');
   var current = 0;
+
+  // Build the thumbnail strip once, from the same images already in the
+  // gallery — no separate/duplicated asset list to keep in sync.
+  var thumbButtons = [];
+  items.forEach(function(item, idx){
+    var img = item.querySelector('img');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.setAttribute('aria-label', 'Go to image ' + (idx + 1));
+    var thumbImg = document.createElement('img');
+    thumbImg.src = img.src;
+    thumbImg.alt = '';
+    btn.appendChild(thumbImg);
+    btn.addEventListener('click', function(){ showCarouselItem(idx); });
+    thumbsEl.appendChild(btn);
+    thumbButtons.push(btn);
+  });
 
   function showCarouselItem(i){
     current = (i + items.length) % items.length;
     items.forEach(function(it, idx){ it.classList.toggle('is-active', idx === current); });
+    thumbButtons.forEach(function(b, idx){ b.classList.toggle('is-active', idx === current); });
     countEl.textContent = (current + 1) + ' / ' + items.length;
   }
 
@@ -154,6 +174,7 @@
       gallery.setAttribute('data-view', view);
       buttons.forEach(function(b){ b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
       controls.classList.toggle('is-active', view === 'carousel');
+      thumbsEl.classList.toggle('is-active', view === 'carousel');
       if (view === 'carousel') showCarouselItem(current);
     });
   });
