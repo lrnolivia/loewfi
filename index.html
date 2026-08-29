@@ -76,7 +76,10 @@
     border-radius:inherit; overflow:hidden;
     --glass-cream:rgba(241,236,223,.16);
   }
-  .native-glass-measure--nav{ --glass-tint:rgba(20,20,16,.18); }
+  .native-glass-measure--nav{
+    --glass-tint:rgba(20,20,16,.16);
+    --glass-cream:transparent;
+  }
   .native-glass-measure--red{ --glass-tint:rgba(var(--btn-red),.48); }
   .native-glass-measure--cyan{ --glass-tint:rgba(var(--btn-cyan-deep),.38); }
   .native-glass-measure--menu{
@@ -89,6 +92,13 @@
       repeating-radial-gradient(circle at 72% 64%,rgba(0,0,0,.18) 0 .45px,transparent .7px 2.9px);
     background-size:5px 5px,7px 7px;
     opacity:.28;
+  }
+  .native-glass-measure--nav::after{
+    background:
+      repeating-radial-gradient(circle at 16% 24%,rgba(255,255,255,.09) 0 .4px,transparent .65px 2.35px),
+      repeating-radial-gradient(circle at 74% 68%,rgba(0,0,0,.14) 0 .45px,transparent .7px 2.85px);
+    background-size:5px 5px,7px 7px;
+    opacity:.3;
   }
   .native-glass--sam{
     background:

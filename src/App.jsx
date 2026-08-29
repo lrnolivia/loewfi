@@ -36,6 +36,13 @@ const menuOptics = {
   glow: 0.07,
 };
 
+const navOptics = {
+  ...samOptics,
+  frost: 2.4,
+  brightness: 0.14,
+  saturate: 1.25,
+};
+
 function useMeasuredBox() {
   const ref = useRef(null);
   const [size, setSize] = useState({ width: 1, height: 1 });
@@ -68,7 +75,7 @@ function NativeGlass({ tone = 'nav' }) {
         width={size.width}
         height={size.height}
         radius={tone === 'menu' ? 20 : Math.min(size.height / 2, size.width / 2)}
-        optics={tone === 'menu' ? menuOptics : samOptics}
+        optics={tone === 'menu' ? menuOptics : tone === 'nav' ? navOptics : samOptics}
       >
         <span className="glass-material-fill" />
       </Glass>
