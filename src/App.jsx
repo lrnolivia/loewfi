@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { LiquidGlass } from '@ybouane/liquidglass';
+import mossImage from '../images/moss.jpg';
 
 const links = ['Home', 'About', 'Portfolio', 'Contact'];
 
@@ -156,13 +157,9 @@ export default function App() {
     let instance = null;
     const start = async () => {
       try {
-        if (document.fonts?.ready) await document.fonts.ready;
-        if (background.decode) {
-          try { await background.decode(); } catch { /* the load event still paints it */ }
-        }
         const created = await LiquidGlass.init({
           root,
-          glassElements: Array.from(root.querySelectorAll(':scope > .ybouane-glass')),
+          glassElements: Array.from(root.children).filter((element) => element.classList.contains('ybouane-glass')),
         });
         if (disposed) created.destroy();
         else {
@@ -173,10 +170,13 @@ export default function App() {
         console.warn('LiquidGlass failed to initialize.', error);
       }
     };
+    const refreshBackground = () => instance?.markChanged(background);
+    background.addEventListener('load', refreshBackground);
     start();
 
     return () => {
       disposed = true;
+      background.removeEventListener('load', refreshBackground);
       instance?.destroy();
       glassRef.current = null;
     };
@@ -203,7 +203,7 @@ export default function App() {
 
   return (
     <>
-      <img ref={backgroundRef} className="scene-background" src="/images/moss.jpg" alt="" aria-hidden="true" />
+      <img ref={backgroundRef} className="scene-background" src={mossImage} alt="" aria-hidden="true" />
       <div className="scene-shade" aria-hidden="true" />
       <div className="scene-grain" aria-hidden="true" />
       <Hero />

@@ -49,13 +49,13 @@
     box-shadow:none;
   }
   .ybouane-glass{ isolation:isolate; background:transparent; }
-  .ybouane-glass > canvas{ border-radius:inherit; }
+  .ybouane-glass > canvas{ z-index:1000 !important; }
   .glass-pointer-highlight{
     position:absolute; inset:-1px; z-index:2; pointer-events:none; border-radius:inherit;
     background:radial-gradient(ellipse 360px 170px at var(--shine-x) var(--shine-y),rgba(255,255,255,.24),rgba(20,20,16,.10) 46%,rgba(255,255,255,.12) 76%,transparent 100%);
     mix-blend-mode:overlay; opacity:.48;
   }
-  .nav-pill__content{ position:relative; z-index:4; display:flex; align-items:center; gap:30px; }
+  .nav-pill__content{ position:relative; z-index:1001; display:flex; align-items:center; gap:30px; }
   .nav-pill .brand{
     font-weight:700; font-size:19px; letter-spacing:-0.01em;
     padding-right:8px; border-right:1px solid rgba(241,236,223,0.22);
@@ -85,8 +85,8 @@
   .nav-toggle.is-open span:nth-child(2){ opacity:0; }
   .nav-toggle.is-open span:nth-child(3){ transform:translateY(-5px) rotate(-45deg); }
 
-  /* The menu grows directly from the navbar edge. The pseudo-element is only
-     a neutral dark veil; the moving scene and refraction come from WebGL. */
+  /* The menu grows directly from the navbar edge and is rendered by the same
+     upstream Ybouane instance and parameters as the navbar. */
   .nav-dropdown{
     display:block;
     position:fixed; left:6vw; right:6vw; pointer-events:none;
@@ -94,7 +94,7 @@
     overflow:visible; isolation:isolate;
     background:transparent;
     border:0;
-    border-radius:0 0 20px 20px;
+    border-radius:0 0 40px 40px;
     padding:13px 6px 6px;
     box-shadow:none;
     z-index:59;
@@ -105,7 +105,7 @@
     opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto;
     transition:opacity .25s var(--ease), transform .35s var(--ease), visibility 0s;
   }
-  .nav-dropdown ul{ position:relative; z-index:4; list-style:none; margin:0; padding:0; }
+  .nav-dropdown ul{ position:relative; z-index:1001; list-style:none; margin:0; padding:0; }
   .nav-dropdown a{
     display:block; padding:14px 14px;
     color:var(--cream); text-decoration:none;
@@ -153,53 +153,39 @@
       0 0 30px rgba(var(--btn-red),0.20);
   }
 
+  .scene-background{
+    position:absolute; inset:0; z-index:0;
+    width:100%; height:100%; object-fit:cover; object-position:center;
+    pointer-events:none;
+  }
+  .scene-shade{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:linear-gradient(
+      0deg,
+      rgba(0,0,0,.55) 0%,
+      rgba(0,0,0,.55) 14%,
+      rgba(20,20,16,.48) 18%,
+      rgba(20,20,16,.14) 55%,
+      rgba(20,20,16,.32) 100%
+    );
+  }
+  .scene-grain{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:.035; mix-blend-mode:overlay;
+  }
+
   /* HERO: adjust so content + footer + nav fit in one viewport by default */
   .hero{
-    position:relative;
+    position:relative; z-index:3;
     /* reserve space for fixed nav + footer so page aims to fit in one viewport */
     min-height:calc(100vh - var(--nav-height) - 72px - 8px);
     display:flex; align-items:center; /* center vertically by default */
     overflow:hidden;
-    background:url('images/moss.jpg') center/cover no-repeat;
+    background:transparent;
     /* keep some top padding so content doesn't sit beneath the nav visually */
     padding-top:calc(var(--nav-height) + 8px);
     flex:1 0 auto;
-  }
-  .bg-scroll-layer{
-    position:absolute; inset:0;
-    pointer-events:none;
-  }
-  .bg-photo{
-    position:absolute; inset:0;
-    background:url('images/moss.jpg') center/cover no-repeat;
-    /* nudged brighter/flatter — the bulk of the dimming lives in the ::after
-       gradient below, which is where it's been pulled back */
-    filter:grayscale(0.55) brightness(0.94) contrast(1.05);
-  }
-  /* light film grain on the photo itself — same turbulence texture as the
-     glass's grain, just at a fraction of the opacity (0.035 vs the glass's
-     0.12) so it reads as photo texture, not competing with the glass */
-  .bg-photo::before{
-    content:'';
-    position:absolute; inset:0;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    opacity:0.035; mix-blend-mode:overlay; pointer-events:none;
-  }
-  /* stronger top band so nav + tag look like a single dark row — every stop
-     pulled down from its old value so the glass has more light to bend */
-  .bg-photo::after{
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      0deg,
-      rgba(0,0,0,0.55) 0%,
-      rgba(0,0,0,0.55) 14%,
-      rgba(20,20,16,0.48) 18%,
-      rgba(20,20,16,0.14) 55%,
-      rgba(20,20,16,0.32) 100%
-    );
-    pointer-events: none;
   }
 
   /* translucent divider - sits under the nav with the same gap below it
@@ -306,7 +292,7 @@
   .notify button .btn-solid__icon{ width:17px; height:17px; }
 
   footer{
-    position:relative; z-index:2;
+    position:relative; z-index:4;
     display:flex; justify-content:space-between; align-items:center;
     padding:14px 6vw; /* reduced padding to save vertical space */
     height:72px;
@@ -314,6 +300,7 @@
     font-family:'Space Mono',monospace; font-size:11px;
     color:var(--cream-dim);
     flex-shrink:0;
+    background:var(--ink);
   }
   footer a{color:var(--cream-dim); text-decoration:none;}
 
@@ -379,11 +366,12 @@
       padding-bottom:clamp(26px,5dvh,48px);
       min-height:0;
     }
-    .bg-scroll-layer{
+    .scene-background{
+      inset:-2dvh 0 auto;
+      height:132dvh;
       transform:translate3d(0,calc(var(--mobile-bg-scroll,0px) * -.42),0);
       will-change:transform;
     }
-    .bg-photo{ inset:-2dvh 0 -30dvh; }
     footer{
       height:calc(64px + env(safe-area-inset-bottom,0px));
       padding:10px 5vw max(10px,env(safe-area-inset-bottom,0px));
@@ -458,7 +446,6 @@
   footer{ animation:fadeUp .8s var(--ease) 1.3s both; }
 
   /* ambient, ongoing */
-  .bg-photo{ animation:kenBurns 26s ease-in-out infinite alternate; }
   .eyebrow i{ animation:pulseDot 2.4s ease-in-out infinite; }
 
   /* interactive polish */
