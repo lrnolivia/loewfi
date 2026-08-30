@@ -36,26 +36,30 @@
 
   /* Ybouane source structure: the background image, static scene content and
      glass elements are direct siblings inside the positioned #root. */
-  .nav-pill{
+  .nav-pill.liquid-glass{
     pointer-events:auto;
     position:fixed; top:var(--nav-top); left:6vw; z-index:60;
-    isolation:isolate; overflow:visible;
+    overflow:hidden;
     display:flex; align-items:center; gap:30px;
     color:var(--cream);
     padding:13px 28px;
     border-radius:100px;
+    --lg-radius:100px;
     background:transparent;
     border:0;
-    box-shadow:none;
   }
-  .ybouane-glass{ isolation:isolate; background:transparent; }
-  .ybouane-glass > canvas{ z-index:1000 !important; }
+  .nav-pill.liquid-glass,
+  .nav-pill.liquid-glass > .liquid-glass-effect,
+  .nav-pill.liquid-glass > .liquid-glass-tint,
+  .nav-pill.liquid-glass > .liquid-glass-shine,
+  .nav-pill.liquid-glass::before,
+  .nav-pill.liquid-glass::after{ corner-shape:round; }
   .glass-pointer-highlight{
     position:absolute; inset:-1px; z-index:2; pointer-events:none; border-radius:inherit;
     background:radial-gradient(ellipse 360px 170px at var(--shine-x) var(--shine-y),rgba(255,255,255,.24),rgba(20,20,16,.10) 46%,rgba(255,255,255,.12) 76%,transparent 100%);
     mix-blend-mode:overlay; opacity:.48;
   }
-  .nav-pill__content{ position:relative; z-index:1001; display:flex; align-items:center; gap:30px; }
+  .nav-pill__content{ display:flex; align-items:center; gap:30px; }
   .nav-pill .brand{
     font-weight:700; font-size:19px; letter-spacing:-0.01em;
     padding-right:8px; border-right:1px solid rgba(241,236,223,0.22);
@@ -87,25 +91,27 @@
 
   /* The menu grows directly from the navbar edge and is rendered by the same
      upstream Ybouane instance and parameters as the navbar. */
-  .nav-dropdown{
+  .nav-dropdown.liquid-glass{
     display:block;
     position:fixed; left:6vw; right:6vw; pointer-events:none;
     top:calc(var(--nav-top) + var(--nav-height) - 1px);
-    overflow:visible; isolation:isolate;
+    overflow:hidden;
     background:transparent;
     border:0;
     border-radius:0 0 40px 40px;
+    --lg-radius:0 0 40px 40px;
     padding:13px 6px 6px;
-    box-shadow:none;
     z-index:59;
-    opacity:0; visibility:hidden; transform:translateY(-12px);
-    transition:opacity .25s var(--ease), transform .35s var(--ease), visibility 0s linear .35s;
+    visibility:hidden;
+    transition:visibility 0s linear .25s;
   }
-  .nav-dropdown.is-open{
-    opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto;
-    transition:opacity .25s var(--ease), transform .35s var(--ease), visibility 0s;
+  .nav-dropdown.liquid-glass.is-open{
+    visibility:visible; pointer-events:auto;
+    transition:visibility 0s;
   }
-  .nav-dropdown ul{ position:relative; z-index:1001; list-style:none; margin:0; padding:0; }
+  .nav-dropdown__content{ width:100%; }
+  .nav-dropdown ul{ list-style:none; margin:0; padding:0; }
+  .nav-dropdown.is-open .nav-dropdown__content{ animation:menuContentIn .35s var(--ease) both; }
   .nav-dropdown a{
     display:block; padding:14px 14px;
     color:var(--cream); text-decoration:none;
@@ -328,10 +334,10 @@
       min-height:0; overflow:hidden;
     }
 
-    .nav-pill{ left:4vw; right:4vw; top:var(--nav-top); }
+    .nav-pill.liquid-glass{ left:4vw; right:4vw; top:var(--nav-top); }
     /* Attach the menu only to the pill's straight bottom edge, not beneath
        either rounded cap. */
-    .nav-dropdown{
+    .nav-dropdown.liquid-glass{
       left:calc(4vw + (var(--nav-height) / 2));
       right:calc(4vw + (var(--nav-height) / 2));
     }
@@ -425,6 +431,7 @@
   :root{ --ease:cubic-bezier(.16,1,.3,1); }
 
   @keyframes fadeDown{ from{opacity:0; transform:translateY(-18px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes menuContentIn{ from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
   @keyframes fadeUp{ from{opacity:0; transform:translateY(26px);} to{opacity:1; transform:translateY(0);} }
   @keyframes drawLine{ from{transform:scaleX(0);} to{transform:scaleX(1);} }
   @keyframes cardIn{ from{opacity:0; transform:translateY(54px) rotate(0deg) scale(.95);} to{opacity:1; transform:translateY(0) rotate(-3deg) scale(1);} }
@@ -432,7 +439,7 @@
   @keyframes pulseDot{ 0%,100%{box-shadow:0 0 0 0 rgba(255,212,0,.55);} 50%{box-shadow:0 0 0 7px rgba(255,212,0,0);} }
 
   /* entrance stagger, top to bottom */
-  .nav-pill{ animation:fadeDown .8s var(--ease) both; }
+  .nav-pill__content{ animation:fadeDown .8s var(--ease) both; }
   .tag-corner{ animation:fadeDown .8s var(--ease) .15s both; }
   .hero-tag-mobile{ animation:fadeDown .8s var(--ease) .15s both; }
   .grain-line{ transform-origin:left center; animation:drawLine 1s var(--ease) .3s both; }

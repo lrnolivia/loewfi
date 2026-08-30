@@ -1,28 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { LiquidGlass } from '@ybouane/liquidglass';
+import { LiquidGlass } from '@sohumsuthar/liquid-glass';
+import { useLiquidGlassEffects } from '@sohumsuthar/liquid-glass/hooks';
 import mossImage from '../images/moss.jpg';
 
 const links = ['Home', 'About', 'Portfolio', 'Contact'];
 
-// Values copied verbatim from Ybouane's Interactive Playground screenshot.
-// `floating` remains at its upstream default (`false`), so nothing is draggable.
-const playgroundGlass = {
-  blurAmount: 0.41,
-  refraction: 1.2,
-  chromAberration: 0.235,
-  edgeHighlight: 0.6,
-  specular: 0.12,
-  fresnel: 0.48,
-  distortion: 0,
-  cornerRadius: 40,
-  zRadius: 40,
-  opacity: 1,
-  saturation: 0.32,
-  brightness: 0.5,
-  shadowOpacity: 0.64,
-  shadowSpread: 28,
-  bevelMode: 0,
-};
+const navLens = { bezel: 16, refraction: 1.2, dispersion: 5, radius: 40 };
+const menuLens = { bezel: 14, refraction: 1.05, dispersion: 2, radius: 40 };
 
 function PointerHighlight() {
   return <span className="glass-pointer-highlight" aria-hidden="true" />;
@@ -64,39 +48,49 @@ function Navbar() {
 
   return (
     <>
-      <div className="nav-pill ybouane-glass" data-config={JSON.stringify(playgroundGlass)}>
-        <div className="nav-pill__content">
-          <div className="brand">loew.fi</div>
-          <ul className="nav-links">
-            {links.map((link) => <li key={link}><a href="#">{link}</a></li>)}
-          </ul>
-          <div className="nav-actions">
-            <button
-              className={`nav-toggle${open ? ' is-open' : ''}`}
-              aria-label="Menu"
-              aria-expanded={open}
-              aria-controls="navDropdown"
-              onClick={() => setOpen((value) => !value)}
-            >
-              <span /><span /><span />
-            </button>
-            <div className="nav-cta btn-solid" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-              <PointerHighlight />
-              <span className="btn-solid__label"><WarningIcon />.workinprogress</span>
-            </div>
+      <LiquidGlass
+        macro
+        variant="regular"
+        lens
+        lensOptions={navLens}
+        className="nav-pill"
+        contentClassName="nav-pill__content"
+      >
+        <div className="brand">loew.fi</div>
+        <ul className="nav-links">
+          {links.map((link) => <li key={link}><a href="#">{link}</a></li>)}
+        </ul>
+        <div className="nav-actions">
+          <button
+            className={`nav-toggle${open ? ' is-open' : ''}`}
+            aria-label="Menu"
+            aria-expanded={open}
+            aria-controls="navDropdown"
+            onClick={() => setOpen((value) => !value)}
+          >
+            <span /><span /><span />
+          </button>
+          <div className="nav-cta btn-solid" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
+            <PointerHighlight />
+            <span className="btn-solid__label"><WarningIcon />.workinprogress</span>
           </div>
         </div>
-      </div>
-      <nav
-        className={`nav-dropdown ybouane-glass${open ? ' is-open' : ''}`}
+      </LiquidGlass>
+      <LiquidGlass
+        macro
+        variant="regular"
+        lens
+        lensOptions={menuLens}
+        className={`nav-dropdown${open ? ' is-open' : ''}`}
+        contentClassName="nav-dropdown__content"
         id="navDropdown"
-        data-config={JSON.stringify(playgroundGlass)}
+        role="navigation"
         aria-hidden={!open}
       >
         <ul>
           {links.map((link) => <li key={link}><a href="#" onClick={() => setOpen(false)}>{link}</a></li>)}
         </ul>
-      </nav>
+      </LiquidGlass>
     </>
   );
 }
@@ -144,41 +138,14 @@ function Hero() {
 }
 
 export default function App() {
-  const glassRef = useRef(null);
-  const backgroundRef = useRef(null);
+  useLiquidGlassEffects({ cursor: true, spotlight: false, reveal: false, scroll: false });
 
   useEffect(() => {
-    document.documentElement.dataset.glassEngine = 'ybouane';
-    const root = document.getElementById('root');
-    const background = backgroundRef.current;
-    if (!root || !background) return undefined;
-
-    let disposed = false;
-    let instance = null;
-    const start = async () => {
-      try {
-        const created = await LiquidGlass.init({
-          root,
-          glassElements: Array.from(root.children).filter((element) => element.classList.contains('ybouane-glass')),
-        });
-        if (disposed) created.destroy();
-        else {
-          instance = created;
-          glassRef.current = created;
-        }
-      } catch (error) {
-        console.warn('LiquidGlass failed to initialize.', error);
-      }
-    };
-    const refreshBackground = () => instance?.markChanged(background);
-    background.addEventListener('load', refreshBackground);
-    start();
-
+    document.documentElement.dataset.glassEngine = 'sohum';
+    document.documentElement.classList.add('dark');
     return () => {
-      disposed = true;
-      background.removeEventListener('load', refreshBackground);
-      instance?.destroy();
-      glassRef.current = null;
+      document.documentElement.classList.remove('dark');
+      delete document.documentElement.dataset.glassEngine;
     };
   }, []);
 
@@ -188,7 +155,6 @@ export default function App() {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         document.documentElement.style.setProperty('--mobile-bg-scroll', `${window.scrollY}px`);
-        if (backgroundRef.current) glassRef.current?.markChanged(backgroundRef.current);
       });
     };
 
@@ -203,7 +169,7 @@ export default function App() {
 
   return (
     <>
-      <img ref={backgroundRef} className="scene-background" src={mossImage} alt="" aria-hidden="true" />
+      <img className="scene-background" src={mossImage} alt="" aria-hidden="true" />
       <div className="scene-shade" aria-hidden="true" />
       <div className="scene-grain" aria-hidden="true" />
       <Hero />

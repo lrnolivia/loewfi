@@ -1,0 +1,53 @@
+@import '@sohumsuthar/liquid-glass/css/liquid-glass-core.css';
+
+/* Host adapters only: the material layers, tint curve, grain and rim all come
+   from Sohum's package. These rules preserve the mockup's existing geometry. */
+.glass.liquid-glass{
+  isolation:auto;
+  background:transparent;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+  border:0;
+}
+
+.nav-pill.liquid-glass{
+  --lg-radius:100px;
+  overflow:visible;
+}
+.nav-pill.liquid-glass > .liquid-glass-effect,
+.nav-pill.liquid-glass > .liquid-glass-tint,
+.nav-pill.liquid-glass > .liquid-glass-shine{
+  border-radius:inherit;
+  overflow:hidden;
+}
+.nav-pill.liquid-glass > .liquid-glass-content{
+  display:flex;
+  align-items:center;
+  gap:30px;
+}
+
+.nav-drop__panel.liquid-glass{
+  --lg-radius:16px;
+}
+.nav-drop__panel.liquid-glass > .liquid-glass-content{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.view-switch.liquid-glass{
+  --lg-radius:100px;
+}
+.view-switch.liquid-glass > .liquid-glass-content{
+  display:inline-flex;
+  gap:4px;
+}
+
+.nav-pill.liquid-glass,
+.nav-pill.liquid-glass > .liquid-glass-effect,
+.nav-pill.liquid-glass > .liquid-glass-tint,
+.nav-pill.liquid-glass > .liquid-glass-shine,
+.nav-pill.liquid-glass::before,
+.nav-pill.liquid-glass::after{
+  corner-shape:round;
+}
