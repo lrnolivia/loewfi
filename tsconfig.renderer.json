@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
+    "skipLibCheck": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "resolveJsonModule": true,
+    "rootDir": ".",
+    "outDir": ".renderer-build",
+    "noEmit": false,
+    "declaration": false,
+    "sourceMap": false
+  },
+  "include": [
+    "scripts/render-fixtures.ts",
+    "src/renderer/**/*.ts",
+    "src/shared/content/types.ts",
+    "src/shared/content/validation.ts",
+    "src/shared/content/index.ts"
+  ],
+  "exclude": ["**/*.test.ts"]
+}

@@ -4,8 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "render:fixtures": "tsc -p tsconfig.renderer.json && node .renderer-build/scripts/render-fixtures.js",
+    "dev": "pnpm render:fixtures && vite",
+    "build": "pnpm render:fixtures && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

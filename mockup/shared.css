@@ -101,7 +101,8 @@ a{color:inherit;}
   padding:13px 28px;
   border-radius:var(--radius-pill);
 }
-.nav-pill__content{ position:relative; z-index:3; display:flex; align-items:center; gap:30px; }
+.nav-pill__glass-content{ position:relative; z-index:3; display:flex; align-items:center; gap:30px; width:100%; }
+.nav-pill__content{ position:relative; display:flex; align-items:center; gap:30px; }
 .nav-pill .brand{
   font-weight:700; font-size:19px; letter-spacing:-0.01em;
   padding-right:8px; border-right:1px solid rgba(241,236,223,0.22);
@@ -173,6 +174,7 @@ a{color:inherit;}
   :root{ --nav-top:16px; --nav-height:56px; }
   .nav-wrap{ left:4vw; right:4vw; }
   .nav-pill{ width:100%; padding:10px 16px; justify-content:space-between; }
+  .nav-pill__glass-content{justify-content:space-between;}
   .nav-links{ display:none; }
 }
 

@@ -2,7 +2,7 @@
 
 /* Host adapters only: the material layers, tint curve, grain and rim all come
    from Sohum's package. These rules preserve the mockup's existing geometry. */
-.glass.liquid-glass{
+.liquid-glass{
   isolation:auto;
   background:transparent;
   -webkit-backdrop-filter:none;
@@ -24,6 +24,7 @@
   display:flex;
   align-items:center;
   gap:30px;
+  width:100%;
 }
 
 .nav-drop__panel.liquid-glass{
@@ -50,4 +51,10 @@
 .nav-pill.liquid-glass::before,
 .nav-pill.liquid-glass::after{
   corner-shape:round;
+}
+
+.nav-pill.liquid-glass > .liquid-glass-effect,
+.nav-pill.liquid-glass > .liquid-glass-tint,
+.nav-pill.liquid-glass > .liquid-glass-shine{
+  clip-path:inset(0 round 100px);
 }

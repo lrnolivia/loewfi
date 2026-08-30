@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "kind": "page",
+  "pageType": "contact",
+  "id": "contact",
+  "slug": "contact",
+  "title": "Contact",
+  "hero": {
+    "image": { "assetId": "contact-hero", "alt": "Warm studio portrait", "web": { "path": "mockup/assets/img/contact-hero.jpg" } },
+    "focalPoint": { "x": 0.5, "y": 0.2 },
+    "tone": "muted-photo",
+    "attachment": "scroll"
+  },
+  "eyebrow": "Say hello",
+  "headline": [{ "type": "text", "text": "Let's make something." }],
+  "introduction": [{ "type": "text", "text": "Print, brand, or photography — if it's a real problem with a real deadline, I'd like to hear about it." }],
+  "form": {
+    "delivery": { "type": "mailto", "recipientEmail": "me@loew.fi", "subject": "Portfolio inquiry" },
+    "messageLabel": "What are you working on?",
+    "submitLabel": "Send it"
+  },
+  "directLinks": [
+    { "id": "email", "label": "me@loew.fi", "href": "mailto:me@loew.fi" },
+    { "id": "phone", "label": "850.570.9019", "href": "tel:8505709019" },
+    { "id": "instagram", "label": "@lrnolivia", "href": "https://instagram.com/lrnolivia" }
+  ]
+}

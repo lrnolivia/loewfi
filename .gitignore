@@ -1,6 +1,8 @@
 node_modules/
 .pnpm-store/
 dist/
+generated-preview/
+.renderer-build/
 .DS_Store
 .env
 .env.*

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "kind": "project",
+  "projectType": "photography",
+  "id": "avedastudio",
+  "slug": "avedastudio",
+  "title": "Aveda Studio",
+  "eyebrow": "Photo — studio beauty",
+  "summary": [{ "type": "text", "text": "A season of studio beauty work — hair, light, and forty-four frames." }],
+  "hero": {
+    "image": { "assetId": "avedastudio-hero", "alt": "Aveda Studio portrait of Alex", "web": { "path": "portfolio/assets/images/avedastudio/avedastudio-01.jpg" }, "full": { "path": "portfolio/assets/images/avedastudio/avedastudio-01.jpg" } },
+    "focalPoint": { "x": 0.5, "y": 0.25 },
+    "tone": "muted-photo",
+    "attachment": "scroll"
+  },
+  "gallery": {
+    "collectionSize": 44,
+    "figures": [
+      { "image": { "assetId": "avedastudio-01", "alt": "Aveda Studio — Alex, look 1", "web": { "path": "portfolio/assets/images/avedastudio/avedastudio-01.jpg" }, "full": { "path": "portfolio/assets/images/avedastudio/avedastudio-01.jpg" } } },
+      { "image": { "assetId": "avedastudio-02", "alt": "Aveda Studio — Alex, look 2", "web": { "path": "portfolio/assets/images/avedastudio/avedastudio-02.jpg" } } },
+      { "image": { "assetId": "avedastudio-04", "alt": "Aveda Studio — Ashelli updo detail", "web": { "path": "portfolio/assets/images/avedastudio/avedastudio-04.jpg" } }, "caption": [{ "type": "text", "text": "Ashelli — updo detail" }] },
+      { "image": { "assetId": "avedastudio-07", "alt": "Aveda Studio — Brittany in studio light", "web": { "path": "portfolio/assets/images/avedastudio/avedastudio-07.jpg" } }, "caption": [{ "type": "text", "text": "Brittany — studio light" }] }
+    ]
+  }
+}
