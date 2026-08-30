@@ -15,6 +15,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        hybrid: fileURLToPath(new URL('./hybrid-test/index.html', import.meta.url)),
         mockup: fileURLToPath(new URL('./mockup/index.html', import.meta.url)),
         'mockup-about': fileURLToPath(new URL('./mockup/about.html', import.meta.url)),
         'mockup-avedastudio': fileURLToPath(new URL('./mockup/avedastudio.html', import.meta.url)),
