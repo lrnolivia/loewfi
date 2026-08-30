@@ -58,11 +58,6 @@
     border-radius:100px;
     clip-path:inset(0 round 100px);
   }
-  .glass-pointer-highlight{
-    position:absolute; inset:-1px; z-index:2; pointer-events:none; border-radius:inherit;
-    background:radial-gradient(ellipse 360px 170px at var(--shine-x) var(--shine-y),rgba(255,255,255,.24),rgba(20,20,16,.10) 46%,rgba(255,255,255,.12) 76%,transparent 100%);
-    mix-blend-mode:overlay; opacity:.48;
-  }
   .nav-pill__content{ display:flex; align-items:center; gap:30px; }
   .nav-pill .brand{
     font-weight:700; font-size:19px; letter-spacing:-0.01em;
@@ -78,8 +73,12 @@
   /* mobile-only hamburger + dropdown, revealing the links that .nav-links
      hides below 760px (see the media query) */
   .nav-actions{ display:flex; align-items:center; gap:14px; }
+  .nav-toggle-gel{
+    display:none; width:34px; height:34px; flex:0 0 auto;
+    --lg-radius:100px;
+  }
   .nav-toggle{
-    display:none; position:relative; width:30px; height:30px;
+    display:block; position:relative; width:100%; height:100%;
     border:none; background:transparent; padding:0; cursor:pointer; flex:0 0 auto;
   }
   .nav-toggle span{
@@ -127,18 +126,39 @@
   .nav-dropdown a:active{ opacity:.7; }
   @media (min-width:761px){ .nav-dropdown{ display:none !important; } }
 
-  /* Flat at rest; hover adds a liquid-glass highlight, rim and colored glow. */
-  .btn-solid{
-    --shine-x:22%;
-    --shine-y:18%;
-    position:relative; overflow:hidden;
+  /* Sohum interactive gel buttons. Color lives in the tint layer so the
+     package's refraction, moving rim and press illumination stay intact. */
+  .gel-button{
+    --gel-rgb:var(--btn-cyan-soft);
+    --gel-hover-rgb:var(--btn-cyan-deep);
+    --lg-radius:100px;
+    position:relative;
     border-radius:100px;
     border:1px solid rgba(255,255,255,0.30);
-    transition:background .28s var(--ease), border-color .28s var(--ease), box-shadow .35s var(--ease), transform .28s var(--ease);
+    background:rgb(var(--gel-rgb));
+    transition:background .28s var(--ease), border-color .28s var(--ease), box-shadow .35s var(--ease), scale .35s var(--ease-apple-magnetic);
   }
-  .btn-solid .glass-pointer-highlight{ opacity:0; transition:opacity .22s var(--ease); }
-  .btn-solid:hover .glass-pointer-highlight,
-  .btn-solid:focus-visible .glass-pointer-highlight{ opacity:.58; }
+  .gel-button > .liquid-glass-effect{
+    --lg-blur:2px;
+    --lg-saturate:180%;
+    --lg-brightness:.92;
+    --lg-contrast:1.08;
+  }
+  .gel-button > .liquid-glass-tint{ background:rgba(var(--gel-rgb),.38); }
+  .gel-button:hover,
+  .gel-button:focus-within{
+    background:rgb(var(--gel-hover-rgb));
+    border-color:rgba(255,255,255,.48);
+    box-shadow:0 0 14px rgba(var(--gel-hover-rgb),.52),0 0 34px rgba(var(--gel-hover-rgb),.24);
+  }
+  .gel-button:hover > .liquid-glass-tint,
+  .gel-button:focus-within > .liquid-glass-tint{ background:rgba(var(--gel-hover-rgb),.34); }
+  .gel-button__content{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+  .gel-button__control{
+    appearance:none; width:100%; height:100%; margin:0; padding:0;
+    display:flex; align-items:center; justify-content:center;
+    border:0; background:transparent; color:inherit; cursor:pointer;
+  }
   .btn-solid__label{
     position:relative; z-index:3; display:flex; align-items:center; gap:6px;
     mix-blend-mode:normal; /* text is never blended — always solid, always legible */
@@ -149,19 +169,25 @@
   }
 
   .nav-cta{
+    --gel-rgb:var(--btn-red);
+    --gel-hover-rgb:var(--btn-red);
     color:#fff;
     font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
     text-transform:uppercase; letter-spacing:0.05em;
     padding:8px 16px;
-    background:rgb(var(--btn-red));
     box-shadow:0 2px 8px rgba(0,0,0,0.3);
   }
-  .nav-cta:hover{
-    border-color:rgba(255,255,255,0.42);
-    box-shadow:
-      0 0 13px rgba(var(--btn-red),0.46),
-      0 0 30px rgba(var(--btn-red),0.20);
-  }
+  /* The badge stays the existing flat red at rest. The exact interactive
+     material layers fade in only on hover/focus, as requested. */
+  .gel-button--hover-only > .liquid-glass-effect,
+  .gel-button--hover-only > .liquid-glass-tint,
+  .gel-button--hover-only > .liquid-glass-shine{ opacity:0; transition:opacity .22s var(--ease); }
+  .gel-button--hover-only:hover > .liquid-glass-effect,
+  .gel-button--hover-only:hover > .liquid-glass-tint,
+  .gel-button--hover-only:hover > .liquid-glass-shine,
+  .gel-button--hover-only:focus-within > .liquid-glass-effect,
+  .gel-button--hover-only:focus-within > .liquid-glass-tint,
+  .gel-button--hover-only:focus-within > .liquid-glass-shine{ opacity:1; }
 
   .scene-background{
     position:absolute; inset:0; z-index:0;
@@ -276,30 +302,23 @@
     border-radius:100px;
   }
   .notify input:focus{ box-shadow:inset 0 0 0 1.5px rgba(20,20,16,0.35); }
-  .notify button{
-    position:absolute; top:50%; right:6px; transform:translateY(-50%);
+  .notify .send-gel{
+    --gel-rgb:var(--btn-cyan-soft);
+    --gel-hover-rgb:var(--btn-cyan-deep);
+    position:absolute; top:50%; right:6px; translate:0 -50%;
     width:38px; height:38px; min-width:38px; padding:0;
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer;
     color:#fff;
-    background:rgb(var(--btn-cyan-soft));
     box-shadow:0 2px 7px rgba(19,91,100,0.20), inset 0 1px 0 rgba(255,255,255,0.20);
   }
-  .notify button:hover, .notify button:focus-visible{
-    background:radial-gradient(
-      circle at 50% 50%,
-      rgb(0,204,236) 0%,
-      #00d9ff 56%,
-      rgb(50,230,255) 82%,
-      rgb(151,247,255) 100%
-    );
+  .notify .send-gel:hover, .notify .send-gel:focus-within{
     border-color:rgba(190,249,255,0.72);
     box-shadow:
       0 0 13px rgba(var(--btn-cyan-deep),0.52),
       0 0 30px rgba(var(--btn-cyan-deep),0.24);
   }
-  .notify button:active{ transform:translateY(-50%) scale(0.94); }
-  .notify button .btn-solid__icon{ width:17px; height:17px; }
+  .notify .send-gel .gel-button__control{ border-radius:inherit; }
+  .notify .send-gel .btn-solid__icon{ width:17px; height:17px; }
 
   footer{
     position:relative; z-index:4;
@@ -351,7 +370,7 @@
        balanced inside the fixed glass shell. */
     .nav-pill__content{ width:100%; justify-content:space-between; }
     .nav-links{display:none;}
-    .nav-toggle{ display:block; }
+    .nav-toggle-gel{ display:block; }
     .tag-corner{display:none;}
 
     .card{

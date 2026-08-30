@@ -7,22 +7,7 @@ const links = ['Home', 'About', 'Portfolio', 'Contact'];
 
 const navLens = { bezel: 16, refraction: 1.2, dispersion: 5, radius: 40 };
 const menuLens = { bezel: 14, refraction: 1.05, dispersion: 2, radius: 40 };
-
-function PointerHighlight() {
-  return <span className="glass-pointer-highlight" aria-hidden="true" />;
-}
-
-function trackHighlight(event) {
-  if (!window.matchMedia('(pointer: fine)').matches) return;
-  const rect = event.currentTarget.getBoundingClientRect();
-  event.currentTarget.style.setProperty('--shine-x', `${(event.clientX - rect.left).toFixed(1)}px`);
-  event.currentTarget.style.setProperty('--shine-y', `${(event.clientY - rect.top).toFixed(1)}px`);
-}
-
-function clearHighlight(event) {
-  event.currentTarget.style.removeProperty('--shine-x');
-  event.currentTarget.style.removeProperty('--shine-y');
-}
+const gelLens = { bezel: 9, refraction: 0.9, dispersion: 3, radius: 40 };
 
 function WarningIcon() {
   return (
@@ -50,7 +35,8 @@ function Navbar() {
     <>
       <LiquidGlass
         macro
-        variant="regular"
+        variant="clear"
+        dimmed
         lens
         lensOptions={navLens}
         className="nav-pill"
@@ -61,24 +47,33 @@ function Navbar() {
           {links.map((link) => <li key={link}><a href="#">{link}</a></li>)}
         </ul>
         <div className="nav-actions">
-          <button
-            className={`nav-toggle${open ? ' is-open' : ''}`}
-            aria-label="Menu"
-            aria-expanded={open}
-            aria-controls="navDropdown"
-            onClick={() => setOpen((value) => !value)}
+          <LiquidGlass interactive variant="clear" className="nav-toggle-gel" contentClassName="gel-button__content">
+            <button
+              className={`nav-toggle${open ? ' is-open' : ''}`}
+              aria-label="Menu"
+              aria-expanded={open}
+              aria-controls="navDropdown"
+              onClick={() => setOpen((value) => !value)}
+            >
+              <span /><span /><span />
+            </button>
+          </LiquidGlass>
+          <LiquidGlass
+            interactive
+            variant="clear"
+            lens
+            lensOptions={gelLens}
+            className="nav-cta gel-button gel-button--red gel-button--hover-only"
+            contentClassName="gel-button__content"
           >
-            <span /><span /><span />
-          </button>
-          <div className="nav-cta btn-solid" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-            <PointerHighlight />
             <span className="btn-solid__label"><WarningIcon />.workinprogress</span>
-          </div>
+          </LiquidGlass>
         </div>
       </LiquidGlass>
       <LiquidGlass
         macro
-        variant="regular"
+        variant="clear"
+        dimmed
         lens
         lensOptions={menuLens}
         className={`nav-dropdown${open ? ' is-open' : ''}`}
@@ -126,10 +121,18 @@ function Hero() {
           <form className="notify" action="mailto:me@loew.fi" method="GET" encType="text/plain">
             <input type="hidden" name="subject" value="A word of encouragement — loew.fi" />
             <input type="text" name="body" placeholder="Talk to me nice..." required />
-            <button type="submit" aria-label="Send" className="btn-solid" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
-              <PointerHighlight />
-              <span className="btn-solid__label"><SendIcon /></span>
-            </button>
+            <LiquidGlass
+              interactive
+              variant="clear"
+              lens
+              lensOptions={gelLens}
+              className="send-gel gel-button gel-button--cyan"
+              contentClassName="gel-button__content"
+            >
+              <button type="submit" aria-label="Send" className="gel-button__control">
+                <span className="btn-solid__label"><SendIcon /></span>
+              </button>
+            </LiquidGlass>
           </form>
         </div>
       </div>
