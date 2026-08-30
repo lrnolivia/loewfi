@@ -34,8 +34,16 @@
   }
   .mono{font-family:'Space Mono',monospace;}
 
-  /* NAV: a direct child of #root so the real WebGL renderer can sample the
-     moving hero behind it. */
+  /* NAV: its own small WebGL scene. The renderer samples an invisible live
+     canvas instead of rasterizing the entire React page. */
+  .nav-glass-root{
+    position:fixed; inset:0; z-index:60;
+    pointer-events:none;
+  }
+  .nav-glass-source{
+    position:absolute; inset:0; z-index:0;
+    width:100%; height:100%; opacity:0; pointer-events:none;
+  }
   .nav-pill{
     --shine-x:20%;
     --shine-y:12%;
