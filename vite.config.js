@@ -11,6 +11,17 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        mockup: fileURLToPath(new URL('./mockup/index.html', import.meta.url)),
+        'mockup-about': fileURLToPath(new URL('./mockup/about.html', import.meta.url)),
+        'mockup-avedastudio': fileURLToPath(new URL('./mockup/avedastudio.html', import.meta.url)),
+        'mockup-cksteele': fileURLToPath(new URL('./mockup/cksteele.html', import.meta.url)),
+        'mockup-contact': fileURLToPath(new URL('./mockup/contact.html', import.meta.url)),
+        'mockup-hydroviv': fileURLToPath(new URL('./mockup/hydroviv.html', import.meta.url))
+      }
+    }
   }
 });
