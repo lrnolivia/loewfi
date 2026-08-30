@@ -44,16 +44,20 @@
     color:var(--cream);
     padding:13px 28px;
     border-radius:100px;
+    corner-shape:round;
     --lg-radius:100px;
     background:transparent;
     border:0;
   }
-  .nav-pill.liquid-glass,
   .nav-pill.liquid-glass > .liquid-glass-effect,
   .nav-pill.liquid-glass > .liquid-glass-tint,
   .nav-pill.liquid-glass > .liquid-glass-shine,
   .nav-pill.liquid-glass::before,
-  .nav-pill.liquid-glass::after{ corner-shape:round; }
+  .nav-pill.liquid-glass::after{
+    corner-shape:round;
+    border-radius:100px;
+    clip-path:inset(0 round 100px);
+  }
   .glass-pointer-highlight{
     position:absolute; inset:-1px; z-index:2; pointer-events:none; border-radius:inherit;
     background:radial-gradient(ellipse 360px 170px at var(--shine-x) var(--shine-y),rgba(255,255,255,.24),rgba(20,20,16,.10) 46%,rgba(255,255,255,.12) 76%,transparent 100%);
