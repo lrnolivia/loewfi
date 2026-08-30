@@ -3,46 +3,25 @@ import { LiquidGlass } from '@ybouane/liquidglass';
 
 const links = ['Home', 'About', 'Portfolio', 'Contact'];
 
-const navGlass = {
-  blurAmount: 0.045, refraction: 0.56, chromAberration: 0.045,
-  edgeHighlight: 0.1, specular: 0.1, fresnel: 0.9, distortion: 0.004,
-  cornerRadius: 100, zRadius: 28, opacity: 0.96, saturation: 0.04,
-  tintStrength: 0, brightness: 0.025, shadowOpacity: 0.24,
-  shadowSpread: 11, shadowOffsetY: 3,
+// Values copied verbatim from Ybouane's Interactive Playground screenshot.
+// `floating` remains at its upstream default (`false`), so nothing is draggable.
+const playgroundGlass = {
+  blurAmount: 0.41,
+  refraction: 1.2,
+  chromAberration: 0.235,
+  edgeHighlight: 0.6,
+  specular: 0.12,
+  fresnel: 0.48,
+  distortion: 0,
+  cornerRadius: 40,
+  zRadius: 40,
+  opacity: 1,
+  saturation: 0.32,
+  brightness: 0.5,
+  shadowOpacity: 0.64,
+  shadowSpread: 28,
+  bevelMode: 0,
 };
-
-const menuGlass = {
-  ...navGlass, blurAmount: 0.075, refraction: 0.44, chromAberration: 0.035,
-  edgeHighlight: 0.07, specular: 0.06, cornerRadius: 20, zRadius: 16,
-  brightness: -0.06, shadowOpacity: 0.48, shadowSpread: 18, shadowOffsetY: 8,
-};
-
-function initLiquidGlass({ root, glassElements, defaults, onReady }) {
-  let disposed = false;
-  let instance;
-
-  const start = async () => {
-    try {
-      if (document.fonts?.ready) await document.fonts.ready;
-      const created = await LiquidGlass.init({ root, glassElements, defaults });
-      if (disposed) {
-        created.destroy();
-        return;
-      }
-      instance = created;
-      onReady?.(created);
-    } catch (error) {
-      console.warn('Liquid glass could not start; CSS fallback remains active.', error);
-    }
-  };
-
-  start();
-  return () => {
-    disposed = true;
-    instance?.destroy();
-    onReady?.(null);
-  };
-}
 
 function PointerHighlight() {
   return <span className="glass-pointer-highlight" aria-hidden="true" />;
@@ -81,105 +60,10 @@ function SendIcon() {
 
 function Navbar() {
   const [open, setOpen] = useState(false);
-  const rootRef = useRef(null);
-  const sourceRef = useRef(null);
-  const navRef = useRef(null);
-  const menuRef = useRef(null);
-
-  useEffect(() => {
-    const root = rootRef.current;
-    const source = sourceRef.current;
-    const nav = navRef.current;
-    const menu = menuRef.current;
-    if (!root || !source || !nav || !menu) return undefined;
-
-    const image = new Image();
-    let instance = null;
-    let cleanupGlass = null;
-    let disposed = false;
-    let frame = 0;
-
-    const drawSource = (scrollY = window.scrollY) => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        if (!image.naturalWidth || disposed) return;
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        const mobile = window.matchMedia('(max-width: 760px)').matches;
-        source.width = Math.round(width * dpr);
-        source.height = Math.round(height * dpr);
-        source.style.width = `${width}px`;
-        source.style.height = `${height}px`;
-
-        const context = source.getContext('2d');
-        context.setTransform(dpr, 0, 0, dpr, 0, 0);
-        context.clearRect(0, 0, width, height);
-        context.filter = 'grayscale(55%) brightness(94%) contrast(105%)';
-
-        const sceneHeight = mobile ? height * 1.32 : height;
-        const scale = Math.max(width / image.naturalWidth, sceneHeight / image.naturalHeight);
-        const drawWidth = image.naturalWidth * scale;
-        const drawHeight = image.naturalHeight * scale;
-        const drawX = (width - drawWidth) / 2;
-        const drawY = (height - drawHeight) / 2 - (mobile ? scrollY * 0.42 : 0);
-        context.drawImage(image, drawX, drawY, drawWidth, drawHeight);
-        context.filter = 'none';
-
-        const shade = context.createLinearGradient(0, height, 0, 0);
-        shade.addColorStop(0, 'rgba(0,0,0,.55)');
-        shade.addColorStop(0.18, 'rgba(20,20,16,.48)');
-        shade.addColorStop(0.55, 'rgba(20,20,16,.14)');
-        shade.addColorStop(1, 'rgba(20,20,16,.32)');
-        context.fillStyle = shade;
-        context.fillRect(0, 0, width, height);
-        instance?.markChanged(source);
-      });
-    };
-
-    const onBackgroundScroll = (event) => drawSource(event.detail?.scrollY ?? window.scrollY);
-    const onResize = () => drawSource();
-
-    const start = async () => {
-      image.src = '/images/moss.jpg';
-      try { await image.decode(); } catch { /* load event fallback below */ }
-      if (disposed || !image.naturalWidth) return;
-      drawSource();
-      cleanupGlass = initLiquidGlass({
-        root,
-        glassElements: [nav, menu],
-        defaults: navGlass,
-        onReady: (created) => { instance = created; },
-      });
-      if (disposed) cleanupGlass();
-    };
-
-    image.addEventListener('load', () => drawSource(), { once: true });
-    window.addEventListener('resize', onResize, { passive: true });
-    window.addEventListener('loew-background-scroll', onBackgroundScroll);
-    start();
-
-    return () => {
-      disposed = true;
-      cancelAnimationFrame(frame);
-      cleanupGlass?.();
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('loew-background-scroll', onBackgroundScroll);
-    };
-  }, []);
 
   return (
-    <div className="nav-glass-root" ref={rootRef}>
-      <canvas className="nav-glass-source" ref={sourceRef} aria-hidden="true" />
-      <div
-        ref={navRef}
-        className="nav-pill ybouane-glass"
-        data-config={JSON.stringify(navGlass)}
-        onPointerMove={trackHighlight}
-        onPointerLeave={clearHighlight}
-      >
-        <PointerHighlight />
-        <div className="glass-grain" aria-hidden="true" />
+    <>
+      <div className="nav-pill ybouane-glass" data-config={JSON.stringify(playgroundGlass)}>
         <div className="nav-pill__content">
           <div className="brand">loew.fi</div>
           <ul className="nav-links">
@@ -203,18 +87,16 @@ function Navbar() {
         </div>
       </div>
       <nav
-        ref={menuRef}
         className={`nav-dropdown ybouane-glass${open ? ' is-open' : ''}`}
         id="navDropdown"
-        data-config={JSON.stringify(menuGlass)}
+        data-config={JSON.stringify(playgroundGlass)}
         aria-hidden={!open}
       >
-        <div className="glass-grain" aria-hidden="true" />
         <ul>
           {links.map((link) => <li key={link}><a href="#" onClick={() => setOpen(false)}>{link}</a></li>)}
         </ul>
       </nav>
-    </div>
+    </>
   );
 }
 
@@ -237,9 +119,6 @@ function Hero() {
 
   return (
     <section className="hero">
-      <div className="bg-scroll-layer" aria-hidden="true">
-        <div className="bg-photo" />
-      </div>
       <div className="grain-line" />
       <div className="tag-corner mono">LOEW FIDELITY<br />FIELD NOTES — VOL. 01</div>
       <div className="hero-tag-mobile mono">LOEW FIDELITY<br />FIELD NOTES — VOL. 01</div>
@@ -252,13 +131,7 @@ function Hero() {
           <form className="notify" action="mailto:me@loew.fi" method="GET" encType="text/plain">
             <input type="hidden" name="subject" value="A word of encouragement — loew.fi" />
             <input type="text" name="body" placeholder="Talk to me nice..." required />
-            <button
-              type="submit"
-              aria-label="Send"
-              className="btn-solid"
-              onPointerMove={trackHighlight}
-              onPointerLeave={clearHighlight}
-            >
+            <button type="submit" aria-label="Send" className="btn-solid" onPointerMove={trackHighlight} onPointerLeave={clearHighlight}>
               <PointerHighlight />
               <span className="btn-solid__label"><SendIcon /></span>
             </button>
@@ -270,14 +143,52 @@ function Hero() {
 }
 
 export default function App() {
+  const glassRef = useRef(null);
+  const backgroundRef = useRef(null);
+
   useEffect(() => {
     document.documentElement.dataset.glassEngine = 'ybouane';
+    const root = document.getElementById('root');
+    const background = backgroundRef.current;
+    if (!root || !background) return undefined;
+
+    let disposed = false;
+    let instance = null;
+    const start = async () => {
+      try {
+        if (document.fonts?.ready) await document.fonts.ready;
+        if (background.decode) {
+          try { await background.decode(); } catch { /* the load event still paints it */ }
+        }
+        const created = await LiquidGlass.init({
+          root,
+          glassElements: Array.from(root.querySelectorAll(':scope > .ybouane-glass')),
+        });
+        if (disposed) created.destroy();
+        else {
+          instance = created;
+          glassRef.current = created;
+        }
+      } catch (error) {
+        console.warn('LiquidGlass failed to initialize.', error);
+      }
+    };
+    start();
+
+    return () => {
+      disposed = true;
+      instance?.destroy();
+      glassRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
     let frame = 0;
     const updateBackgroundScroll = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         document.documentElement.style.setProperty('--mobile-bg-scroll', `${window.scrollY}px`);
-        window.dispatchEvent(new CustomEvent('loew-background-scroll', { detail: { scrollY: window.scrollY } }));
+        if (backgroundRef.current) glassRef.current?.markChanged(backgroundRef.current);
       });
     };
 
@@ -292,6 +203,9 @@ export default function App() {
 
   return (
     <>
+      <img ref={backgroundRef} className="scene-background" src="/images/moss.jpg" alt="" aria-hidden="true" />
+      <div className="scene-shade" aria-hidden="true" />
+      <div className="scene-grain" aria-hidden="true" />
       <Hero />
       <Navbar />
       <footer>

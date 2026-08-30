@@ -34,19 +34,9 @@
   }
   .mono{font-family:'Space Mono',monospace;}
 
-  /* NAV: its own small WebGL scene. The renderer samples an invisible live
-     canvas instead of rasterizing the entire React page. */
-  .nav-glass-root{
-    position:fixed; inset:0; z-index:60;
-    pointer-events:none;
-  }
-  .nav-glass-source{
-    position:absolute; inset:0; z-index:0;
-    width:100%; height:100%; opacity:0; pointer-events:none;
-  }
+  /* Ybouane source structure: the background image, static scene content and
+     glass elements are direct siblings inside the positioned #root. */
   .nav-pill{
-    --shine-x:20%;
-    --shine-y:12%;
     pointer-events:auto;
     position:fixed; top:var(--nav-top); left:6vw; z-index:60;
     isolation:isolate; overflow:visible;
@@ -55,34 +45,11 @@
     padding:13px 28px;
     border-radius:100px;
     background:transparent;
-    border:1px solid rgba(255,255,255,0.20);
-    box-shadow:
-      0 14px 36px rgba(0,0,0,0.28),
-      inset 0 1px 0 rgba(255,255,255,0.24),
-      inset 0 -1px 0 rgba(0,0,0,0.15);
-    transition:background .35s var(--ease), border-color .35s var(--ease), box-shadow .4s var(--ease);
-  }
-  .nav-pill:hover, .nav-pill:focus-within{
-    background:transparent;
-    border-color:rgba(255,255,255,0.30);
-    box-shadow:
-      0 16px 42px rgba(0,0,0,0.32),
-      0 0 28px rgba(215,229,222,0.10),
-      inset 0 1px 0 rgba(255,255,255,0.38),
-      inset 0 -1px 0 rgba(0,0,0,0.12);
+    border:0;
+    box-shadow:none;
   }
   .ybouane-glass{ isolation:isolate; background:transparent; }
   .ybouane-glass > canvas{ border-radius:inherit; }
-  .glass-grain{
-    position:absolute; inset:0; z-index:1; pointer-events:none;
-    border-radius:inherit;
-    background:
-      repeating-radial-gradient(circle at 18% 27%,rgba(241,236,223,.16) 0 .45px,transparent .65px 2.25px),
-      repeating-radial-gradient(circle at 72% 64%,rgba(20,20,16,.12) 0 .4px,transparent .65px 2.8px);
-    background-size:5px 5px,7px 7px;
-    mix-blend-mode:overlay;
-    opacity:.28;
-  }
   .glass-pointer-highlight{
     position:absolute; inset:-1px; z-index:2; pointer-events:none; border-radius:inherit;
     background:radial-gradient(ellipse 360px 170px at var(--shine-x) var(--shine-y),rgba(255,255,255,.24),rgba(20,20,16,.10) 46%,rgba(255,255,255,.12) 76%,transparent 100%);
@@ -126,18 +93,13 @@
     top:calc(var(--nav-top) + var(--nav-height) - 1px);
     overflow:visible; isolation:isolate;
     background:transparent;
-    border:1px solid rgba(241,236,223,0.18);
-    border-top-color:rgba(241,236,223,0.09);
+    border:0;
     border-radius:0 0 20px 20px;
     padding:13px 6px 6px;
-    box-shadow:0 24px 60px rgba(0,0,0,0.55);
+    box-shadow:none;
     z-index:59;
     opacity:0; visibility:hidden; transform:translateY(-12px);
     transition:opacity .25s var(--ease), transform .35s var(--ease), visibility 0s linear .35s;
-  }
-  .nav-dropdown::before{
-    content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
-    border-radius:inherit; background:rgba(3,4,3,.64); mix-blend-mode:multiply;
   }
   .nav-dropdown.is-open{
     opacity:1; visibility:visible; transform:translateY(0); pointer-events:auto;
@@ -164,10 +126,7 @@
     border:1px solid rgba(255,255,255,0.30);
     transition:background .28s var(--ease), border-color .28s var(--ease), box-shadow .35s var(--ease), transform .28s var(--ease);
   }
-  .btn-solid .glass-grain,
   .btn-solid .glass-pointer-highlight{ opacity:0; transition:opacity .22s var(--ease); }
-  .btn-solid:hover .glass-grain,
-  .btn-solid:focus-visible .glass-grain{ opacity:.32; }
   .btn-solid:hover .glass-pointer-highlight,
   .btn-solid:focus-visible .glass-pointer-highlight{ opacity:.58; }
   .btn-solid__label{
@@ -383,7 +342,12 @@
     }
 
     .nav-pill{ left:4vw; right:4vw; top:var(--nav-top); }
-    .nav-dropdown{ left:4vw; right:4vw; }
+    /* Attach the menu only to the pill's straight bottom edge, not beneath
+       either rounded cap. */
+    .nav-dropdown{
+      left:calc(4vw + (var(--nav-height) / 2));
+      right:calc(4vw + (var(--nav-height) / 2));
+    }
     /* stretch the fixed pill between the two mobile gutters */
     .nav-pill{ width:auto; padding:10px 18px; }
     /* space-between lives on the content row so the brand and actions stay
