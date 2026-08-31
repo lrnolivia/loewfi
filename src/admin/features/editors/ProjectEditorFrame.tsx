@@ -38,8 +38,13 @@ export function ProjectEditorFrame({
         description="This is a recoverable browser-local working copy. Server drafts, media uploads, preview, and publishing remain deliberately disconnected."
         actions={
           <div className="detail-actions">
-            <Button variant="secondary" onClick={onReset}>Reset local copy</Button>
-            <Button onClick={onSaveLocal}>{dirty ? 'Save working copy' : 'Saved locally'}</Button>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                if (window.confirm('Clear this browser-local working copy and return to the source version?')) onReset();
+              }}
+            >Reset local copy</Button>
+            <Button onClick={onSaveLocal}>{savedAt && !dirty ? 'Saved locally' : 'Save working copy'}</Button>
           </div>
         }
       />
@@ -49,7 +54,7 @@ export function ProjectEditorFrame({
           <Surface className="editor-validation" tone={validation.valid ? 'cream' : 'quiet'}>
             <div className="editor-status-line">
               <Badge tone={validation.valid ? 'good' : 'warning'}>{validation.valid ? 'Schema valid' : 'Needs attention'}</Badge>
-              <span>{dirty ? 'Unsaved changes' : 'Local copy saved'}</span>
+              <span>{dirty ? 'Unsaved changes' : savedAt ? 'Local copy saved' : 'Source loaded'}</span>
             </div>
             <h2>{validation.valid ? 'Ready for a future draft.' : 'Keep shaping the document.'}</h2>
             {validation.valid ? (

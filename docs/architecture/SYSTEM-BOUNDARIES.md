@@ -8,7 +8,7 @@ Drafts branch from canonical validated data before publishing and never become p
 
 ## React admin
 
-The application mounted from `admin/index.html` owns routing, bootstrap state, portfolio management, future editing, and status UI. It talks to the server only through `src/admin/api`. Feature modules consume `src/admin/design-system`; they do not import public Liquid Glass internals. The current shell and project catalog use an isolated cream/ink material boundary that can accept the revised Sohum treatment when the final mockup arrives.
+The application mounted from `admin/index.html` owns routing, bootstrap state, portfolio management, specialized project editing, and status UI. It talks to the server only through `src/admin/api`. Feature modules consume `src/admin/design-system`; they do not import public Liquid Glass internals. The current shell, catalog, and editors use an isolated cream/ink material boundary that can accept the revised Sohum treatment when the final mockup arrives.
 
 ## CMS API
 
@@ -24,7 +24,7 @@ The renderer under `src/renderer` is a deterministic, side-effect-free layer: un
 
 ## Draft persistence
 
-Draft storage is a separate repository interface, expected to use a low-cost Cloudflare store such as KV. Draft keys, migrations, conflict behavior, autosave, and retention are later milestones. Published Git data is not used as an autosave store.
+The Milestones 7–8 editors have an explicit, namespaced browser-local working-copy adapter. It can recover valid or temporarily invalid form state after reload, reports when it was saved, and requires confirmation before reset. It is deliberately not called a server draft: no API mutation, synchronization, autosave, conflict resolution, preview, or publishing occurs. Milestone 10 will replace this adapter boundary with a real draft repository, expected to use a low-cost Cloudflare store such as KV. Published Git data is not used as an autosave store.
 
 ## Publisher
 

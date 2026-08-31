@@ -12,4 +12,4 @@ Lauren White's portfolio and its custom CMS.
 - `pnpm build` creates the Cloudflare Pages output in `dist/`.
 - `pnpm check` runs type checking, tests, and the production build together.
 
-Architecture notes live in [`docs/architecture/`](docs/architecture/), including the takeover audit, system boundaries, content and renderer contracts, CMS API, admin architecture, and project-management decisions.
+Architecture notes live in [`docs/architecture/`](docs/architecture/), including the takeover audit, system boundaries, content and renderer contracts, CMS API, admin architecture, project management, and the two specialized project editors.
