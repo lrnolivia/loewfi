@@ -55,7 +55,7 @@ function Glass({ className = '', contentClassName = '', options = lens.panel, va
 }
 
 function Navbar({ page }) {
-  return <div className="nav-wrap">
+  return <nav className="nav-wrap" aria-label="Primary">
     <Glass className="nav-pill" contentClassName="nav-pill__glass-content" options={lens.nav}>
       <div className="nav-pill__content">
         <a href={routePath('index')} className="brand">loew.fi</a>
@@ -78,7 +78,7 @@ function Navbar({ page }) {
       </div>
       <a href={routePath('contact')} className="nav-cta" aria-current={page === 'contact' ? 'page' : undefined}>Contact</a>
     </Glass>
-  </div>;
+  </nav>;
 }
 
 function Footer() {
