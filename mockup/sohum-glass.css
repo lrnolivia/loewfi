@@ -44,6 +44,17 @@
   gap:4px;
 }
 
+.mobile-nav-panel.liquid-glass{
+  --lg-radius:28px;
+}
+.mobile-nav-panel.liquid-glass > .liquid-glass-effect,
+.mobile-nav-panel.liquid-glass > .liquid-glass-tint,
+.mobile-nav-panel.liquid-glass > .liquid-glass-shine{
+  border-radius:28px;
+  overflow:hidden;
+  clip-path:inset(0 round 28px);
+}
+
 .nav-pill.liquid-glass,
 .nav-pill.liquid-glass > .liquid-glass-effect,
 .nav-pill.liquid-glass > .liquid-glass-tint,

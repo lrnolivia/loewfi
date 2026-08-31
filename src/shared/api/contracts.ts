@@ -1,16 +1,22 @@
+import type { ProjectDocument, ProjectType } from '../content/types';
 import type { ValidationIssue } from '../content/validation';
-import { validateContentCollection } from '../content/validation';
+import { parseProjectDocument, validateContentCollection } from '../content/validation';
 
 export const CMS_API_VERSION = 1 as const;
 export const CMS_MAX_JSON_BYTES = 1_000_000;
+export const CMS_MAX_MEDIA_BYTES = 10_000_000;
 
 export type ApiErrorCode =
   | 'unauthorized'
   | 'method_not_allowed'
   | 'unsupported_media_type'
   | 'invalid_json'
+  | 'invalid_media'
   | 'payload_too_large'
   | 'validation_failed'
+  | 'not_found'
+  | 'conflict'
+  | 'storage_unavailable'
   | 'internal_error';
 
 export type ApiSuccess<T> = {
@@ -40,14 +46,55 @@ export type CmsCapabilities = {
   apiVersion: typeof CMS_API_VERSION;
   contentSchemaVersion: 1;
   maxJsonBytes: number;
+  maxMediaBytes: number;
   features: {
     contentValidation: true;
     artifactPlanning: true;
     publishedContentRead: true;
-    drafts: false;
+    media: boolean;
+    drafts: boolean;
     preview: false;
     publishing: false;
   };
+};
+
+export type ProjectDraftRecord = {
+  draftId: string;
+  document: ProjectDocument;
+  revision: string;
+  basePublishedRevision: string;
+  mediaIds: string[];
+  updatedAt: string;
+  updatedBy: string;
+};
+
+export type ProjectDraftSnapshot = { draft: ProjectDraftRecord | null };
+
+export type ProjectDraftSaveInput = {
+  document: ProjectDocument;
+  expectedRevision: string | null;
+  basePublishedRevision: string;
+  mediaIds: string[];
+};
+
+export type ProjectDraftDeleteResult = { deleted: true; draftId: string };
+
+export type MediaVariant = 'web' | 'full';
+
+export type StagedMediaAsset = {
+  stagingId: string;
+  assetId: string;
+  projectSlug: string;
+  projectType: ProjectType;
+  variant: MediaVariant;
+  targetPath: string;
+  contentType: 'image/jpeg' | 'image/png' | 'image/webp';
+  byteLength: number;
+  width: number;
+  height: number;
+  uploadedAt: string;
+  uploadedBy: string;
+  expiresAt: string;
 };
 
 export type PublishedContentSnapshot = {
@@ -101,16 +148,79 @@ export function parseCmsCapabilities(value: unknown): CmsCapabilities {
     value.apiVersion !== CMS_API_VERSION ||
     value.contentSchemaVersion !== 1 ||
     typeof value.maxJsonBytes !== 'number' ||
+    typeof value.maxMediaBytes !== 'number' ||
     value.features.contentValidation !== true ||
     value.features.artifactPlanning !== true ||
     value.features.publishedContentRead !== true ||
-    value.features.drafts !== false ||
+    typeof value.features.media !== 'boolean' ||
+    typeof value.features.drafts !== 'boolean' ||
     value.features.preview !== false ||
     value.features.publishing !== false
   ) {
     throw new Error('Invalid CMS capabilities response.');
   }
   return value as CmsCapabilities;
+}
+
+export function parseProjectDraftSnapshot(value: unknown): ProjectDraftSnapshot {
+  if (!isRecord(value) || (value.draft !== null && !isRecord(value.draft))) {
+    throw new Error('Invalid project draft response.');
+  }
+  return { draft: value.draft === null ? null : parseProjectDraftRecord(value.draft) };
+}
+
+export function parseProjectDraftRecord(value: unknown): ProjectDraftRecord {
+  if (!isRecord(value)) throw new Error('Invalid project draft response.');
+  const mediaIds = value.mediaIds;
+  if (
+    typeof value.draftId !== 'string' ||
+    typeof value.revision !== 'string' ||
+    typeof value.basePublishedRevision !== 'string' ||
+    typeof value.updatedAt !== 'string' ||
+    typeof value.updatedBy !== 'string' ||
+    !Array.isArray(mediaIds) ||
+    !mediaIds.every((id) => typeof id === 'string')
+  ) {
+    throw new Error('Invalid project draft response.');
+  }
+  return {
+    draftId: value.draftId,
+    revision: value.revision,
+    basePublishedRevision: value.basePublishedRevision,
+    mediaIds,
+    updatedAt: value.updatedAt,
+    updatedBy: value.updatedBy,
+    document: parseProjectDocument(value.document),
+  };
+}
+
+export function parseProjectDraftDeleteResult(value: unknown): ProjectDraftDeleteResult {
+  if (!isRecord(value) || value.deleted !== true || typeof value.draftId !== 'string') {
+    throw new Error('Invalid project draft delete response.');
+  }
+  return { deleted: true, draftId: value.draftId };
+}
+
+export function parseStagedMediaAsset(value: unknown): StagedMediaAsset {
+  if (
+    !isRecord(value) ||
+    typeof value.stagingId !== 'string' ||
+    typeof value.assetId !== 'string' ||
+    typeof value.projectSlug !== 'string' ||
+    !['design', 'photography'].includes(String(value.projectType)) ||
+    !['web', 'full'].includes(String(value.variant)) ||
+    typeof value.targetPath !== 'string' ||
+    !['image/jpeg', 'image/png', 'image/webp'].includes(String(value.contentType)) ||
+    !Number.isSafeInteger(value.byteLength) || Number(value.byteLength) < 1 ||
+    !Number.isSafeInteger(value.width) || Number(value.width) < 1 ||
+    !Number.isSafeInteger(value.height) || Number(value.height) < 1 ||
+    typeof value.uploadedAt !== 'string' ||
+    typeof value.uploadedBy !== 'string' ||
+    typeof value.expiresAt !== 'string'
+  ) {
+    throw new Error('Invalid staged media response.');
+  }
+  return value as StagedMediaAsset;
 }
 
 export function parseContentValidationResult(value: unknown): ContentValidationResult {

@@ -1,9 +1,13 @@
 import { withAccessIdentity, withApiErrors } from '../../functions/admin/api/_middleware';
-import type { CmsApiData, CmsRouteHandler } from '../../functions/admin/api/_lib/types';
+import type { CmsApiData, CmsApiEnv, CmsRouteHandler } from '../../functions/admin/api/_lib/types';
 
-export async function invokeCmsApi(handler: CmsRouteHandler, request: Request): Promise<Response> {
+export async function invokeCmsApi(
+  handler: CmsRouteHandler,
+  request: Request,
+  envOverrides: Partial<CmsApiEnv> = {},
+): Promise<Response> {
   const data: CmsApiData = {};
-  const env = { CF_PAGES_COMMIT_SHA: 'test-revision' };
+  const env: CmsApiEnv = { CF_PAGES_COMMIT_SHA: 'test-revision', ...envOverrides };
   return withApiErrors({
     request,
     data,

@@ -1,6 +1,7 @@
 import {
   CMS_API_VERSION,
   CMS_MAX_JSON_BYTES,
+  CMS_MAX_MEDIA_BYTES,
   type CmsCapabilities,
 } from '../../../src/shared/api/contracts';
 import { CONTENT_SCHEMA_VERSION } from '../../../src/shared/content/types';
@@ -14,11 +15,13 @@ export function onRequest(context: CmsRouteContext): Response {
     apiVersion: CMS_API_VERSION,
     contentSchemaVersion: CONTENT_SCHEMA_VERSION,
     maxJsonBytes: CMS_MAX_JSON_BYTES,
+    maxMediaBytes: CMS_MAX_MEDIA_BYTES,
     features: {
       contentValidation: true,
       artifactPlanning: true,
       publishedContentRead: true,
-      drafts: false,
+      media: Boolean(context.env.CMS_MEDIA),
+      drafts: Boolean(context.env.CMS_DRAFTS),
       preview: false,
       publishing: false,
     },

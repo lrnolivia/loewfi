@@ -1,4 +1,5 @@
 import type { ContentCollection } from '../../shared/content/types';
+import type { ProjectType } from '../../shared/content/types';
 import type { ValidationIssue } from '../../shared/content/validation';
 import {
   isApiFailure,
@@ -6,10 +7,19 @@ import {
   parseCmsCapabilities,
   parseContentValidationResult,
   parsePublishedContentSnapshot,
+  parseProjectDraftDeleteResult,
+  parseProjectDraftRecord,
+  parseProjectDraftSnapshot,
+  parseStagedMediaAsset,
   type ApiErrorCode,
   type CmsCapabilities,
   type ContentValidationResult,
   type PublishedContentSnapshot,
+  type MediaVariant,
+  type ProjectDraftDeleteResult,
+  type ProjectDraftRecord,
+  type ProjectDraftSaveInput,
+  type StagedMediaAsset,
 } from '../../shared/api/contracts';
 import { parseWhoAmI, type WhoAmI } from '../../shared/api/whoami';
 
@@ -60,6 +70,69 @@ export async function validateContent(
     headers: { accept: 'application/json', 'content-type': 'application/json' },
     body: JSON.stringify(content),
   });
+}
+
+export async function fetchProjectDraft(
+  draftId: string,
+  options: RequestOptions = {},
+): Promise<ProjectDraftRecord | null> {
+  const result = await requestJson(`/admin/api/drafts/${encodeURIComponent(draftId)}`, parseProjectDraftSnapshot, options, {
+    headers: { accept: 'application/json' },
+  });
+  return result.draft;
+}
+
+export async function saveProjectDraft(
+  draftId: string,
+  input: ProjectDraftSaveInput,
+  options: RequestOptions = {},
+): Promise<ProjectDraftRecord> {
+  return requestJson(`/admin/api/drafts/${encodeURIComponent(draftId)}`, parseProjectDraftRecord, options, {
+    method: 'PUT',
+    headers: { accept: 'application/json', 'content-type': 'application/json' },
+    body: JSON.stringify(input),
+  });
+}
+
+export async function deleteProjectDraft(
+  draftId: string,
+  expectedRevision: string,
+  options: RequestOptions = {},
+): Promise<ProjectDraftDeleteResult> {
+  return requestJson(`/admin/api/drafts/${encodeURIComponent(draftId)}`, parseProjectDraftDeleteResult, options, {
+    method: 'DELETE',
+    headers: { accept: 'application/json', 'if-match': expectedRevision },
+  });
+}
+
+export type StageMediaInput = {
+  blob: Blob;
+  projectType: ProjectType;
+  projectSlug: string;
+  assetId: string;
+  variant: MediaVariant;
+  width: number;
+  height: number;
+};
+
+export async function stageMedia(input: StageMediaInput, options: RequestOptions = {}): Promise<StagedMediaAsset> {
+  const query = new URLSearchParams({
+    projectType: input.projectType,
+    projectSlug: input.projectSlug,
+    assetId: input.assetId,
+    variant: input.variant,
+    width: String(input.width),
+    height: String(input.height),
+  });
+  return requestJson(`/admin/api/media?${query}`, parseStagedMediaAsset, options, {
+    method: 'POST',
+    headers: { accept: 'application/json', 'content-type': input.blob.type },
+    body: input.blob,
+  });
+}
+
+export function stagedMediaUrl(stagingId: string): string {
+  return `/admin/api/media?id=${encodeURIComponent(stagingId)}`;
 }
 
 async function requestJson<T>(

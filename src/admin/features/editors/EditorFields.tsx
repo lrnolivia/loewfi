@@ -8,6 +8,7 @@ import type {
   TextMark,
 } from '../../../shared/content/types';
 import { Button } from '../../design-system';
+import { MediaPreparationPanel } from '../media/MediaPreparationPanel';
 import { moveItem, removeAt, replaceAt } from './editor-model';
 
 type BaseProjectPatch = Partial<Pick<ProjectDocument, 'id' | 'slug' | 'title' | 'eyebrow' | 'summary' | 'hero'>>;
@@ -196,6 +197,7 @@ export function ImageAssetFields({
           </div>
         </div>
       )}
+      <MediaPreparationPanel label={label} image={image} onApply={onChange} />
     </fieldset>
   );
 }

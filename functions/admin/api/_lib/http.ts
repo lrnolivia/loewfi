@@ -1,5 +1,6 @@
 import {
   CMS_MAX_JSON_BYTES,
+  CMS_MAX_MEDIA_BYTES,
   type ApiErrorCode,
   type ApiFailure,
   type ApiSuccess,
@@ -85,6 +86,23 @@ export async function readJsonBody(request: Request): Promise<unknown> {
   } catch {
     throw new CmsApiError(400, 'invalid_json', 'The request body is not valid JSON.');
   }
+}
+
+export async function readMediaBody(request: Request): Promise<{ bytes: ArrayBuffer; contentType: 'image/jpeg' | 'image/png' | 'image/webp' }> {
+  const contentType = request.headers.get('content-type')?.split(';')[0].trim().toLowerCase();
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(contentType ?? '')) {
+    throw new CmsApiError(415, 'invalid_media', 'Media must be JPEG, PNG, or WebP.');
+  }
+  const announcedLength = Number(request.headers.get('content-length'));
+  if (Number.isFinite(announcedLength) && announcedLength > CMS_MAX_MEDIA_BYTES) {
+    throw new CmsApiError(413, 'payload_too_large', `Staged media files are limited to ${CMS_MAX_MEDIA_BYTES} bytes.`);
+  }
+  const bytes = await request.arrayBuffer();
+  if (bytes.byteLength < 1) throw new CmsApiError(400, 'invalid_media', 'The uploaded media file is empty.');
+  if (bytes.byteLength > CMS_MAX_MEDIA_BYTES) {
+    throw new CmsApiError(413, 'payload_too_large', `Staged media files are limited to ${CMS_MAX_MEDIA_BYTES} bytes.`);
+  }
+  return { bytes, contentType: contentType as 'image/jpeg' | 'image/png' | 'image/webp' };
 }
 
 export function jsonSuccess<T>(data: T, requestIdValue: string, status = 200): Response {
