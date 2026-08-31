@@ -43,9 +43,9 @@
     display:flex; align-items:center; gap:30px;
     color:var(--cream);
     padding:13px 28px;
-    border-radius:100px;
-    corner-shape:round;
-    --lg-radius:100px;
+    border-radius:999px;
+    corner-shape:round !important;
+    --lg-radius:999px;
     background:transparent;
     border:0;
   }
@@ -54,9 +54,10 @@
   .nav-pill.liquid-glass > .liquid-glass-shine,
   .nav-pill.liquid-glass::before,
   .nav-pill.liquid-glass::after{
-    corner-shape:round;
-    border-radius:100px;
-    clip-path:inset(0 round 100px);
+    corner-shape:round !important;
+    border-radius:999px;
+    -webkit-clip-path:inset(0 round 999px);
+    clip-path:inset(0 round 999px);
   }
   .nav-pill__content{ display:flex; align-items:center; gap:30px; }
   .nav-pill .brand{
@@ -131,12 +132,47 @@
   .gel-button{
     --gel-rgb:var(--btn-cyan-soft);
     --gel-hover-rgb:var(--btn-cyan-deep);
-    --lg-radius:100px;
+    --lg-radius:999px;
     position:relative;
-    border-radius:100px;
+    border-radius:999px;
     border:1px solid rgba(255,255,255,0.30);
     background:rgb(var(--gel-rgb));
     transition:background .28s var(--ease), border-color .28s var(--ease), box-shadow .35s var(--ease), scale .35s var(--ease-apple-magnetic);
+  }
+  /* The package's core stylesheet opts supported Chrome builds into a
+     squircle. These controls are true capsules/circles instead. Safari also
+     needs every filtered child clipped explicitly because filtered layers can
+     escape a rounded parent's overflow during compositing. The host itself is
+     deliberately not clip-pathed: doing so creates a Backdrop Root and stops
+     the glass from sampling the scene behind it. */
+  .liquid-glass.gel-button,
+  .liquid-glass.nav-toggle-gel,
+  .liquid-glass.gel-button > .liquid-glass-effect,
+  .liquid-glass.gel-button > .liquid-glass-tint,
+  .liquid-glass.gel-button > .liquid-glass-shine,
+  .liquid-glass.gel-button > .liquid-glass-content,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-effect,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-tint,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-shine,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-content,
+  .liquid-glass.gel-button::before,
+  .liquid-glass.gel-button::after,
+  .liquid-glass.nav-toggle-gel::before,
+  .liquid-glass.nav-toggle-gel::after{
+    corner-shape:round !important;
+    border-radius:999px !important;
+  }
+  .liquid-glass.gel-button > .liquid-glass-effect,
+  .liquid-glass.gel-button > .liquid-glass-tint,
+  .liquid-glass.gel-button > .liquid-glass-shine,
+  .liquid-glass.gel-button > .liquid-glass-content,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-effect,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-tint,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-shine,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-content{
+    overflow:hidden;
+    -webkit-clip-path:inset(0 round 999px);
+    clip-path:inset(0 round 999px);
   }
   .gel-button > .liquid-glass-effect{
     --lg-blur:2px;
