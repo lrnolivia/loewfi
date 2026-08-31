@@ -161,14 +161,12 @@ export function parseSiteConfigDocument(value: unknown): SiteConfigDocument {
   };
 }
 
-export function validateContentCollection(collection: {
-  projects: unknown[];
-  pages: unknown[];
-  siteConfig: unknown;
-}): ContentCollection {
-  const projects = collection.projects.map(parseProjectDocument);
-  const pages = collection.pages.map(parsePageDocument);
-  const siteConfig = parseSiteConfigDocument(collection.siteConfig);
+export function validateContentCollection(collection: unknown): ContentCollection {
+  const record = asRecord(collection, '$');
+  exactKeys(record, ['projects', 'pages', 'siteConfig'], '$');
+  const projects = asArray(record.projects, '$.projects').map(parseProjectDocument);
+  const pages = asArray(record.pages, '$.pages').map(parsePageDocument);
+  const siteConfig = parseSiteConfigDocument(record.siteConfig);
 
   requireUnique(projects.map((project) => project.slug), '$.projects', 'project slug');
   requireUnique(pages.map((page) => page.slug), '$.pages', 'page slug');

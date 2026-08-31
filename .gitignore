@@ -3,6 +3,12 @@ node_modules/
 dist/
 generated-preview/
 .renderer-build/
+.wrangler/
 .DS_Store
 .env
 .env.*
+cms-reference-clone/
+REPO-CLEANUP.md
+.vite/
+coverage/
+*.log

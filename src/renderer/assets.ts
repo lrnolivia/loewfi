@@ -1,8 +1,9 @@
-import { posix } from 'node:path';
-
 export function relativeAssetUrl(artifactPath: string, repositoryPath: string): string {
-  const fromDirectory = posix.dirname(artifactPath);
-  const relative = posix.relative(fromDirectory, repositoryPath);
+  const from = artifactPath.split('/').slice(0, -1);
+  const to = repositoryPath.split('/');
+  let shared = 0;
+  while (shared < from.length && shared < to.length && from[shared] === to[shared]) shared += 1;
+  const relative = [...from.slice(shared).map(() => '..'), ...to.slice(shared)].join('/');
   return relative.startsWith('.') ? relative : `./${relative}`;
 }
 

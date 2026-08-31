@@ -8,11 +8,11 @@ Drafts branch from canonical validated data before publishing and never become p
 
 ## React admin
 
-The application mounted from `admin/index.html` owns interactive editing and status UI. It talks to the server only through `src/admin/api`. Editor and business components consume `src/admin/design-system`; they must not import a Liquid Glass renderer directly.
+The application mounted from `admin/index.html` owns routing, bootstrap state, portfolio management, future editing, and status UI. It talks to the server only through `src/admin/api`. Feature modules consume `src/admin/design-system`; they do not import public Liquid Glass internals. The current shell and project catalog use an isolated cream/ink material boundary that can accept the revised Sohum treatment when the final mockup arrives.
 
 ## CMS API
 
-Cloudflare Pages Functions live under `functions/admin/api`. They authenticate upstream through Cloudflare Access, validate all untrusted input again, coordinate draft/renderer/publisher services, and keep GitHub credentials server-side.
+Cloudflare Pages Functions live under `functions/admin/api`. Shared middleware requires the identity headers injected behind Cloudflare Access, assigns a request ID, converts expected failures into a stable JSON envelope, and prevents internal exception details from reaching the client. The active API exposes identity, capability discovery, a read-only bundled repository snapshot, and full-collection validation/artifact planning. A loopback-only development identity can be enabled explicitly by the local Wrangler command and cannot activate on a non-local hostname. Draft, preview, and publishing capabilities report themselves as disabled until their implementations exist.
 
 ## Shared content model
 

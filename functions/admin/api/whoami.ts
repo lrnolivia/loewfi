@@ -1,22 +1,8 @@
-type PagesContext = {
-  request: Request;
-};
+import { allowMethod, jsonSuccess, requireIdentity } from './_lib/http';
+import type { CmsRouteContext } from './_lib/types';
 
-export async function onRequestGet({ request }: PagesContext): Promise<Response> {
-  const email = request.headers.get('Cf-Access-Authenticated-User-Email');
-  const jwt = request.headers.get('Cf-Access-Jwt-Assertion');
-
-  return Response.json(
-    {
-      ok: true,
-      email,
-      accessJwtPresent: Boolean(jwt),
-      timestamp: new Date().toISOString(),
-    },
-    {
-      headers: {
-        'cache-control': 'no-store',
-      },
-    },
-  );
+export function onRequest(context: CmsRouteContext): Response {
+  allowMethod(context.request, ['GET']);
+  const identity = requireIdentity(context.data);
+  return jsonSuccess(identity, context.data.requestId ?? 'missing-request-id');
 }

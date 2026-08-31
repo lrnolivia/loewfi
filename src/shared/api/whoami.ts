@@ -1,17 +1,14 @@
-export type WhoAmI = {
-  ok: true;
-  email: string | null;
-  accessJwtPresent: boolean;
-  timestamp: string;
-};
+import type { CmsIdentity } from './contracts';
+import { isRecord } from './contracts';
+
+export type WhoAmI = CmsIdentity;
 
 export function parseWhoAmI(value: unknown): WhoAmI {
   if (!isRecord(value)) throw new Error('Invalid CMS identity response.');
-
-  const validEmail = value.email === null || typeof value.email === 'string';
   if (
-    value.ok !== true ||
-    !validEmail ||
+    typeof value.email !== 'string' ||
+    value.email.trim() === '' ||
+    !['cloudflare-access', 'local-development'].includes(String(value.authentication)) ||
     typeof value.accessJwtPresent !== 'boolean' ||
     typeof value.timestamp !== 'string' ||
     Number.isNaN(Date.parse(value.timestamp))
@@ -20,13 +17,9 @@ export function parseWhoAmI(value: unknown): WhoAmI {
   }
 
   return {
-    ok: true,
-    email: value.email as string | null,
+    email: value.email,
+    authentication: value.authentication as WhoAmI['authentication'],
     accessJwtPresent: value.accessJwtPresent,
     timestamp: value.timestamp,
   };
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }

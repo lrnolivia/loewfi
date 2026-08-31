@@ -10,8 +10,11 @@ const lens = {
   control: { bezel: 10, refraction: 1, dispersion: 2, radius: 40 },
 };
 
+const routePath = (page) => page === 'index' ? '/' : `/${page}`;
 const pageKey = () => {
-  const file = location.pathname.split('/').pop() || 'index.html';
+  const pathname = decodeURIComponent(window.location.pathname).replace(/\/+$/, '');
+  if (!pathname) return 'index';
+  const file = pathname.split('/').pop() || 'index';
   return file.replace(/\.html$/, '') || 'index';
 };
 
@@ -55,25 +58,25 @@ function Navbar({ page }) {
   return <div className="nav-wrap">
     <Glass className="nav-pill" contentClassName="nav-pill__glass-content" options={lens.nav}>
       <div className="nav-pill__content">
-        <a href="index.html" className="brand">loew.fi</a>
+        <a href={routePath('index')} className="brand">loew.fi</a>
         <ul className="nav-links">
-          <li><a href="index.html" aria-current={page === 'index' ? 'page' : undefined}>Main</a></li>
+          <li><a href={routePath('index')} aria-current={page === 'index' ? 'page' : undefined}>Main</a></li>
           <li className="nav-drop">
-            <a href="avedastudio.html" role="button" aria-current={page === 'avedastudio' ? 'page' : undefined}>Photo <span className="caret" /></a>
+            <a href={routePath('avedastudio')} aria-current={page === 'avedastudio' ? 'page' : undefined}>Photo <span className="caret" /></a>
             <div className="nav-drop__panel-wrap"><Glass className="nav-drop__panel" contentClassName="nav-drop__panel-content">
-              <a href="#">Aveda Lifestyle</a><a href="avedastudio.html" aria-current={page === 'avedastudio' ? 'page' : undefined}>Aveda Studio</a><a href="#">Isles Ashore</a><a href="#">Magnolia Fields</a><a href="#">Leaves &amp; Leos</a>
+              <a href={routePath('avedalife')}>Aveda Lifestyle</a><a href={routePath('avedastudio')} aria-current={page === 'avedastudio' ? 'page' : undefined}>Aveda Studio</a><a href={routePath('islesashore')}>Isles Ashore</a><a href={routePath('magnoliafields')}>Magnolia Fields</a><a href={routePath('leavesleos')}>Leaves &amp; Leos</a>
             </Glass></div>
           </li>
           <li className="nav-drop">
-            <a href="hydroviv.html" role="button" aria-current={['hydroviv', 'cksteele'].includes(page) ? 'page' : undefined}>Design <span className="caret" /></a>
+            <a href={routePath('hydroviv')} aria-current={['hydroviv', 'cksteele'].includes(page) ? 'page' : undefined}>Design <span className="caret" /></a>
             <div className="nav-drop__panel-wrap"><Glass className="nav-drop__panel" contentClassName="nav-drop__panel-content">
-              <a href="hydroviv.html" aria-current={page === 'hydroviv' ? 'page' : undefined}>Hydroviv</a><a href="#">Ascencion</a><a href="#">Glory Be</a><a href="cksteele.html" aria-current={page === 'cksteele' ? 'page' : undefined}>CK Steele Plaza</a><a href="#">Promotional Material</a><a href="#">Misc</a>
+              <a href={routePath('hydroviv')} aria-current={page === 'hydroviv' ? 'page' : undefined}>Hydroviv</a><a href={routePath('delta-ascencion')}>Ascencion</a><a href={routePath('glorybe')}>Glory Be</a><a href={routePath('cksteele')} aria-current={page === 'cksteele' ? 'page' : undefined}>CK Steele Plaza</a><a href={routePath('promotional')}>Promotional Material</a><a href={routePath('misc')}>Misc</a>
             </Glass></div>
           </li>
-          <li><a href="about.html" aria-current={page === 'about' ? 'page' : undefined}>About</a></li>
+          <li><a href={routePath('about')} aria-current={page === 'about' ? 'page' : undefined}>About</a></li>
         </ul>
       </div>
-      <a href="contact.html" className="nav-cta" aria-current={page === 'contact' ? 'page' : undefined}>Contact</a>
+      <a href={routePath('contact')} className="nav-cta" aria-current={page === 'contact' ? 'page' : undefined}>Contact</a>
     </Glass>
   </div>;
 }
@@ -90,26 +93,26 @@ function PageHero({ image, eyebrow, title, lede, className = '', soften = false 
 }
 
 const work = [
-  ['avedastudio.html','alex1.jpg','Photo','Aveda Studio','A season of studio beauty work — hair, light, and 44 frames of it.'],
-  ['hydroviv.html','Outside.png','Design','Hydroviv','Advertisement, print and marketing material work.'],
-  ['cksteele.html','dt_starmetro_final_Page_1.jpg','Design','CK Steele Plaza','A physical mural on the history and future of public transit.'],
-  ['#','isles-teaser.jpg','Photo','Isles Ashore','Coastal light, unstyled.'],
-  ['#','asc_main.jpg','Design','Ascencion','Brand identity for a Delta × SpaceX passenger flight concept.'],
+  [routePath('avedastudio'),'alex1.jpg','Photo','Aveda Studio','A season of studio beauty work — hair, light, and 44 frames of it.'],
+  [routePath('hydroviv'),'Outside.png','Design','Hydroviv','Advertisement, print and marketing material work.'],
+  [routePath('cksteele'),'dt_starmetro_final_Page_1.jpg','Design','CK Steele Plaza','A physical mural on the history and future of public transit.'],
+  [routePath('islesashore'),'isles-teaser.jpg','Photo','Isles Ashore','Coastal light, unstyled.'],
+  [routePath('delta-ascencion'),'asc_main.jpg','Design','Ascencion','Brand identity for a Delta × SpaceX passenger flight concept.'],
 ];
 
 function Home() {
   return <><section className="hero home-hero">
     <div className="photo-fill scrim-top" style={{ backgroundImage: `url('${img('moss.jpg')}')` }} /><div className="grain-line" /><div className="tag-corner mono">LOEW FIDELITY<br />FIELD NOTES — VOL. 04</div>
-    <div className="hero-card"><div className="hero-card-inner paper"><div className="eyebrow"><i />tallahassee, fl</div><h1>Twenty years of<br />making <span>things.</span></h1><p className="sub">A collection of design and photography by Lauren White — from personal and college projects to production assets for recording artists and D2C marketing.</p><div className="actions"><a href="avedastudio.html" className="btn-primary">View the work</a><a href="about.html" className="btn-ghost">About Lauren</a></div></div></div>
+    <div className="hero-card"><div className="hero-card-inner paper"><div className="eyebrow"><i />tallahassee, fl</div><h1>Twenty years of<br />making <span>things.</span></h1><p className="sub">A collection of design and photography by Lauren White — from personal and college projects to production assets for recording artists and D2C marketing.</p><div className="actions"><a href={routePath('avedastudio')} className="btn-primary">View the work</a><a href={routePath('about')} className="btn-ghost">About Lauren</a></div></div></div>
   </section>
-  <section className="work anim-fadeUp"><div className="work-head"><h2>Selected work</h2><p>A mix of photography and design projects — the full archive is split into two tracks in the nav above.</p></div><div className="work-grid">{work.map(([href,image,track,title,desc]) => <a href={href} className="teaser-card" key={title}><div className="teaser-card__frame"><div className="teaser-card__frame-inner"><img src={img(image)} alt="" /></div></div><div className="teaser-card__meta"><span className="teaser-card__track mono">{track}</span><h3 className="teaser-card__title">{title}</h3><p className="teaser-card__desc">{desc}</p></div></a>)}</div></section>
-  <section className="tracks"><div className="tracks-inner"><div className="track"><h3>Photo</h3><p>Finished photography — studio beauty work, coastal landscapes, lifestyle sets. Shown full-bleed, with a view switcher on every gallery so you can browse it the way that suits the set.</p><a href="avedastudio.html">Start with Aveda Studio →</a></div><div className="track"><h3>Design</h3><p>Print, brand, and packaging work — presented as case studies, with the artifacts themselves framed like prints on a table rather than cropped into a photo grid.</p><a href="hydroviv.html">Start with Hydroviv →</a></div></div></section></>;
+  <section className="work anim-fadeUp"><div className="work-head"><h2>Selected work</h2><p>A mix of photography and design projects — the full archive is split into two tracks in the nav above.</p></div><div className="work-grid">{work.map(([href,image,track,title,desc]) => <a href={href} className="teaser-card" key={title}><div className="teaser-card__frame"><div className="teaser-card__frame-inner"><img src={img(image)} alt="" loading="lazy" decoding="async" /></div></div><div className="teaser-card__meta"><span className="teaser-card__track mono">{track}</span><h3 className="teaser-card__title">{title}</h3><p className="teaser-card__desc">{desc}</p></div></a>)}</div></section>
+  <section className="tracks"><div className="tracks-inner"><div className="track"><h3>Photo</h3><p>Finished photography — studio beauty work, coastal landscapes, lifestyle sets. Shown full-bleed, with a view switcher on every gallery so you can browse it the way that suits the set.</p><a href={routePath('avedastudio')}>Start with Aveda Studio →</a></div><div className="track"><h3>Design</h3><p>Print, brand, and packaging work — presented as case studies, with the artifacts themselves framed like prints on a table rather than cropped into a photo grid.</p><a href={routePath('hydroviv')}>Start with Hydroviv →</a></div></div></section></>;
 }
 
 function About() {
   return <><PageHero image="moss.jpg" eyebrow="about" title="Lauren White" />
   <main className="article"><aside className="article__sidebar"><dl><dt>Based</dt><dd>Tallahassee, FL</dd><dt>Disciplines</dt><dd>Design, art direction, photography</dd><dt>Selected clients</dt><dd>Hydroviv, Delta (student), Britney Spears / Glory (student)</dd><dt>Contact</dt><dd><a href="mailto:me@loew.fi" className="text-link">me@loew.fi</a></dd></dl><div className="facts-plate"><div className="plate card-tilt"><h4>On the desk right now</h4><ul><li>Aveda Studio, season two</li><li>A print run for a friend's zine</li><li>This website</li></ul></div></div><nav aria-label="On this page"><a href="#story" className="is-active">The short version</a><a href="#practice">How I work</a><a href="#now">What's next</a></nav></aside>
-  <div className="article__body"><h1 className="about-title">Twenty years of making things, most of them by hand first.</h1><p className="lede" id="story">I've been making things — collages, zines, posters, then album layouts and brand systems, then whatever a client actually needed — for about twenty years now. Some of it was for college. Some of it was for myself. A good amount of it, lately, is for people who need a system to sell water filters or fill a mural wall downtown.</p><p>I trained as a designer first, which is probably why even the photography leans toward composition and light over spontaneity — the beauty work in Aveda Studio is closer in spirit to the brand plates in Hydroviv than either of them is to a snapshot. I like problems with real constraints: a wall that's already there, a product that already exists, a client with an actual opinion about their own brand.</p><div className="pull"><img src={img('ashelli2+(1).jpg')} alt="Studio portrait from the Aveda Studio series" /></div><h2 id="practice">How I work</h2><p>Most projects start on paper, not because it's precious but because it's faster to throw away. The CK Steele mural went through a dozen thumbnail passes before anyone saw a digital file. The same is mostly true of a shoot — I'd rather over-plan a set and improvise the actual frames than the other way around.</p><p>I still think in terms of print, even for screens — a page, a spread, a plate. It's part of why this site treats design work like objects on a table instead of tiles in a grid.</p><h2 id="now">What's next</h2><p>A second season of studio work with Aveda, and slowly getting the rest of the archive — Glory Be, the Ascencion brand exercise, a decade of miscellaneous print — properly organized here instead of scattered across old drives. If you've got a wall, a brand, or a water filter that needs a system, <a href="contact.html" className="text-link">say hello</a>.</p></div></main></>;
+  <div className="article__body"><h1 className="about-title">Twenty years of making things, most of them by hand first.</h1><p className="lede" id="story">I've been making things — collages, zines, posters, then album layouts and brand systems, then whatever a client actually needed — for about twenty years now. Some of it was for college. Some of it was for myself. A good amount of it, lately, is for people who need a system to sell water filters or fill a mural wall downtown.</p><p>I trained as a designer first, which is probably why even the photography leans toward composition and light over spontaneity — the beauty work in Aveda Studio is closer in spirit to the brand plates in Hydroviv than either of them is to a snapshot. I like problems with real constraints: a wall that's already there, a product that already exists, a client with an actual opinion about their own brand.</p><div className="pull"><img src={img('ashelli2+(1).jpg')} alt="Studio portrait from the Aveda Studio series" loading="lazy" decoding="async" /></div><h2 id="practice">How I work</h2><p>Most projects start on paper, not because it's precious but because it's faster to throw away. The CK Steele mural went through a dozen thumbnail passes before anyone saw a digital file. The same is mostly true of a shoot — I'd rather over-plan a set and improvise the actual frames than the other way around.</p><p>I still think in terms of print, even for screens — a page, a spread, a plate. It's part of why this site treats design work like objects on a table instead of tiles in a grid.</p><h2 id="now">What's next</h2><p>A second season of studio work with Aveda, and slowly getting the rest of the archive — Glory Be, the Ascencion brand exercise, a decade of miscellaneous print — properly organized here instead of scattered across old drives. If you've got a wall, a brand, or a water filter that needs a system, <a href={routePath('contact')} className="text-link">say hello</a>.</p></div></main></>;
 }
 
 const galleryImages = [
@@ -125,9 +128,9 @@ function AvedaStudio() {
   const move = (delta) => setCurrent(i => (i + delta + galleryImages.length) % galleryImages.length);
   return <><PageHero image="alex1.jpg" eyebrow="photo — studio beauty" title="Aveda Studio" lede="A season of studio beauty work — hair, light, and forty-four frames of it, shown here in a representative set of sixteen." />
   <div className="gwrap"><div className="gallery-bar"><p className="gnote">16 of 44 — full set ships with the production build</p><Glass className="view-switch" contentClassName="view-switch__content" options={lens.control} variant="clear" role="group" aria-label="Gallery view">{views.map(item => <button type="button" key={item} onClick={() => setView(item)} aria-pressed={view === item}><ViewIcon type={item}/>{item}</button>)}</Glass></div>
-  <div className="gallery" data-view={view}>{galleryImages.map(([src,alt,caption],i) => <figure className={`g-item${i === current ? ' is-active' : ''}`} key={src}><img src={img(src)} alt={alt}/>{caption && <figcaption>{caption}</figcaption>}</figure>)}</div>
+  <div className="gallery" data-view={view}>{galleryImages.map(([src,alt,caption],i) => <figure className={`g-item${i === current ? ' is-active' : ''}`} key={src}><img src={img(src)} alt={alt} loading={i < 4 ? 'eager' : 'lazy'} fetchPriority={i === 0 ? 'high' : 'auto'} decoding="async" />{caption && <figcaption>{caption}</figcaption>}</figure>)}</div>
   <div className={`carousel-controls${view === 'carousel' ? ' is-active' : ''}`}><button type="button" onClick={() => move(-1)} aria-label="Previous image">‹</button><span className="carousel-controls__count">{current+1} / {galleryImages.length}</span><button type="button" onClick={() => move(1)} aria-label="Next image">›</button></div>
-  <div className={`carousel-thumbs${view === 'carousel' ? ' is-active' : ''}`}>{galleryImages.map(([src],i) => <button type="button" key={src} className={i === current ? 'is-active' : ''} onClick={() => setCurrent(i)} aria-label={`Go to image ${i+1}`}><img src={img(src)} alt="" /></button>)}</div></div></>;
+  <div className={`carousel-thumbs${view === 'carousel' ? ' is-active' : ''}`}>{galleryImages.map(([src],i) => <button type="button" key={src} className={i === current ? 'is-active' : ''} onClick={() => setCurrent(i)} aria-label={`Go to image ${i+1}`}><img src={img(src)} alt="" loading="lazy" decoding="async" /></button>)}</div></div></>;
 }
 
 function Hydroviv() {
@@ -136,7 +139,7 @@ function Hydroviv() {
 }
 
 function CaseSidebar({ items, links }) { return <aside className="article__sidebar"><dl>{items.map(([dt,dd]) => <div key={dt}><dt>{dt}</dt><dd>{dd}</dd></div>)}</dl><nav aria-label="On this page">{links.map(([href,label],i) => <a href={href} className={i === 0 ? 'is-active' : ''} key={href}>{label}</a>)}</nav></aside>; }
-function Plate({ src, caption, className='' }) { return <figure className={`plate ${className}`}><img src={img(src)} alt={caption}/><figcaption>{caption}</figcaption></figure>; }
+function Plate({ src, caption, className='' }) { return <figure className={`plate ${className}`}><img src={img(src)} alt={caption} loading="lazy" decoding="async" /><figcaption>{caption}</figcaption></figure>; }
 
 function CKSteele() {
   const panels = [1,2,4,5,8];
@@ -148,13 +151,44 @@ function Contact() {
   return <section className="hero contact-hero"><div className="photo-fill scrim-full" style={{ backgroundImage:`url('${img('contact-hero.jpg')}')` }}/><div className="grain-line contact-line"/><div className="tag-corner mono">LOEW FIDELITY<br/>GET IN TOUCH</div><div className="contact-panel paper"><div className="eyebrow"><i/>say hello</div><h1>Let's make<br/>something.</h1><p className="sub">Print, brand, or photography — if it's a real problem with a real deadline, I'd like to hear about it.</p><form className="contact-form" action="mailto:me@loew.fi" method="GET" encType="text/plain"><div className="row"><div className="field"><label htmlFor="name">Name</label><input id="name" name="name" required/></div><div className="field"><label htmlFor="email">Email</label><input type="email" id="email" name="email" required/></div></div><div className="field"><label htmlFor="message">What are you working on?</label><textarea id="message" name="body" required/></div><button type="submit">Send it</button></form><div className="direct"><a href="mailto:me@loew.fi">me@loew.fi</a><a href="tel:8505709019">850.570.9019</a><a href="http://instagram.com/lrnolivia">@lrnolivia</a></div></div></section>;
 }
 
+function NotFound() {
+  return <main className="not-found"><div className="eyebrow on-dark"><i />404</div><h1>This page wandered off.</h1><p>The work is still here. Head back to the portfolio index and try another route.</p><a href={routePath('index')} className="btn-primary">Back to the work</a></main>;
+}
+
 const pages = { index: Home, about: About, avedastudio: AvedaStudio, hydroviv: Hydroviv, cksteele: CKSteele, contact: Contact };
-const meta = { index:['loew.fi — Lauren White, design & photography','cat-neutral'], about:['About — loew.fi','cat-neutral'], avedastudio:['Aveda Studio — loew.fi','cat-photo'], hydroviv:['Hydroviv — loew.fi','cat-design'], cksteele:['CK Steele Plaza — loew.fi','cat-design'], contact:['Contact — loew.fi','cat-neutral'] };
+const meta = {
+  index: ['loew.fi — Lauren White, design & photography', 'cat-neutral', 'The design and photography portfolio of Lauren White.'],
+  about: ['About Lauren White — loew.fi', 'cat-neutral', 'About Lauren White, a Tallahassee-based designer, art director, and photographer.'],
+  avedastudio: ['Aveda Studio — loew.fi', 'cat-photo', 'A season of studio beauty photography by Lauren White.'],
+  hydroviv: ['Hydroviv — loew.fi', 'cat-design', 'Print, direct-mail, and digital campaign design for Hydroviv.'],
+  cksteele: ['CK Steele Plaza — loew.fi', 'cat-design', 'A public mural project tracing Tallahassee transportation history.'],
+  contact: ['Contact — loew.fi', 'cat-neutral', 'Contact Lauren White about design, art direction, and photography projects.'],
+  notFound: ['Page not found — loew.fi', 'cat-neutral', 'The requested page could not be found.'],
+};
 
 export default function MockupApp() {
-  const page = pageKey(); const Page = pages[page] || Home;
+  const page = pageKey(); const found = Boolean(pages[page]); const Page = pages[page] || NotFound;
   useLiquidGlassEffects({ cursor:true, spotlight:false, reveal:false, scroll:false });
   useDynamicFrameColors(page);
-  useEffect(() => { document.title = (meta[page] || meta.index)[0]; document.body.className = (meta[page] || meta.index)[1]; document.documentElement.classList.add('dark'); document.documentElement.dataset.glassEngine='sohum'; return () => { document.body.className=''; }; }, [page]);
+  useEffect(() => {
+    const [title, bodyClass, description] = meta[found ? page : 'notFound'];
+    const canonicalPath = found ? routePath(page) : window.location.pathname;
+    document.title = title;
+    document.body.className = bodyClass;
+    document.documentElement.classList.add('dark');
+    document.documentElement.dataset.glassEngine = 'sohum';
+    document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+    document.querySelector('meta[property="og:title"]')?.setAttribute('content', title);
+    document.querySelector('meta[property="og:description"]')?.setAttribute('content', description);
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', new URL(canonicalPath, 'https://loew.fi').href);
+    let robots = document.querySelector('meta[name="robots"]');
+    if (!found && !robots) {
+      robots = document.createElement('meta');
+      robots.setAttribute('name', 'robots');
+      document.head.append(robots);
+    }
+    if (robots) robots.setAttribute('content', found ? 'index,follow' : 'noindex,follow');
+    return () => { document.body.className = ''; };
+  }, [found, page]);
   return <><Navbar page={page}/><Page/><Footer/></>;
 }
