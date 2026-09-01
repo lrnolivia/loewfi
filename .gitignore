@@ -12,3 +12,4 @@ REPO-CLEANUP.md
 .vite/
 coverage/
 *.log
+public/media/
