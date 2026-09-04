@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { LiquidGlass } from '@sohumsuthar/liquid-glass';
 import { useLiquidGlassEffects } from '@sohumsuthar/liquid-glass/hooks';
 import mossUrl from '../../mockup/assets/img/moss.jpg?url';
@@ -6,11 +6,11 @@ import contactHeroUrl from '../../mockup/assets/img/contact-hero.jpg?url';
 import {
   designArchiveProjects,
   designCatalogSlugs,
-  designSlugs,
   featuredSlugs,
   photographyProjects,
   photoSlugs,
   projectCatalog,
+  portfolioNavigation,
 } from './content/portfolio.js';
 
 const localImages = { 'moss.jpg': mossUrl, 'contact-hero.jpg': contactHeroUrl };
@@ -94,37 +94,44 @@ function Glass({ className = '', contentClassName = '', options = lens.panel, va
 
 function Navbar({ page }) {
   const [open, setOpen] = useState(false);
-  const mobileLink = (slug, label) => <SiteLink href={routePath(slug)} aria-current={page === slug ? 'page' : undefined} onClick={() => setOpen(false)}>{label}</SiteLink>;
+  const toggleRef = useRef(null);
+  const projectLink = (slug) => <SiteLink href={routePath(slug)} key={slug} aria-current={page === slug ? 'page' : undefined}>{projectCatalog[slug].title}</SiteLink>;
+  const mobileLink = (slug, label) => <SiteLink href={routePath(slug)} key={slug} aria-current={page === slug ? 'page' : undefined} tabIndex={open ? undefined : -1} onClick={() => setOpen(false)}>{label}</SiteLink>;
+  useEffect(() => setOpen(false), [page]);
+  useEffect(() => {
+    if (!open) return undefined;
+    const closeOnEscape = (event) => {
+      if (event.key !== 'Escape') return;
+      setOpen(false);
+      toggleRef.current?.focus();
+    };
+    document.addEventListener('keydown', closeOnEscape);
+    return () => document.removeEventListener('keydown', closeOnEscape);
+  }, [open]);
   return <nav className="nav-wrap" aria-label="Primary">
     <Glass className="nav-pill" contentClassName="nav-pill__glass-content" options={lens.nav}>
       <div className="nav-pill__content">
         <SiteLink href={routePath('index')} className="brand">loew.fi</SiteLink>
         <ul className="nav-links">
           <li><SiteLink href={routePath('index')} aria-current={page === 'index' ? 'page' : undefined}>Main</SiteLink></li>
-          <li className="nav-drop">
-            <SiteLink href={routePath('photo')} aria-current={page === 'photo' || photoSlugs.includes(page) ? 'page' : undefined}>Photo <span className="caret" /></SiteLink>
+          {portfolioNavigation.map((group) => <li className="nav-drop" key={group.slug}>
+            <SiteLink href={routePath(group.slug)} aria-current={page === group.slug || group.projectSlugs.includes(page) ? 'page' : undefined}>{group.label} <span className="caret" /></SiteLink>
             <div className="nav-drop__panel-wrap"><Glass className="nav-drop__panel" contentClassName="nav-drop__panel-content">
-              <SiteLink href={routePath('photo')} aria-current={page === 'photo' ? 'page' : undefined}>All photography</SiteLink><SiteLink href={routePath('avedalife')} aria-current={page === 'avedalife' ? 'page' : undefined}>Aveda Lifestyle</SiteLink><SiteLink href={routePath('avedastudio')} aria-current={page === 'avedastudio' ? 'page' : undefined}>Aveda Studio</SiteLink><SiteLink href={routePath('islesashore')} aria-current={page === 'islesashore' ? 'page' : undefined}>Isles Ashore</SiteLink><SiteLink href={routePath('magnoliafields')} aria-current={page === 'magnoliafields' ? 'page' : undefined}>Magnolia Fields</SiteLink><SiteLink href={routePath('leavesleos')} aria-current={page === 'leavesleos' ? 'page' : undefined}>Leaves &amp; Leos</SiteLink>
+              <SiteLink href={routePath(group.slug)} aria-current={page === group.slug ? 'page' : undefined}>{group.allLabel}</SiteLink>
+              {group.projectSlugs.map(projectLink)}
             </Glass></div>
-          </li>
-          <li className="nav-drop">
-            <SiteLink href={routePath('design')} aria-current={page === 'design' || designSlugs.includes(page) ? 'page' : undefined}>Design <span className="caret" /></SiteLink>
-            <div className="nav-drop__panel-wrap"><Glass className="nav-drop__panel" contentClassName="nav-drop__panel-content">
-              <SiteLink href={routePath('design')} aria-current={page === 'design' ? 'page' : undefined}>All design</SiteLink><SiteLink href={routePath('hydroviv')} aria-current={page === 'hydroviv' ? 'page' : undefined}>Hydroviv</SiteLink><SiteLink href={routePath('delta-ascencion')} aria-current={page === 'delta-ascencion' ? 'page' : undefined}>Ascencion</SiteLink><SiteLink href={routePath('glorybe')} aria-current={page === 'glorybe' ? 'page' : undefined}>Glory Be</SiteLink><SiteLink href={routePath('cksteele')} aria-current={page === 'cksteele' ? 'page' : undefined}>CK Steele Plaza</SiteLink><SiteLink href={routePath('promotional')} aria-current={page === 'promotional' ? 'page' : undefined}>Promotional Material</SiteLink><SiteLink href={routePath('misc')} aria-current={page === 'misc' ? 'page' : undefined}>Misc</SiteLink>
-            </Glass></div>
-          </li>
+          </li>)}
           <li><SiteLink href={routePath('about')} aria-current={page === 'about' ? 'page' : undefined}>About</SiteLink></li>
         </ul>
       </div>
       <div className="nav-actions">
-        <button type="button" className={`mobile-nav-toggle${open ? ' is-open' : ''}`} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="mobile-menu" onClick={() => setOpen((value) => !value)}><span /><span /><span /></button>
+        <button ref={toggleRef} type="button" className={`mobile-nav-toggle${open ? ' is-open' : ''}`} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="mobile-menu" onClick={() => setOpen((value) => !value)}><span /><span /><span /></button>
         <SiteLink href={routePath('contact')} className="nav-cta" aria-current={page === 'contact' ? 'page' : undefined}>Contact</SiteLink>
       </div>
     </Glass>
     <Glass className={`mobile-nav-panel${open ? ' is-open' : ''}`} contentClassName="mobile-nav-panel__content" options={lens.panel} id="mobile-menu" aria-hidden={!open}>
       <div className="mobile-nav-group">{mobileLink('index', 'Main')}{mobileLink('about', 'About')}</div>
-      <div className="mobile-nav-group"><span>Photo</span>{mobileLink('photo', 'All photography')}{mobileLink('avedalife', 'Aveda Lifestyle')}{mobileLink('avedastudio', 'Aveda Studio')}{mobileLink('islesashore', 'Isles Ashore')}{mobileLink('magnoliafields', 'Magnolia Fields')}{mobileLink('leavesleos', 'Leaves & Leos')}</div>
-      <div className="mobile-nav-group"><span>Design</span>{mobileLink('design', 'All design')}{mobileLink('hydroviv', 'Hydroviv')}{mobileLink('delta-ascencion', 'Ascencion')}{mobileLink('glorybe', 'Glory Be')}{mobileLink('cksteele', 'CK Steele Plaza')}{mobileLink('promotional', 'Promotional Material')}{mobileLink('misc', 'Misc')}</div>
+      {portfolioNavigation.map((group) => <div className="mobile-nav-group" key={group.slug}><span>{group.label}</span>{mobileLink(group.slug, group.allLabel)}{group.projectSlugs.map((slug) => mobileLink(slug, projectCatalog[slug].title))}</div>)}
     </Glass>
   </nav>;
 }
@@ -161,14 +168,14 @@ function PortfolioIndex({ track }) {
   const slugs = isPhoto ? photoSlugs : designCatalogSlugs;
   const hero = isPhoto ? 'images/home/home-01.jpg' : 'graphics/delta-ascencion/delta-ascencion-01.jpg';
   return <><PageHero imageUrl={portfolioImg(hero)} eyebrow={`${track.toLowerCase()} — complete archive`} title={isPhoto ? 'Photography' : 'Design'} lede={isPhoto ? 'Studio beauty, lifestyle, portraiture, and the landscapes around North Florida.' : 'Brand, publication, promotional, and public-space work collected across the archive.'} />
-    <main className="work portfolio-index"><div className="work-head"><h2>{slugs.length} projects</h2><p>Every collection currently available in the portfolio source archive.</p></div><ProjectGrid slugs={slugs} /></main>
+    <section className="work portfolio-index" aria-labelledby={`${track.toLowerCase()}-project-count`}><div className="work-head"><h2 id={`${track.toLowerCase()}-project-count`}>{slugs.length} projects</h2><p>Every collection currently available in the portfolio source archive.</p></div><ProjectGrid slugs={slugs} /></section>
   </>;
 }
 
 function About() {
   return <><PageHero image="moss.jpg" eyebrow="about" title="Lauren White" />
-  <main className="article"><aside className="article__sidebar"><dl><dt>Based</dt><dd>Tallahassee, FL</dd><dt>Disciplines</dt><dd>Design, art direction, photography</dd><dt>Selected clients</dt><dd>Hydroviv, Delta (student), Britney Spears / Glory (student)</dd><dt>Contact</dt><dd><a href="mailto:me@loew.fi" className="text-link">me@loew.fi</a></dd></dl><div className="facts-plate"><div className="plate card-tilt"><h4>On the desk right now</h4><ul><li>Aveda Studio, season two</li><li>A print run for a friend's zine</li><li>This website</li></ul></div></div><nav aria-label="On this page"><a href="#story" className="is-active">The short version</a><a href="#practice">How I work</a><a href="#now">What's next</a></nav></aside>
-  <div className="article__body"><h1 className="about-title">Twenty years of making things, most of them by hand first.</h1><p className="lede" id="story">I've been making things — collages, zines, posters, then album layouts and brand systems, then whatever a client actually needed — for about twenty years now. Some of it was for college. Some of it was for myself. A good amount of it, lately, is for people who need a system to sell water filters or fill a mural wall downtown.</p><p>I trained as a designer first, which is probably why even the photography leans toward composition and light over spontaneity — the beauty work in Aveda Studio is closer in spirit to the brand plates in Hydroviv than either of them is to a snapshot. I like problems with real constraints: a wall that's already there, a product that already exists, a client with an actual opinion about their own brand.</p><div className="pull"><img {...portfolioImageProps('images/avedastudio/avedastudio-07.jpg')} alt="Studio portrait from the Aveda Studio series" loading="lazy" decoding="async" /></div><h2 id="practice">How I work</h2><p>Most projects start on paper, not because it's precious but because it's faster to throw away. The CK Steele mural went through a dozen thumbnail passes before anyone saw a digital file. The same is mostly true of a shoot — I'd rather over-plan a set and improvise the actual frames than the other way around.</p><p>I still think in terms of print, even for screens — a page, a spread, a plate. It's part of why this site treats design work like objects on a table instead of tiles in a grid.</p><h2 id="now">What's next</h2><p>A second season of studio work with Aveda, and slowly getting the rest of the archive — Glory Be, the Ascencion brand exercise, a decade of miscellaneous print — properly organized here. If you've got a wall, a brand, or a water filter that needs a system, <SiteLink href={routePath('contact')} className="text-link">say hello</SiteLink>.</p></div></main></>;
+  <article className="article"><aside className="article__sidebar"><dl><dt>Based</dt><dd>Tallahassee, FL</dd><dt>Disciplines</dt><dd>Design, art direction, photography</dd><dt>Selected clients</dt><dd>Hydroviv, Delta (student), Britney Spears / Glory (student)</dd><dt>Contact</dt><dd><a href="mailto:me@loew.fi" className="text-link">me@loew.fi</a></dd></dl><div className="facts-plate"><div className="plate card-tilt"><h4>On the desk right now</h4><ul><li>Aveda Studio, season two</li><li>A print run for a friend's zine</li><li>This website</li></ul></div></div><nav aria-label="On this page"><a href="#story" className="is-active">The short version</a><a href="#practice">How I work</a><a href="#now">What's next</a></nav></aside>
+  <div className="article__body"><h1 className="about-title">Twenty years of making things, most of them by hand first.</h1><p className="lede" id="story">I've been making things — collages, zines, posters, then album layouts and brand systems, then whatever a client actually needed — for about twenty years now. Some of it was for college. Some of it was for myself. A good amount of it, lately, is for people who need a system to sell water filters or fill a mural wall downtown.</p><p>I trained as a designer first, which is probably why even the photography leans toward composition and light over spontaneity — the beauty work in Aveda Studio is closer in spirit to the brand plates in Hydroviv than either of them is to a snapshot. I like problems with real constraints: a wall that's already there, a product that already exists, a client with an actual opinion about their own brand.</p><div className="pull"><img {...portfolioImageProps('images/avedastudio/avedastudio-07.jpg')} alt="Studio portrait from the Aveda Studio series" loading="lazy" decoding="async" /></div><h2 id="practice">How I work</h2><p>Most projects start on paper, not because it's precious but because it's faster to throw away. The CK Steele mural went through a dozen thumbnail passes before anyone saw a digital file. The same is mostly true of a shoot — I'd rather over-plan a set and improvise the actual frames than the other way around.</p><p>I still think in terms of print, even for screens — a page, a spread, a plate. It's part of why this site treats design work like objects on a table instead of tiles in a grid.</p><h2 id="now">What's next</h2><p>A second season of studio work with Aveda, and slowly getting the rest of the archive — Glory Be, the Ascencion brand exercise, a decade of miscellaneous print — properly organized here. If you've got a wall, a brand, or a water filter that needs a system, <SiteLink href={routePath('contact')} className="text-link">say hello</SiteLink>.</p></div></article></>;
 }
 
 const views = ['grid','natural','strip','story','carousel'];
@@ -178,23 +185,38 @@ function ViewIcon({ type }) {
 }
 
 function MediaLightbox({ images, current, title, onClose, onMove }) {
+  const dialogRef = useRef(null);
+  const closeRef = useRef(null);
+  const returnFocusRef = useRef(null);
+  const isOpen = current !== null;
   useEffect(() => {
-    if (current === null) return undefined;
+    if (!isOpen) return undefined;
+    returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const onKeyDown = (event) => {
       if (event.key === 'Escape') onClose();
       if (event.key === 'ArrowLeft') onMove(-1);
       if (event.key === 'ArrowRight') onMove(1);
+      if (event.key === 'Tab') {
+        const controls = [...dialogRef.current.querySelectorAll('button:not([disabled])')];
+        if (!controls.length) return;
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
     };
     document.addEventListener('keydown', onKeyDown);
     document.body.classList.add('lightbox-open');
+    requestAnimationFrame(() => closeRef.current?.focus());
     return () => {
       document.removeEventListener('keydown', onKeyDown);
       document.body.classList.remove('lightbox-open');
+      if (returnFocusRef.current?.isConnected) returnFocusRef.current.focus();
     };
-  }, [current, onClose, onMove]);
+  }, [isOpen]);
   if (current === null) return null;
-  return <div className="media-lightbox" role="dialog" aria-modal="true" aria-label={`${title} image viewer`} onClick={onClose}>
-    <button type="button" className="media-lightbox__close" aria-label="Close image viewer" onClick={onClose}>×</button>
+  return <div ref={dialogRef} className="media-lightbox" role="dialog" aria-modal="true" aria-label={`${title} image viewer`} onClick={onClose}>
+    <button ref={closeRef} type="button" className="media-lightbox__close" aria-label="Close image viewer" onClick={onClose}>×</button>
     <button type="button" className="media-lightbox__arrow is-prev" aria-label="Previous image" onClick={(event) => { event.stopPropagation(); onMove(-1); }}>‹</button>
     <figure onClick={(event) => event.stopPropagation()}><img {...portfolioImageProps(images[current])} alt={`${title} — image ${current + 1}`} /><figcaption>{current + 1} / {images.length}</figcaption></figure>
     <button type="button" className="media-lightbox__arrow is-next" aria-label="Next image" onClick={(event) => { event.stopPropagation(); onMove(1); }}>›</button>
@@ -218,14 +240,14 @@ function DesignArchive({ project }) {
   const [lightbox, setLightbox] = useState(null);
   const moveLightbox = (delta) => setLightbox(i => (i + delta + project.images.length) % project.images.length);
   return <><PageHero imageUrl={portfolioImg(project.images[0])} eyebrow={project.eyebrow} title={project.title} lede={project.description} className="hero-grain" soften />
-    <main className="article archive-case"><CaseSidebar items={project.metadata} links={[["#archive", "Artifact archive"]]} /><div className="article__body"><p className="lede">{project.description}</p><h2 id="archive">Artifact archive</h2><div className="archive-grid">{project.images.map((src, index) => <figure className="plate" key={src}><button type="button" className="media-open" onClick={() => setLightbox(index)} aria-label={`Open ${project.title} artifact ${index + 1}`}><img {...portfolioImageProps(src, '(max-width: 760px) 92vw, 46vw')} alt={`${project.title} — artifact ${index + 1}`} loading={index < 2 ? 'eager' : 'lazy'} decoding="async" /></button><figcaption>{project.title} — {String(index + 1).padStart(2, '0')}</figcaption></figure>)}</div></div></main>
+    <article className="article archive-case"><CaseSidebar items={project.metadata} links={[["#archive", "Artifact archive"]]} /><div className="article__body"><p className="lede">{project.description}</p><h2 id="archive">Artifact archive</h2><div className="archive-grid">{project.images.map((src, index) => <figure className="plate" key={src}><button type="button" className="media-open" onClick={() => setLightbox(index)} aria-label={`Open ${project.title} artifact ${index + 1}`}><img {...portfolioImageProps(src, '(max-width: 760px) 92vw, 46vw')} alt={`${project.title} — artifact ${index + 1}`} loading={index < 2 ? 'eager' : 'lazy'} decoding="async" /></button><figcaption>{project.title} — {String(index + 1).padStart(2, '0')}</figcaption></figure>)}</div></div></article>
     <MediaLightbox images={project.images} current={lightbox} title={project.title} onClose={() => setLightbox(null)} onMove={moveLightbox} />
   </>;
 }
 
 function Hydroviv() {
   return <><PageHero imageUrl={portfolioImg('graphics/hydroviv/hydroviv-01.png')} eyebrow="design — print & marketing" title="Hydroviv" lede="Advertisement, print and marketing material work for Hydroviv, a custom water-filtration company." className="hero-grain" soften />
-  <main className="article"><CaseSidebar items={[['Client','Hydroviv'],['Role','Design'],['Medium','Print, direct mail, email'],['Deliverables','Trifold brochure, digital ad set']]} links={[['#brochure','The brochure'],['#digital','Digital set']]}/><div className="article__body"><p className="lede">Hydroviv builds water filters customized to a household's actual local water report — the brief called for print and digital material that could make “your water is specifically contaminated” feel useful rather than alarming.</p><h2 id="brochure">The brochure</h2><p>A trifold, meant to work as both a countertop leaflet and a direct-mail piece: one outward-facing panel to stop someone flipping past it, and an interior spread that does the actual explaining once they've opened it.</p><Plate portfolioSrc="graphics/hydroviv/hydroviv-01.png" caption="Outer spread — cover, QR-code offer panel, and back panel."/><Plate portfolioSrc="graphics/hydroviv/hydroviv-02.png" caption="Inner spread — the actual filter, spelled out."/><h2 id="digital">Digital set</h2><p>A matching set of digital assets built from the same system — an email header, a vertical social ad, and a pattern tile pulled from the brochure's wave motif for use across the rest of the campaign.</p><div className="plate-pair"><Plate portfolioSrc="graphics/hydroviv/hydroviv-03.jpg" caption="Email header"/><Plate portfolioSrc="graphics/hydroviv/hydroviv-04.jpg" caption="Vertical social ad"/></div><Plate portfolioSrc="graphics/hydroviv/hydroviv-05.jpg" caption="Wave pattern, extracted for reuse across the campaign." className="plate-narrow"/></div></main></>;
+  <article className="article"><CaseSidebar items={[['Client','Hydroviv'],['Role','Design'],['Medium','Print, direct mail, email'],['Deliverables','Trifold brochure, digital ad set']]} links={[['#brochure','The brochure'],['#digital','Digital set']]}/><div className="article__body"><p className="lede">Hydroviv builds water filters customized to a household's actual local water report — the brief called for print and digital material that could make “your water is specifically contaminated” feel useful rather than alarming.</p><h2 id="brochure">The brochure</h2><p>A trifold, meant to work as both a countertop leaflet and a direct-mail piece: one outward-facing panel to stop someone flipping past it, and an interior spread that does the actual explaining once they've opened it.</p><Plate portfolioSrc="graphics/hydroviv/hydroviv-01.png" caption="Outer spread — cover, QR-code offer panel, and back panel."/><Plate portfolioSrc="graphics/hydroviv/hydroviv-02.png" caption="Inner spread — the actual filter, spelled out."/><h2 id="digital">Digital set</h2><p>A matching set of digital assets built from the same system — an email header, a vertical social ad, and a pattern tile pulled from the brochure's wave motif for use across the rest of the campaign.</p><div className="plate-pair"><Plate portfolioSrc="graphics/hydroviv/hydroviv-03.jpg" caption="Email header"/><Plate portfolioSrc="graphics/hydroviv/hydroviv-04.jpg" caption="Vertical social ad"/></div><Plate portfolioSrc="graphics/hydroviv/hydroviv-05.jpg" caption="Wave pattern, extracted for reuse across the campaign." className="plate-narrow"/></div></article></>;
 }
 
 function CaseSidebar({ items, links }) { return <aside className="article__sidebar"><dl>{items.map(([dt,dd]) => <div key={dt}><dt>{dt}</dt><dd>{dd}</dd></div>)}</dl><nav aria-label="On this page">{links.map(([href,label],i) => <a href={href} className={i === 0 ? 'is-active' : ''} key={href}>{label}</a>)}</nav></aside>; }
@@ -234,7 +256,7 @@ function Plate({ src, portfolioSrc, caption, className='' }) { return <figure cl
 function CKSteele() {
   const panels = [1,4,6,8,9];
   return <><PageHero imageUrl={portfolioImg('graphics/cksteele/cksteele-07.jpg')} eyebrow="design — public mural, college project" title="CK Steele Plaza" lede="A physical mural for Tallahassee's CK Steele Plaza, tracing the history and future of public transportation in the capital city." className="hero-grain ck-hero" />
-  <main className="article"><CaseSidebar items={[['Context','College project'],['Site','CK Steele Plaza, Tallahassee'],['Medium','Large-format mural panels'],['Subject','StarMetro transit, past & future']]} links={[['#thenandnow','Then & now'],['#panels','The panel set']]}/><div className="article__body"><p className="lede">The plaza is Tallahassee's central transit hub — the brief was to design a mural that a rider actually waiting for a bus would read, not just glance past. The concept pairs a “past” and “now” illustration of the same route, then unpacks it across a run of transit-shelter panels.</p><h2 id="thenandnow">Then &amp; now</h2><p>Two roundels, same composition, one generation apart — a horse-and-trolley-era capitol scene opposite a modern StarMetro coach.</p><figure className="baPair plate"><div className="baPair-imgs"><div><span className="lbl">Past</span><img {...portfolioImageProps('graphics/cksteele/cksteele-03.png', '50vw')} alt="Past illustration panel"/></div><div><span className="lbl">Now</span><img {...portfolioImageProps('graphics/cksteele/cksteele-05.png', '50vw')} alt="Present-day illustration panel"/></div></div><figcaption>Left and right panels of the entry roundel — same layout, a century apart.</figcaption></figure><Plate portfolioSrc="graphics/cksteele/cksteele-02.jpg" caption="The center pairing that ties the two side panels together." className="plate-center"/><h2 id="panels">The panel set</h2><p>Five additional panels extend the story across the shelter run — each kept at its own natural proportions rather than cropped to a shared grid.</p><div className="panelStrip">{panels.map(n => <Plate key={n} portfolioSrc={`graphics/cksteele/cksteele-${String(n).padStart(2, '0')}.jpg`} caption={`Panel ${String(n).padStart(2, '0')}`}/>)}</div></div></main></>;
+  <article className="article"><CaseSidebar items={[['Context','College project'],['Site','CK Steele Plaza, Tallahassee'],['Medium','Large-format mural panels'],['Subject','StarMetro transit, past & future']]} links={[['#thenandnow','Then & now'],['#panels','The panel set']]}/><div className="article__body"><p className="lede">The plaza is Tallahassee's central transit hub — the brief was to design a mural that a rider actually waiting for a bus would read, not just glance past. The concept pairs a “past” and “now” illustration of the same route, then unpacks it across a run of transit-shelter panels.</p><h2 id="thenandnow">Then &amp; now</h2><p>Two roundels, same composition, one generation apart — a horse-and-trolley-era capitol scene opposite a modern StarMetro coach.</p><figure className="baPair plate"><div className="baPair-imgs"><div><span className="lbl">Past</span><img {...portfolioImageProps('graphics/cksteele/cksteele-03.png', '50vw')} alt="Past illustration panel"/></div><div><span className="lbl">Now</span><img {...portfolioImageProps('graphics/cksteele/cksteele-05.png', '50vw')} alt="Present-day illustration panel"/></div></div><figcaption>Left and right panels of the entry roundel — same layout, a century apart.</figcaption></figure><Plate portfolioSrc="graphics/cksteele/cksteele-02.jpg" caption="The center pairing that ties the two side panels together." className="plate-center"/><h2 id="panels">The panel set</h2><p>Five additional panels extend the story across the shelter run — each kept at its own natural proportions rather than cropped to a shared grid.</p><div className="panelStrip">{panels.map(n => <Plate key={n} portfolioSrc={`graphics/cksteele/cksteele-${String(n).padStart(2, '0')}.jpg`} caption={`Panel ${String(n).padStart(2, '0')}`}/>)}</div></div></article></>;
 }
 
 function Contact() {
@@ -242,7 +264,7 @@ function Contact() {
 }
 
 function NotFound() {
-  return <main className="not-found"><div className="eyebrow on-dark"><i />404</div><h1>This page wandered off.</h1><p>The work is still here. Head back to the portfolio index and try another route.</p><SiteLink href={routePath('index')} className="btn-primary">Back to the work</SiteLink></main>;
+  return <section className="not-found"><div className="eyebrow on-dark"><i />404</div><h1>This page wandered off.</h1><p>The work is still here. Head back to the portfolio index and try another route.</p><SiteLink href={routePath('index')} className="btn-primary">Back to the work</SiteLink></section>;
 }
 
 const pages = {
@@ -272,6 +294,7 @@ const meta = {
 
 export default function ProductionSiteApp() {
   const [page, setPage] = useState(pageKey);
+  const initialRoute = useRef(true);
   const found = Boolean(pages[page]); const Page = pages[page] || NotFound;
   useLiquidGlassEffects({ cursor:true, spotlight:false, reveal:false, scroll:false });
   useDynamicFrameColors(page);
@@ -307,5 +330,12 @@ export default function ProductionSiteApp() {
     if (robots) robots.setAttribute('content', found ? 'index,follow' : 'noindex,follow');
     return () => { document.body.className = ''; };
   }, [found, page]);
-  return <><Navbar page={page}/><Page/><Footer/></>;
+  useEffect(() => {
+    if (initialRoute.current) {
+      initialRoute.current = false;
+      return;
+    }
+    requestAnimationFrame(() => document.getElementById('main-content')?.focus({ preventScroll: true }));
+  }, [page]);
+  return <><a className="skip-link" href="#main-content">Skip to content</a><Navbar page={page}/><main id="main-content" tabIndex="-1"><Page/></main><Footer/></>;
 }

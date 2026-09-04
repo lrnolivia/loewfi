@@ -7,6 +7,7 @@ import {
   photographyProjects,
   photoSlugs,
   projectCatalog,
+  portfolioNavigation,
 } from './portfolio.js';
 
 const assetRoot = fileURLToPath(new URL('../../../portfolio/assets/', import.meta.url));
@@ -38,5 +39,13 @@ describe('public portfolio catalog', () => {
   it('features only valid production projects', () => {
     const catalog = projectCatalog as Record<string, unknown>;
     expect(featuredSlugs.every((slug) => Boolean(catalog[slug]))).toBe(true);
+  });
+
+  it('builds public navigation from the same ordered catalog', () => {
+    const catalog = projectCatalog as Record<string, unknown>;
+    expect(portfolioNavigation.map((group) => group.slug)).toEqual(['photo', 'design']);
+    expect(portfolioNavigation[0].projectSlugs).toEqual(photoSlugs);
+    expect(portfolioNavigation[1].projectSlugs).toEqual(designCatalogSlugs);
+    expect(portfolioNavigation.flatMap((group) => group.projectSlugs).every((slug) => Boolean(catalog[slug]))).toBe(true);
   });
 });

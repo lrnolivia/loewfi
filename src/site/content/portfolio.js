@@ -104,3 +104,18 @@ export const projectCatalog = {
 
 export const designCatalogSlugs = ['hydroviv', 'delta-ascencion', 'glorybe', 'cksteele', 'promotional', 'misc'];
 export const featuredSlugs = ['avedastudio', 'hydroviv', 'cksteele', 'islesashore', 'delta-ascencion', 'glorybe'];
+
+export const portfolioNavigation = [
+  {
+    slug: 'photo',
+    label: 'Photo',
+    allLabel: 'All photography',
+    projectSlugs: photoSlugs,
+  },
+  {
+    slug: 'design',
+    label: 'Design',
+    allLabel: 'All design',
+    projectSlugs: designCatalogSlugs,
+  },
+];
