@@ -12,7 +12,7 @@ The application mounted from `admin/index.html` owns routing, bootstrap state, p
 
 ## CMS API
 
-Cloudflare Pages Functions live under `functions/admin/api`. Shared middleware requires the identity headers injected behind Cloudflare Access, assigns a request ID, converts expected failures into a stable JSON envelope, and prevents internal exception details from reaching the client. The active API exposes identity, capability discovery, a read-only bundled repository snapshot, and full-collection validation/artifact planning. A loopback-only development identity can be enabled explicitly by the local Wrangler command and cannot activate on a non-local hostname. Draft, preview, and publishing capabilities report themselves as disabled until their implementations exist.
+Cloudflare Pages Functions live under `functions/admin/api`. Shared middleware requires the identity headers injected behind Cloudflare Access, assigns a request ID, converts expected failures into a stable JSON envelope, and prevents internal exception details from reaching the client. The active API exposes identity, capability discovery, a read-only bundled repository snapshot, full-collection validation/artifact planning, draft persistence, and temporary media staging. A loopback-only development identity can be enabled explicitly by the local Wrangler command and cannot activate on a non-local hostname. Each storage capability reports itself as active only when its binding exists; preview and publishing remain disabled.
 
 ## Shared content model
 
@@ -22,9 +22,13 @@ Framework-free TypeScript types and strict runtime validators live under `src/sh
 
 The renderer under `src/renderer` is a deterministic, side-effect-free layer: untrusted structured input is validated first, then converted into an explicit list of public artifacts. It remains independent of the React admin and performs no filesystem, draft-store, GitHub, or deployment mutations. The fixture command is a separate build adapter that owns only `generated-preview/`, writes the declared artifacts plus a manifest, and supplies those pages to Vite. Public output reuses the approved mockup styles and the committed Sohum Liquid Glass adapter without converting the public site to React.
 
+## Media staging
+
+Image decoding, cropping, resizing, and WebP compression run in the browser. The authenticated media API validates safe metadata and stores temporary binary objects in the `CMS_MEDIA` KV namespace for 30 days. Drafts reference staging IDs plus canonical future repository paths. Staging never copies files into Git, serves them publicly, or triggers deployment.
+
 ## Draft persistence
 
-The Milestones 7–8 editors have an explicit, namespaced browser-local working-copy adapter. It can recover valid or temporarily invalid form state after reload, reports when it was saved, and requires confirmation before reset. It is deliberately not called a server draft: no API mutation, synchronization, autosave, conflict resolution, preview, or publishing occurs. Milestone 10 will replace this adapter boundary with a real draft repository, expected to use a low-cost Cloudflare store such as KV. Published Git data is not used as an autosave store.
+The editor uses two coordinated recovery layers. A namespaced browser envelope immediately preserves valid or temporarily invalid form state, staged-media IDs, and the last server revision. Canonical-valid work also synchronizes through the authenticated API to the `CMS_DRAFTS` KV namespace after a 15-second idle interval or an explicit save. Revision checks surface conflicts instead of silently overwriting the normal stale client. Published Git data remains the immutable editor baseline and is never used as an autosave store.
 
 ## Publisher
 

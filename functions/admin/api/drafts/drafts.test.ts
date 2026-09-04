@@ -63,4 +63,15 @@ describe('project drafts endpoint', () => {
     expect(response.status).toBe(422);
     expect((await response.json()).error.issues[0].path).toBe('$.slug');
   });
+
+  it('accepts the encoded colon emitted by the browser client', async () => {
+    const kv = new MemoryKv();
+    const response = await invokeCmsApi(
+      draftHandler('existing%3Ahydroviv'),
+      authenticatedRequest('https://loew.fi/admin/api/drafts/existing%3Ahydroviv'),
+      { CMS_DRAFTS: kv },
+    );
+    expect(response.status).toBe(200);
+    expect((await response.json()).data.draft).toBeNull();
+  });
 });

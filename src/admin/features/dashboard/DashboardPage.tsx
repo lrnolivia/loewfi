@@ -57,7 +57,8 @@ export function DashboardPage({ data }: { data: CmsBootstrapData }) {
             <ul>
               <li><span>Content API</span><Badge tone="good">Connected</Badge></li>
               <li><span>Validation</span><Badge tone="good">Active</Badge></li>
-              <li><span>Drafts</span><Badge>Milestone 10</Badge></li>
+              <li><span>Media staging</span><Badge tone={data.capabilities.features.media ? 'good' : 'warning'}>{data.capabilities.features.media ? 'Connected' : 'Binding required'}</Badge></li>
+              <li><span>Drafts</span><Badge tone={data.capabilities.features.drafts ? 'good' : 'warning'}>{data.capabilities.features.drafts ? 'Connected' : 'Browser only'}</Badge></li>
               <li><span>Publishing</span><Badge>Milestone 12</Badge></li>
             </ul>
           </Surface>

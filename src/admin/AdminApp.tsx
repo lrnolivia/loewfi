@@ -30,16 +30,21 @@ export function AdminApp() {
   }
 
   const { data } = state;
+  const editorInfrastructure = {
+    basePublishedRevision: data.published.revision,
+    draftsEnabled: data.capabilities.features.drafts,
+    mediaEnabled: data.capabilities.features.media,
+  };
   return (
     <AdminShell route={route} identity={data.identity}>
       {route.name === 'dashboard' && <DashboardPage data={data} />}
       {route.name === 'projects' && <ProjectsPage collection={data.published.collection} />}
       {route.name === 'new-project' && <NewProjectPage />}
       {route.name === 'new-project-editor' && route.projectType === 'design' && (
-        <DesignProjectEditor key="new-design" initialProject={newDesignProject} routeIdentity="new:design" isNew />
+        <DesignProjectEditor key="new-design" initialProject={newDesignProject} routeIdentity="new:design" isNew {...editorInfrastructure} />
       )}
       {route.name === 'new-project-editor' && route.projectType === 'photography' && (
-        <PhotographyProjectEditor key="new-photography" initialProject={newPhotographyProject} routeIdentity="new:photography" isNew />
+        <PhotographyProjectEditor key="new-photography" initialProject={newPhotographyProject} routeIdentity="new:photography" isNew {...editorInfrastructure} />
       )}
       {route.name === 'project' && (() => {
         const project = data.published.collection.projects.find((item) => item.slug === route.slug);
@@ -59,8 +64,8 @@ export function AdminApp() {
           );
         }
         return project.projectType === 'design'
-          ? <DesignProjectEditor key={`design:${project.slug}`} initialProject={project} routeIdentity={`existing:${project.slug}`} />
-          : <PhotographyProjectEditor key={`photography:${project.slug}`} initialProject={project} routeIdentity={`existing:${project.slug}`} />;
+          ? <DesignProjectEditor key={`design:${project.slug}`} initialProject={project} routeIdentity={`existing:${project.slug}`} {...editorInfrastructure} />
+          : <PhotographyProjectEditor key={`photography:${project.slug}`} initialProject={project} routeIdentity={`existing:${project.slug}`} {...editorInfrastructure} />;
       })()}
       {route.name === 'not-found' && (
         <EmptyState title="This CMS page does not exist." action={<ActionLink href={adminHref('/')}>Return to dashboard</ActionLink>}>

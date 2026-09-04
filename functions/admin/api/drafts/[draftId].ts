@@ -63,5 +63,9 @@ function parseSaveInput(value: unknown): ProjectDraftSaveInput {
 
 function routeDraftId(value: string | string[] | undefined): string {
   if (typeof value !== 'string' || value === '') throw new CmsApiError(400, 'validation_failed', 'Draft id is required.');
-  return value;
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    throw new CmsApiError(400, 'validation_failed', 'Draft id is not valid URL encoding.');
+  }
 }

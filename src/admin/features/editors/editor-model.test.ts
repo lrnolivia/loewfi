@@ -74,4 +74,19 @@ describe('local project recovery', () => {
     expect(loaded.source).toBe('initial');
     expect(loaded.recoveryNotice).toContain('damaged');
   });
+
+  it('keeps staged media and the matching server revision in the recovery envelope', () => {
+    const storage = memoryStorage();
+    const initial = createDesignProjectTemplate();
+    const key = projectDraftKey('new:design');
+    writeProjectDraft(storage, key, initial, '2026-09-01T12:00:00.000Z', {
+      mediaIds: ['staged-1'],
+      serverRevision: 'revision-1',
+    });
+    expect(readProjectDraft(storage, key, initial)).toMatchObject({
+      mediaIds: ['staged-1'],
+      serverRevision: 'revision-1',
+      savedAt: '2026-09-01T12:00:00.000Z',
+    });
+  });
 });

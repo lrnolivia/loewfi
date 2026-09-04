@@ -21,8 +21,9 @@ import {
   TextField,
 } from './EditorFields';
 import { moveItem, nextStableId, removeAt, replaceAt, validateProjectDraft } from './editor-model';
-import { useLocalProjectDraft } from './local-project-draft';
+import { useProjectDraft } from './local-project-draft';
 import { ProjectEditorFrame } from './ProjectEditorFrame';
+import { MediaEditorProvider } from '../media/MediaEditorContext';
 import {
   createContentBlock,
   createFigure,
@@ -43,13 +44,22 @@ const blockOptions: Array<readonly [ContentBlockType, string]> = [
 export function DesignProjectEditor({
   initialProject,
   routeIdentity,
+  basePublishedRevision,
+  draftsEnabled,
+  mediaEnabled,
   isNew = false,
 }: {
   initialProject: DesignProject;
   routeIdentity: string;
+  basePublishedRevision: string;
+  draftsEnabled: boolean;
+  mediaEnabled: boolean;
   isNew?: boolean;
 }) {
-  const editor = useLocalProjectDraft(initialProject, routeIdentity);
+  const editor = useProjectDraft(initialProject, routeIdentity, {
+    basePublishedRevision,
+    serverEnabled: draftsEnabled,
+  });
   const validation = useMemo(() => validateProjectDraft(editor.project), [editor.project]);
   const patch = (next: Partial<DesignProject>) => editor.setProject((project) => ({ ...project, ...next }));
 
@@ -61,14 +71,24 @@ export function DesignProjectEditor({
       dirty={editor.dirty}
       savedAt={editor.savedAt}
       notice={editor.notice}
+      syncStatus={editor.syncStatus}
+      mediaCount={editor.mediaIds.length}
       validation={validation}
-      onSaveLocal={editor.saveLocal}
+      onSave={editor.saveNow}
       onReset={editor.reset}
+      onReloadServer={editor.reloadServer}
     >
-      <ProjectBasicsFields project={editor.project} onPatch={patch} />
-      <HeroFields hero={editor.project.hero} onChange={(hero) => patch({ hero })} />
-      <MetadataEditor metadata={editor.project.metadata} onChange={(metadata) => patch({ metadata })} />
-      <DesignBlocksEditor blocks={editor.project.body} onChange={(body) => patch({ body })} />
+      <MediaEditorProvider value={{
+        enabled: mediaEnabled,
+        projectType: 'design',
+        projectSlug: editor.project.slug,
+        onStaged: editor.onStaged,
+      }}>
+        <ProjectBasicsFields project={editor.project} onPatch={patch} />
+        <HeroFields hero={editor.project.hero} onChange={(hero) => patch({ hero })} />
+        <MetadataEditor metadata={editor.project.metadata} onChange={(metadata) => patch({ metadata })} />
+        <DesignBlocksEditor blocks={editor.project.body} onChange={(body) => patch({ body })} />
+      </MediaEditorProvider>
     </ProjectEditorFrame>
   );
 }
