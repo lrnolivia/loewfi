@@ -6,9 +6,9 @@
   "scripts": {
     "render:fixtures": "tsc -p tsconfig.renderer.json && node .renderer-build/scripts/render-fixtures.js",
     "media:build": "node scripts/build-portfolio-media.mjs",
-    "dev": "pnpm render:fixtures && pnpm media:build && vite",
+    "dev": "pnpm render:fixtures && vite",
     "api:dev": "pnpm build && wrangler pages dev dist --compatibility-date=2026-08-28 --binding CMS_LOCAL_ADMIN_EMAIL=local@loew.fi --kv CMS_DRAFTS --kv CMS_MEDIA --persist-to .wrangler/state",
-    "build": "pnpm render:fixtures && pnpm media:build && vite build",
+    "build": "pnpm render:fixtures && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

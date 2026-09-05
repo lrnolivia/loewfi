@@ -16,9 +16,12 @@ describe('Cloudflare public-site routing', () => {
     expect(redirectLines).not.toContain('/ /mockup 301');
   });
 
-  it('rewrites every production route to the React shell', () => {
+  it('keeps the staged portfolio routes off the public site', () => {
     const routes = ['photo', 'design', 'about', 'contact', ...photoSlugs, ...designCatalogSlugs];
-    for (const route of routes) expect(redirectLines).toContain(`/${route} / 200`);
+    for (const route of routes) {
+      expect(redirectLines).toContain(`/${route} / 302`);
+      expect(redirectLines).not.toContain(`/${route} / 200`);
+    }
   });
 
   it('uses only status codes supported by Cloudflare Pages redirects', () => {

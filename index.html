@@ -1,30 +1,557 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#141410">
-    <meta name="description" content="The design and photography portfolio of Lauren White.">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="loew.fi">
-    <meta property="og:title" content="loew.fi — Lauren White, design &amp; photography">
-    <meta property="og:description" content="The design and photography portfolio of Lauren White.">
-    <meta property="og:url" content="https://loew.fi/">
-    <meta property="og:image" content="https://loew.fi/favicon.svg">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="loew.fi — Lauren White, design &amp; photography">
-    <meta name="twitter:description" content="The design and photography portfolio of Lauren White.">
-    <meta name="twitter:image" content="https://loew.fi/favicon.svg">
-    <meta name="robots" content="index,follow">
-    <link rel="canonical" href="https://loew.fi/">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
-    <title>loew.fi — Lauren White, design &amp; photography</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<title>loew.fi — good things are coming</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#141410">
+<meta name="description" content="loew.fi is under construction. Good things are coming.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="loew.fi">
+<meta property="og:title" content="loew.fi — good things are coming">
+<meta property="og:description" content="loew.fi is under construction. Good things are coming.">
+<meta property="og:url" content="https://loew.fi/">
+<meta property="og:image" content="https://loew.fi/favicon.svg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="loew.fi — good things are coming">
+<meta name="twitter:description" content="loew.fi is under construction. Good things are coming.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://loew.fi/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#141410;
+    --cream:#F1ECDF;
+    --cream-dim:#C9C3B2;
+    --sand:#CBB88E;
+    --line: rgba(241,236,223,0.16);
+    /* these are read by the navbar, hero, divider and footer alike, so they
+       live on :root — component scoping once sent
+       the divider to the middle of the page and killed the hero's top padding. */
+    --nav-top:26px;
+    --nav-height:64px;
+    --btn-cyan-soft:102,211,218;
+    --btn-cyan-deep:0,217,255;
+    --btn-red:181,71,31;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    background:var(--ink);
+    color:var(--cream);
+    font-family:'Space Grotesk',sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  .mono{font-family:'Space Mono',monospace;}
+
+  /* The background, scene content and Sohum glass surfaces share the same
+     positioned root so backdrop sampling stays aligned while scrolling. */
+  .nav-pill.liquid-glass{
+    pointer-events:auto;
+    position:fixed; top:var(--nav-top); left:6vw; z-index:60;
+    overflow:hidden;
+    display:flex; align-items:center; gap:30px;
+    color:var(--cream);
+    padding:13px 28px;
+    border-radius:999px;
+    corner-shape:round !important;
+    --lg-radius:999px;
+    background:transparent;
+    border:0;
+  }
+  .nav-pill.liquid-glass > .liquid-glass-effect,
+  .nav-pill.liquid-glass > .liquid-glass-tint,
+  .nav-pill.liquid-glass > .liquid-glass-shine,
+  .nav-pill.liquid-glass::before,
+  .nav-pill.liquid-glass::after{
+    corner-shape:round !important;
+    border-radius:999px;
+    -webkit-clip-path:inset(0 round 999px);
+    clip-path:inset(0 round 999px);
+  }
+  .nav-pill__content{ display:flex; align-items:center; gap:30px; }
+  .nav-pill .brand{
+    font-weight:700; font-size:19px; letter-spacing:-0.01em;
+    padding-right:8px; border-right:1px solid rgba(241,236,223,0.22);
+  }
+  .nav-links{display:flex; gap:24px; list-style:none; margin:0; padding:0;}
+  .nav-links a{
+    color:var(--cream); text-decoration:none; font-size:12px;
+    letter-spacing:0.05em; text-transform:uppercase;
+    font-family:'Space Mono',monospace; opacity:0.55; /* inactive links — barely visible */
+  }
+
+  /* mobile-only hamburger + dropdown, revealing the links that .nav-links
+     hides below 760px (see the media query) */
+  .nav-actions{ display:flex; align-items:center; gap:14px; }
+  .nav-toggle-gel{
+    display:none; width:34px; height:34px; flex:0 0 auto;
+    --lg-radius:100px;
+  }
+  .nav-toggle{
+    display:block; position:relative; width:100%; height:100%;
+    border:none; background:transparent; padding:0; cursor:pointer; flex:0 0 auto;
+  }
+  .nav-toggle span{
+    position:absolute; left:5px; right:5px; height:2.5px; border-radius:2px;
+    background:var(--cream); transition:transform .3s var(--ease), opacity .2s ease;
+  }
+  .nav-toggle span:nth-child(1){ top:9px; }
+  .nav-toggle span:nth-child(2){ top:14px; }
+  .nav-toggle span:nth-child(3){ top:19px; }
+  .nav-toggle.is-open span:nth-child(1){ transform:translateY(5px) rotate(45deg); }
+  .nav-toggle.is-open span:nth-child(2){ opacity:0; }
+  .nav-toggle.is-open span:nth-child(3){ transform:translateY(-5px) rotate(-45deg); }
+
+  /* The menu grows directly from the navbar edge and uses the same Sohum
+     material family and calibrated lens behavior as the navbar. */
+  .nav-dropdown.liquid-glass{
+    display:block;
+    position:fixed; left:6vw; right:6vw; pointer-events:none;
+    top:calc(var(--nav-top) + var(--nav-height) - 1px);
+    overflow:hidden;
+    background:transparent;
+    border:0;
+    border-radius:0 0 40px 40px;
+    --lg-radius:0 0 40px 40px;
+    padding:13px 6px 6px;
+    z-index:59;
+    visibility:hidden;
+    transition:visibility 0s linear .25s;
+  }
+  .nav-dropdown.liquid-glass.is-open{
+    visibility:visible; pointer-events:auto;
+    transition:visibility 0s;
+  }
+  .nav-dropdown__content{ width:100%; }
+  .nav-dropdown ul{ list-style:none; margin:0; padding:0; }
+  .nav-dropdown.is-open .nav-dropdown__content{ animation:menuContentIn .35s var(--ease) both; }
+  .nav-dropdown a{
+    display:block; padding:14px 14px;
+    color:var(--cream); text-decoration:none;
+    font-family:'Space Mono',monospace; font-size:12.5px;
+    letter-spacing:0.05em; text-transform:uppercase;
+    border-bottom:1px solid rgba(241,236,223,0.08);
+  }
+  .nav-dropdown li:last-child a{ border-bottom:none; }
+  .nav-dropdown a:active{ opacity:.7; }
+  @media (min-width:761px){ .nav-dropdown{ display:none !important; } }
+
+  /* Sohum interactive gel buttons. Color lives in the tint layer so the
+     package's refraction, moving rim and press illumination stay intact. */
+  .gel-button{
+    --gel-rgb:var(--btn-cyan-soft);
+    --gel-hover-rgb:var(--btn-cyan-deep);
+    --lg-radius:999px;
+    position:relative;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,0.30);
+    background:rgb(var(--gel-rgb));
+    transition:background .28s var(--ease), border-color .28s var(--ease), box-shadow .35s var(--ease), scale .35s var(--ease-apple-magnetic);
+  }
+  /* The package's core stylesheet opts supported Chrome builds into a
+     squircle. These controls are true capsules/circles instead. Safari also
+     needs every filtered child clipped explicitly because filtered layers can
+     escape a rounded parent's overflow during compositing. The host itself is
+     deliberately not clip-pathed: doing so creates a Backdrop Root and stops
+     the glass from sampling the scene behind it. */
+  .liquid-glass.gel-button,
+  .liquid-glass.nav-toggle-gel,
+  .liquid-glass.gel-button > .liquid-glass-effect,
+  .liquid-glass.gel-button > .liquid-glass-tint,
+  .liquid-glass.gel-button > .liquid-glass-shine,
+  .liquid-glass.gel-button > .liquid-glass-content,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-effect,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-tint,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-shine,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-content,
+  .liquid-glass.gel-button::before,
+  .liquid-glass.gel-button::after,
+  .liquid-glass.nav-toggle-gel::before,
+  .liquid-glass.nav-toggle-gel::after{
+    corner-shape:round !important;
+    border-radius:999px !important;
+  }
+  .liquid-glass.gel-button > .liquid-glass-effect,
+  .liquid-glass.gel-button > .liquid-glass-tint,
+  .liquid-glass.gel-button > .liquid-glass-shine,
+  .liquid-glass.gel-button > .liquid-glass-content,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-effect,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-tint,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-shine,
+  .liquid-glass.nav-toggle-gel > .liquid-glass-content{
+    overflow:hidden;
+    -webkit-clip-path:inset(0 round 999px);
+    clip-path:inset(0 round 999px);
+  }
+  .gel-button > .liquid-glass-effect{
+    --lg-blur:2px;
+    --lg-saturate:180%;
+    --lg-brightness:.92;
+    --lg-contrast:1.08;
+  }
+  .gel-button > .liquid-glass-tint{ background:rgba(var(--gel-rgb),.38); }
+  .gel-button:hover,
+  .gel-button:focus-within{
+    background:rgb(var(--gel-hover-rgb));
+    border-color:rgba(255,255,255,.48);
+    box-shadow:0 0 14px rgba(var(--gel-hover-rgb),.52),0 0 34px rgba(var(--gel-hover-rgb),.24);
+  }
+  .gel-button:hover > .liquid-glass-tint,
+  .gel-button:focus-within > .liquid-glass-tint{ background:rgba(var(--gel-hover-rgb),.34); }
+  .gel-button__content{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; }
+  .gel-button__control{
+    appearance:none; width:100%; height:100%; margin:0; padding:0;
+    display:flex; align-items:center; justify-content:center;
+    border:0; background:transparent; color:inherit; cursor:pointer;
+  }
+  .btn-solid__label{
+    position:relative; z-index:3; display:flex; align-items:center; gap:6px;
+    mix-blend-mode:normal; /* text is never blended — always solid, always legible */
+  }
+  .btn-solid__icon{
+    width:12px; height:12px; flex:0 0 auto;
+    color:#fff; mix-blend-mode:normal;
+  }
+
+  .nav-cta{
+    --gel-rgb:var(--btn-red);
+    --gel-hover-rgb:var(--btn-red);
+    color:#fff;
+    font-family:'Space Mono',monospace; font-size:10px; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.05em;
+    padding:8px 16px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.3);
+  }
+  /* The badge stays the existing flat red at rest. The exact interactive
+     material layers fade in only on hover/focus, as requested. */
+  .gel-button--hover-only > .liquid-glass-effect,
+  .gel-button--hover-only > .liquid-glass-tint,
+  .gel-button--hover-only > .liquid-glass-shine{ opacity:0; transition:opacity .22s var(--ease); }
+  .gel-button--hover-only:hover > .liquid-glass-effect,
+  .gel-button--hover-only:hover > .liquid-glass-tint,
+  .gel-button--hover-only:hover > .liquid-glass-shine,
+  .gel-button--hover-only:focus-within > .liquid-glass-effect,
+  .gel-button--hover-only:focus-within > .liquid-glass-tint,
+  .gel-button--hover-only:focus-within > .liquid-glass-shine{ opacity:1; }
+
+  .scene-background{
+    position:absolute; inset:0; z-index:0;
+    width:100%; height:100%; object-fit:cover; object-position:center;
+    pointer-events:none;
+  }
+  .scene-shade{
+    position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:linear-gradient(
+      0deg,
+      rgba(0,0,0,.55) 0%,
+      rgba(0,0,0,.55) 14%,
+      rgba(20,20,16,.48) 18%,
+      rgba(20,20,16,.14) 55%,
+      rgba(20,20,16,.32) 100%
+    );
+  }
+  .scene-grain{
+    position:absolute; inset:0; z-index:2; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:.035; mix-blend-mode:overlay;
+  }
+
+  /* HERO: adjust so content + footer + nav fit in one viewport by default */
+  .hero{
+    position:relative; z-index:3;
+    /* reserve space for fixed nav + footer so page aims to fit in one viewport */
+    min-height:calc(100vh - var(--nav-height) - 72px - 8px);
+    display:flex; align-items:center; /* center vertically by default */
+    overflow:hidden;
+    background:transparent;
+    /* keep some top padding so content doesn't sit beneath the nav visually */
+    padding-top:calc(var(--nav-height) + 8px);
+    flex:1 0 auto;
+  }
+
+  /* translucent divider - sits under the nav with the same gap below it
+     as the nav has above it (--nav-top), so the spacing reads as even */
+  .grain-line{
+    position:absolute; left:0; right:0; top:calc((var(--nav-top) * 2) + var(--nav-height));
+    height:1px; background:var(--line); z-index:55;
+  }
+  .tag-corner{
+    position:absolute; top:calc(var(--nav-top) + 8px); right:6vw; z-index:2;
+    font-family:'Space Mono',monospace; font-size:11.5px;
+    color:var(--cream-dim); text-align:right; line-height:1.7;
+  }
+
+  /* Mobile-only stand-in for .tag-corner (which hides below 760px because there's
+     no room for it beside a full-width nav pill). Hidden on desktop by default;
+     the mobile media query below turns it on and positions it one of two ways —
+     see the comments there. */
+  .hero-tag-mobile{ display:none; }
+
+  /* CARD: right-shifted on desktop; content inside should be left-aligned.
+     Split into two layers so the mouse-tilt parallax stays purely physical:
+     .card is just a static, untransformed anchor (paper's resting -3deg tilt
+     lives here, permanently — it never receives the dynamic JS transform).
+     .card-surface is the layer the JS tilt/scale actually touches — it's the
+     "physical card" (fill + shadow + glow), absolutely filling .card behind
+     the copy. .card-content sits on top, in normal flow, and never receives
+     any transform at all, so the text/eyebrow/form stay crisp and fixed
+     regardless of how the surface underneath tilts on hover. */
+  .card{
+    position:relative; z-index:60;
+    margin:0; /* we'll control placement with auto margins */
+    max-width:560px; /* slightly reduced to help fit within viewport */
+    color:var(--ink);
+    transform:rotate(-3deg);
+    /* place to the right while keeping a consistent right padding */
+    margin-left:auto; /* push to the right */
+    margin-right:6vw; /* ample padding from right edge */
+    text-align:left; /* keep copy left-aligned even when card sits on right */
+    /* gives .card-surface's rotateX/rotateY real 3D depth */
+    perspective:1000px;
+  }
+  .card-surface{
+    position:absolute; inset:0;
+    background:var(--cream);
+    box-shadow:0 30px 70px rgba(0,0,0,0.45);
+    transition:box-shadow .3s ease, transform .15s ease-out;
+    will-change:transform;
+  }
+  .card-content{
+    position:relative; z-index:1;
+    padding:44px 40px 36px;
+  }
+  .eyebrow{
+    display:flex; align-items:center; gap:8px;
+    font-family:'Space Mono',monospace; font-size:12px;
+    letter-spacing:0.08em; text-transform:uppercase;
+    color:#7A6B45; margin-bottom:20px;
+  }
+  .eyebrow i{width:7px;height:7px;border-radius:50%;background:#FFD400; display:inline-block;}
+  h1{
+    font-weight:700; letter-spacing:-0.02em;
+    font-size:clamp(36px, 4.8vw, 68px);
+    line-height:1.0; margin:0 0 20px;
+  }
+  h1 span{color:#8C8474;} /* greige — ties in with the new form palette below */
+  .sub{
+    font-size:15px; line-height:1.6; color:#3E3B33;
+    max-width:440px; margin:0 0 30px;
+  }
+  .notify{
+    position:relative; max-width:420px;
+  }
+  .notify input{
+    width:100%; border:none; background:#DCD5C3; /* darker shade of the card's own cream, not grey */
+    padding:15px 56px 15px 20px; /* extra right padding clears the round button */
+    font-family:'Space Grotesk',sans-serif; font-size:14px; color:var(--ink); outline:none;
+    border-radius:100px;
+  }
+  .notify input:focus{ box-shadow:inset 0 0 0 1.5px rgba(20,20,16,0.35); }
+  .notify .send-gel{
+    --gel-rgb:var(--btn-cyan-soft);
+    --gel-hover-rgb:var(--btn-cyan-deep);
+    position:absolute; top:50%; right:6px; translate:0 -50%;
+    width:38px; height:38px; min-width:38px; padding:0;
+    display:flex; align-items:center; justify-content:center;
+    color:#fff;
+    box-shadow:0 2px 7px rgba(19,91,100,0.20), inset 0 1px 0 rgba(255,255,255,0.20);
+  }
+  .notify .send-gel:hover, .notify .send-gel:focus-within{
+    border-color:rgba(190,249,255,0.72);
+    box-shadow:
+      0 0 13px rgba(var(--btn-cyan-deep),0.52),
+      0 0 30px rgba(var(--btn-cyan-deep),0.24);
+  }
+  .notify .send-gel .gel-button__control{ border-radius:inherit; }
+  .notify .send-gel .btn-solid__icon{ width:17px; height:17px; }
+
+  footer{
+    position:relative; z-index:4;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 6vw; /* reduced padding to save vertical space */
+    height:72px;
+    border-top:1px solid var(--line);
+    font-family:'Space Mono',monospace; font-size:11px;
+    color:var(--cream-dim);
+    flex-shrink:0;
+    background:var(--ink);
+  }
+  footer a{color:var(--cream-dim); text-decoration:none;}
+
+  #root{ position:relative; min-height:100vh; display:flex; flex-direction:column; }
+
+  /* MOBILE / narrow adjustments */
+  @media (max-width:760px){
+    /* set on :root so .hero / .grain-line / footer inherit the
+       same smaller nav measurements — this is the fix for the divider bug */
+    :root{ --nav-top:18px; --nav-height:56px; }
+
+    html{
+      width:100%; min-height:100%;
+      overflow-x:hidden; overflow-y:auto;
+    }
+    body{
+      width:100%; height:155svh; height:155dvh;
+      min-height:155svh; min-height:155dvh;
+      overflow-x:hidden; overflow-y:visible;
+      overscroll-behavior-y:contain;
+    }
+    #root{
+      position:fixed; inset:0;
+      width:100%; height:100svh; height:100dvh;
+      min-height:0; overflow:hidden;
+    }
+
+    .nav-pill.liquid-glass{ left:4vw; right:4vw; top:var(--nav-top); }
+    /* Attach the menu only to the pill's straight bottom edge, not beneath
+       either rounded cap. */
+    .nav-dropdown.liquid-glass{
+      left:calc(4vw + (var(--nav-height) / 2));
+      right:calc(4vw + (var(--nav-height) / 2));
+    }
+    /* stretch the fixed pill between the two mobile gutters */
+    .nav-pill{ width:auto; padding:10px 18px; }
+    /* space-between lives on the content row so the brand and actions stay
+       balanced inside the fixed glass shell. */
+    .nav-pill__content{ width:100%; justify-content:space-between; }
+    .nav-links{display:none;}
+    .nav-toggle-gel{ display:block; }
+    .tag-corner{display:none;}
+
+    .card{
+      margin-left: auto; /* keep horizontal placement left under nav */
+      margin-right: auto;
+      transform:rotate(-3deg);
+      text-align:left; /* keep copy left-aligned on mobile */
+      margin-top:0;
+      max-width:calc(100% - 10vw);
+    }
+    .card-content{
+      padding:28px 22px 26px;
+    }
+
+    /* Use the visual viewport rather than 100vh so Safari's browser chrome never
+       pushes the footer below the fold. The card rests low in the remaining hero
+       space with a responsive cushion above the footer. */
+    .hero{
+      flex:1 1 0;
+      align-items:flex-end;
+      padding-top:calc(var(--nav-height) + 8px);
+      padding-bottom:clamp(26px,5dvh,48px);
+      min-height:0;
+    }
+    .scene-background{
+      inset:-2dvh 0 auto;
+      height:132dvh;
+      transform:translate3d(0,calc(var(--mobile-bg-scroll,0px) * -.42),0);
+      will-change:transform;
+    }
+    footer{
+      height:calc(64px + env(safe-area-inset-bottom,0px));
+      padding:10px 5vw max(10px,env(safe-area-inset-bottom,0px));
+      gap:12px;
+      font-size:clamp(8.5px,2.5vw,10px);
+      white-space:nowrap;
+    }
+    .grain-line{ top:calc((var(--nav-top) * 2) + var(--nav-height)); }
+    .notify{ margin-left:0; }
+    h1{ font-size:clamp(32px,7.5vw,56px); }
+
+    /* ============================================================
+       Hero tag text on mobile — coded two ways. Option B is active;
+       to use Option A instead, delete/comment Option B's rule below
+       and un-comment Option A's.
+       ============================================================ */
+
+    /* Option A — inside the top bar, above the divider, vertically
+       centered with the nav row. Note: this only has room to breathe
+       if the pill ISN'T stretched full-width. */
+    /*
+    .hero-tag-mobile{
+      display:flex; align-items:center;
+      position:absolute; top:var(--nav-top); height:var(--nav-height);
+      right:4vw; z-index:2;
+      font-family:'Space Mono',monospace; font-size:10.5px;
+      letter-spacing:0.05em; color:var(--cream-dim); text-align:right; line-height:1.5;
+    }
+    */
+
+    /* Option B (active) — just below the divider. Pinned with an absolute
+       top tied to the divider's own position (not to flex centering, which
+       is what made its distance from the divider accidental before) so it
+       always sits close to the divider and stays clear of the card. */
+    .hero-tag-mobile{
+      display:block;
+      position:absolute; z-index:3;
+      top:calc((var(--nav-top) * 2) + var(--nav-height) + 14px);
+      left:5vw; right:5vw;
+      font-family:'Space Mono',monospace; font-size:10.5px;
+      letter-spacing:0.05em; color:var(--cream-dim); line-height:1.6;
+    }
+  }
+
+  /* ============================================================
+     MOTION — entrance choreography + ambient/interactive polish.
+     Everything here is progressive enhancement: with JS or motion
+     disabled, every element still lands in its correct resting
+     state (see the prefers-reduced-motion block at the bottom).
+     ============================================================ */
+  :root{ --ease:cubic-bezier(.16,1,.3,1); }
+
+  @keyframes fadeDown{ from{opacity:0; transform:translateY(-18px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes menuContentIn{ from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes fadeUp{ from{opacity:0; transform:translateY(26px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes drawLine{ from{transform:scaleX(0);} to{transform:scaleX(1);} }
+  @keyframes cardIn{ from{opacity:0; transform:translateY(54px) rotate(0deg) scale(.95);} to{opacity:1; transform:translateY(0) rotate(-3deg) scale(1);} }
+  @keyframes kenBurns{ from{transform:scale(1);} to{transform:scale(1.07);} }
+  @keyframes pulseDot{ 0%,100%{box-shadow:0 0 0 0 rgba(255,212,0,.55);} 50%{box-shadow:0 0 0 7px rgba(255,212,0,0);} }
+
+  /* entrance stagger, top to bottom */
+  .nav-pill__content{ animation:fadeDown .8s var(--ease) both; }
+  .tag-corner{ animation:fadeDown .8s var(--ease) .15s both; }
+  .hero-tag-mobile{ animation:fadeDown .8s var(--ease) .15s both; }
+  .grain-line{ transform-origin:left center; animation:drawLine 1s var(--ease) .3s both; }
+  .hero{ perspective:1200px; } /* gives the card's mouse-tilt (JS, below) real depth */
+  .card{ animation:cardIn 1s var(--ease) .4s both; }
+  .card-content > *{ opacity:0; animation:fadeUp .8s var(--ease) both; }
+  .card-content .eyebrow{ animation-delay:.75s; }
+  .card-content h1{ animation-delay:.85s; }
+  .card-content .sub{ animation-delay:1s; }
+  .card-content .notify{ animation-delay:1.15s; }
+  footer{ animation:fadeUp .8s var(--ease) 1.3s both; }
+
+  /* ambient, ongoing */
+  .eyebrow i{ animation:pulseDot 2.4s ease-in-out infinite; }
+
+  /* interactive polish */
+  .nav-links a{ position:relative; transition:opacity .25s var(--ease); }
+  .nav-links a::after{
+    content:''; position:absolute; left:0; right:100%; bottom:-4px; height:1px;
+    background:#FFFFFF; transition:right .3s var(--ease);
+  }
+  .nav-links a:hover{ opacity:.9; }
+  .nav-links a:hover::after{ right:0; }
+
+  .nav-cta{ transition:border-color .28s var(--ease), box-shadow .35s var(--ease); }
+
+  .card:hover .card-surface{ box-shadow:0 40px 90px rgba(0,0,0,0.5); }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration:0.01ms !important; animation-iteration-count:1 !important;
+      transition-duration:0.01ms !important; scroll-behavior:auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div id="root"></div>
+<script type="module" src="/src/main.jsx"></script>
+</body>
 </html>
