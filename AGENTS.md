@@ -1,5 +1,7 @@
 # loew.fi — Production Site Agent Instructions
 
+> Universal process authority: read `lrnolivia/loew-runner@main/LOEW_CHAT_BIBLE.md` and `contracts/manifest.json` first. This file is a repository-specific overlay and must not fork the universal operating contract.
+
 This is the standing directive for the `loew.fi` production repository. Read and follow it before making changes.
 
 ## Mission
