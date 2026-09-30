@@ -1,6 +1,6 @@
 # loew.fi
 
-Lauren White's portfolio website and canonical source repository. The self-hosted Revyme editor/CMS is the day-to-day editing surface; the former custom CMS/Puck implementation in this repository is historical and inactive unless explicitly revived. Current project context and evidence limits are documented in [WORKER_CONTEXT.md](WORKER_CONTEXT.md) and [docs/STATE.md](docs/STATE.md).
+Lauren White's portfolio website and canonical source repository. The self-hosted Revyme editor/CMS is the day-to-day editing surface; the former custom CMS/Puck implementation in this repository is historical and inactive unless explicitly revived. Non-product project context, state, architecture, decisions, research, operations, and historical records are Runner-owned under [`docs/loewfi/`](https://github.com/lrnolivia/loew-runner/tree/main/docs/loewfi).
 
 ## Development
 
@@ -12,4 +12,4 @@ Lauren White's portfolio website and canonical source repository. The self-hoste
 - `pnpm build` creates the Cloudflare Pages output in `dist/`.
 - `pnpm check` runs type checking, tests, and the production build together.
 
-Canonical documentation lives in [`docs/`](docs/STATE.md): [architecture](docs/ARCHITECTURE.md), [decisions](docs/DECISIONS.md), [research](docs/RESEARCH.md), and [operations](docs/OPERATIONS.md). Historical custom-CMS design and milestone records remain available in [`docs/archive/`](docs/archive/README.md). Portfolio archive authoring references remain in [`portfolio/README.md`](portfolio/README.md) and [`portfolio/ASSET-NAMING.md`](portfolio/ASSET-NAMING.md). The ignored local [`REPO-CLEANUP.md`](REPO-CLEANUP.md) is preserved and is not a committed/current status source.
+Repository-local product authoring references remain in [`portfolio/README.md`](portfolio/README.md) and [`portfolio/ASSET-NAMING.md`](portfolio/ASSET-NAMING.md). Non-product documentation lives in [`lrnolivia/loew-runner/docs/loewfi/`](https://github.com/lrnolivia/loew-runner/tree/main/docs/loewfi). The ignored local [`REPO-CLEANUP.md`](REPO-CLEANUP.md) is preserved and is not a committed/current status source.
