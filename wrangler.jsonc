@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "loewfi",
+  "compatibility_date": "2026-08-28",
+  // Workers Builds runs pnpm build before uploading this static output.
+  "assets": {
+    "directory": "./dist"
+  }
+}
