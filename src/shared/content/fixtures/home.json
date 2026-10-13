@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "kind": "page",
+  "pageType": "home",
+  "id": "home",
+  "slug": "home",
+  "title": "Lauren White — design & photography",
+  "hero": {
+    "image": { "assetId": "home-hero", "alt": "Moss-covered tree canopy", "web": { "path": "images/moss.jpg" } },
+    "focalPoint": { "x": 0.5, "y": 0.5 },
+    "tone": "muted-photo",
+    "attachment": "fixed",
+    "eyebrow": "Tallahassee, FL",
+    "headline": [{ "type": "text", "text": "Twenty years of making things." }],
+    "introduction": [{ "type": "text", "text": "A collection of design and photography by Lauren White — from personal and college projects to production assets for recording artists and D2C marketing." }],
+    "actions": [
+      { "id": "view-work", "label": "View the work", "href": "/avedastudio" },
+      { "id": "about-lauren", "label": "About Lauren", "href": "/about" }
+    ]
+  },
+  "selectedProjectSlugs": ["avedastudio", "hydroviv", "cksteele"],
+  "trackIntroductions": [
+    { "projectType": "photography", "title": "Photo", "description": [{ "type": "text", "text": "Finished photography — studio beauty work, coastal landscapes, and lifestyle sets." }], "actionLabel": "Start with Aveda Studio" },
+    { "projectType": "design", "title": "Design", "description": [{ "type": "text", "text": "Print, brand, and packaging work presented as case studies." }], "actionLabel": "Start with Hydroviv" }
+  ]
+}

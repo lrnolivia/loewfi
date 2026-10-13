@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "kind": "project",
+  "projectType": "design",
+  "id": "cksteele",
+  "slug": "cksteele",
+  "title": "CK Steele Plaza",
+  "eyebrow": "Design — public mural, college project",
+  "summary": [{ "type": "text", "text": "A physical mural tracing the history and future of public transportation in Tallahassee." }],
+  "hero": {
+    "image": { "assetId": "cksteele-hero", "alt": "CK Steele Plaza mural panel", "web": { "path": "portfolio/assets/graphics/cksteele/cksteele-07.jpg" } },
+    "focalPoint": { "x": 0.5, "y": 0.2 },
+    "tone": "softened-artwork",
+    "attachment": "scroll"
+  },
+  "metadata": [
+    { "id": "context", "label": "Context", "value": [{ "type": "text", "text": "College project" }] },
+    { "id": "site", "label": "Site", "value": [{ "type": "text", "text": "CK Steele Plaza, Tallahassee" }] },
+    { "id": "medium", "label": "Medium", "value": [{ "type": "text", "text": "Large-format mural panels" }] }
+  ],
+  "body": [
+    { "id": "introduction", "type": "paragraph", "treatment": "lede", "content": [{ "type": "text", "text": "The plaza is Tallahassee's central transit hub. The concept pairs past and present illustrations, then extends the story across a shelter-panel run." }] },
+    { "id": "then-and-now", "type": "heading", "text": "Then & now" },
+    { "id": "roundel-comparison", "type": "comparison",
+      "before": { "label": "Past", "image": { "assetId": "cksteele-past", "alt": "Past transportation illustration panel", "web": { "path": "portfolio/assets/graphics/cksteele/cksteele-03.png" } } },
+      "after": { "label": "Now", "image": { "assetId": "cksteele-now", "alt": "Present-day transportation illustration panel", "web": { "path": "portfolio/assets/graphics/cksteele/cksteele-05.png" } } },
+      "caption": [{ "type": "text", "text": "The entry roundel uses the same composition a century apart." }]
+    },
+    { "id": "center-roundel", "type": "figure", "layout": "centered", "figure": { "image": { "assetId": "cksteele-center", "alt": "Center roundel pairing bus icons", "web": { "path": "portfolio/assets/graphics/cksteele/cksteele-02.jpg" } }, "caption": [{ "type": "text", "text": "The center pairing ties the side panels together." }] } },
+    { "id": "panel-set", "type": "heading", "text": "The panel set" },
+    { "id": "panel-strip", "type": "figure-strip", "figures": [
+      { "image": { "assetId": "cksteele-panel-01", "alt": "Transit shelter panel 1", "web": { "path": "portfolio/assets/graphics/cksteele/cksteele-01.jpg" } }, "caption": [{ "type": "text", "text": "Panel 01" }] },
+      { "image": { "assetId": "cksteele-panel-04", "alt": "Transit shelter panel 4", "web": { "path": "portfolio/assets/graphics/cksteele/cksteele-04.jpg" } }, "caption": [{ "type": "text", "text": "Panel 04" }] },
+      { "image": { "assetId": "cksteele-panel-06", "alt": "Transit shelter panel 6", "web": { "path": "portfolio/assets/graphics/cksteele/cksteele-06.jpg" } }, "caption": [{ "type": "text", "text": "Panel 06" }] },
+      { "image": { "assetId": "cksteele-panel-08", "alt": "Transit shelter panel 8", "web": { "path": "portfolio/assets/graphics/cksteele/cksteele-08.jpg" } }, "caption": [{ "type": "text", "text": "Panel 08" }] }
+    ] }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "kind": "site-config",
+  "id": "site",
+  "site": {
+    "title": "loew.fi",
+    "baseUrl": "https://loew.fi",
+    "locale": "en-US",
+    "ownerName": "Lauren White",
+    "footerCopyright": "© 2026 Lauren Olivia — loew.fi"
+  },
+  "tracks": [
+    { "projectType": "photography", "label": "Photo" },
+    { "projectType": "design", "label": "Design" }
+  ],
+  "projectOrder": {
+    "photography": ["avedastudio"],
+    "design": ["hydroviv", "cksteele"]
+  },
+  "contact": {
+    "email": "me@loew.fi",
+    "phone": "850.570.9019",
+    "instagramUrl": "https://instagram.com/lrnolivia"
+  }
+}

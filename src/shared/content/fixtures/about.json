@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "kind": "page",
+  "pageType": "about",
+  "id": "about",
+  "slug": "about",
+  "title": "About",
+  "personName": "Lauren White",
+  "hero": {
+    "image": { "assetId": "about-hero", "alt": "Moss-covered tree canopy", "web": { "path": "images/moss.jpg" } },
+    "focalPoint": { "x": 0.5, "y": 0.5 },
+    "tone": "muted-photo",
+    "attachment": "fixed"
+  },
+  "metadata": [
+    { "id": "based", "label": "Based", "value": [{ "type": "text", "text": "Tallahassee, FL" }] },
+    { "id": "disciplines", "label": "Disciplines", "value": [{ "type": "text", "text": "Design, art direction, photography" }] },
+    { "id": "contact", "label": "Contact", "value": [{ "type": "link", "text": "me@loew.fi", "href": "mailto:me@loew.fi" }] }
+  ],
+  "sidebarWidget": { "title": "On the desk right now", "items": ["Aveda Studio, season two", "A print run for a friend's zine", "This website"] },
+  "body": [
+    { "id": "opening-headline", "type": "headline", "content": [{ "type": "text", "text": "Twenty years of making things, most of them by hand first." }] },
+    { "id": "short-version", "type": "paragraph", "treatment": "lede", "content": [{ "type": "text", "text": "I've been making things — collages, zines, posters, album layouts, brand systems, and whatever a client actually needed — for about twenty years now." }] },
+    { "id": "design-practice", "type": "paragraph", "content": [{ "type": "text", "text": "I trained as a designer first, which is probably why even the photography leans toward composition and light over spontaneity." }] },
+    { "id": "studio-pull", "type": "image-break", "image": { "assetId": "about-studio-pull", "alt": "Studio portrait from the Aveda Studio series", "web": { "path": "portfolio/assets/images/avedastudio/avedastudio-07.jpg" } } },
+    { "id": "practice", "type": "heading", "text": "How I work" },
+    { "id": "practice-copy", "type": "paragraph", "content": [{ "type": "text", "text": "Most projects start on paper, not because it's precious but because it's faster to throw away." }] },
+    { "id": "next", "type": "heading", "text": "What's next" },
+    { "id": "next-copy", "type": "paragraph", "content": [
+      { "type": "text", "text": "A second season of studio work with Aveda, and slowly getting the rest of the archive properly organized here. If you've got a wall, a brand, or a water filter that needs a system, " },
+      { "type": "link", "text": "say hello", "href": "/contact" },
+      { "type": "text", "text": "." }
+    ] }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "loewfi",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "render:fixtures": "tsc -p tsconfig.renderer.json && node .renderer-build/scripts/render-fixtures.js",
+    "media:build": "node scripts/build-portfolio-media.mjs",
+    "dev": "pnpm render:fixtures && vite",
+    "api:dev": "pnpm build && wrangler pages dev dist --compatibility-date=2026-08-28 --binding CMS_LOCAL_ADMIN_EMAIL=local@loew.fi --kv CMS_DRAFTS --kv CMS_MEDIA --persist-to .wrangler/state",
+    "build": "pnpm render:fixtures && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "pnpm typecheck && pnpm test && pnpm build"
+  },
+  "dependencies": {
+    "@sohumsuthar/liquid-glass": "3.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "sharp": "0.35.2",
+    "typescript": "^5.9.2",
+    "vite": "^6.4.3",
+    "vitest": "^3.2.4",
+    "wrangler": "^4.127.1"
+  }
+}

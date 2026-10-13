@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "kind": "project",
+  "projectType": "design",
+  "id": "hydroviv",
+  "slug": "hydroviv",
+  "title": "Hydroviv",
+  "eyebrow": "Design — print & marketing",
+  "summary": [{ "type": "text", "text": "Advertisement, print and marketing material work for Hydroviv, a custom water-filtration company." }],
+  "hero": {
+    "image": { "assetId": "hydroviv-hero", "alt": "Hydroviv trifold brochure outer panels", "web": { "path": "portfolio/assets/graphics/hydroviv/hydroviv-01.png" }, "full": { "path": "portfolio/assets/graphics/hydroviv/hydroviv-01.png" } },
+    "focalPoint": { "x": 0.2, "y": 0.5 },
+    "tone": "softened-artwork",
+    "attachment": "scroll"
+  },
+  "metadata": [
+    { "id": "client", "label": "Client", "value": [{ "type": "text", "text": "Hydroviv" }] },
+    { "id": "role", "label": "Role", "value": [{ "type": "text", "text": "Design" }] },
+    { "id": "medium", "label": "Medium", "value": [{ "type": "text", "text": "Print, direct mail, email" }] },
+    { "id": "deliverables", "label": "Deliverables", "value": [{ "type": "text", "text": "Trifold brochure, digital ad set" }] }
+  ],
+  "body": [
+    { "id": "introduction", "type": "paragraph", "treatment": "lede", "content": [{ "type": "text", "text": "Hydroviv builds water filters customized to a household's actual local water report — the brief called for material that could make specific contamination feel useful rather than alarming." }] },
+    { "id": "brochure", "type": "heading", "text": "The brochure" },
+    { "id": "brochure-context", "type": "paragraph", "content": [{ "type": "text", "text": "A trifold meant to work as both a countertop leaflet and a direct-mail piece." }] },
+    { "id": "brochure-outer", "type": "figure", "layout": "full", "figure": { "image": { "assetId": "hydroviv-outer", "alt": "Hydroviv brochure outer panels", "web": { "path": "portfolio/assets/graphics/hydroviv/hydroviv-01.png" } }, "caption": [{ "type": "text", "text": "Outer spread — cover, QR-code offer panel, and back panel." }] } },
+    { "id": "brochure-inner", "type": "figure", "layout": "full", "figure": { "image": { "assetId": "hydroviv-inner", "alt": "Hydroviv brochure inner panels", "web": { "path": "portfolio/assets/graphics/hydroviv/hydroviv-02.png" } }, "caption": [{ "type": "text", "text": "Inner spread — the actual filter, spelled out." }] } },
+    { "id": "digital", "type": "heading", "text": "Digital set" },
+    { "id": "digital-context", "type": "paragraph", "content": [{ "type": "text", "text": "A matching set of digital assets built from the same system." }] },
+    { "id": "digital-pair", "type": "figure-pair", "figures": [
+      { "image": { "assetId": "hydroviv-email", "alt": "Hydroviv email header", "web": { "path": "portfolio/assets/graphics/hydroviv/hydroviv-03.jpg" } }, "caption": [{ "type": "text", "text": "Email header" }] },
+      { "image": { "assetId": "hydroviv-social", "alt": "Hydroviv vertical social advertisement", "web": { "path": "portfolio/assets/graphics/hydroviv/hydroviv-04.jpg" } }, "caption": [{ "type": "text", "text": "Vertical social ad" }] }
+    ] },
+    { "id": "wave-pattern", "type": "figure", "layout": "narrow", "figure": { "image": { "assetId": "hydroviv-pattern", "alt": "Hydroviv wave pattern tile", "web": { "path": "portfolio/assets/graphics/hydroviv/hydroviv-05.jpg" } }, "caption": [{ "type": "text", "text": "Wave pattern, extracted for reuse across the campaign." }] } }
+  ]
+}

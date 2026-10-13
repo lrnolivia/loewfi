@@ -1,0 +1,15 @@
+node_modules/
+.pnpm-store/
+dist/
+generated-preview/
+.renderer-build/
+.wrangler/
+.DS_Store
+.env
+.env.*
+cms-reference-clone/
+REPO-CLEANUP.md
+.vite/
+coverage/
+*.log
+public/media/
