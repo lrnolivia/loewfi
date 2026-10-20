@@ -42,7 +42,10 @@ function Navbar() {
       <div className="nav-container">
         <AccentRail />
         <nav className="nav-content" aria-label="Main navigation">
-          <a className="brand" href="#" onClick={() => setOpen(false)}>loew.fi</a>
+          <div className="brand-block">
+            <a className="brand" href="#" onClick={() => setOpen(false)}>loew.fi</a>
+            <div className="nav-meta"><span>Loew Fidelity / Field Notes — Vol. 01</span><span>2026</span></div>
+          </div>
           <ul className="nav-links">{navLinks()}</ul>
           <button ref={toggleRef} className={`nav-toggle${open ? ' is-open' : ''}`} aria-label={open ? 'Close menu' : 'Menu'} aria-expanded={open} aria-controls="navDropdown" onClick={() => setOpen((value) => !value)}>
             <span /><span /><span />
@@ -80,7 +83,6 @@ function Hero() {
             <div className="status-rule" aria-hidden="true" />
             <div className="eyebrow"><img src={statusDot} alt="" width="8" height="8" />Currently under construction</div>
           </div>
-          <div className="card-meta"><span>Loew Fidelity / Field Notes — Vol. 01</span><span>2026</span></div>
           <h1 id="landing-title">Good things<br />are coming.</h1>
           <p className="sub">A girl, her dreams, delusions and her work gathered into one place. Send a word of encouragement while I work!</p>
           <form className="notify" action="mailto:me@loew.fi" method="GET" encType="text/plain">
