@@ -34,7 +34,7 @@ function Navbar() {
   }, [open]);
 
   const navLinks = (mobile = false) => links.map((link) => (
-    <li key={link}><a href="#" tabIndex={mobile && !open ? -1 : undefined} onClick={() => setOpen(false)}>{link}</a></li>
+    <li key={link}><a className={`nav-item nav-item--${link.toLowerCase()}`} href="#" tabIndex={mobile && !open ? -1 : undefined} onClick={() => setOpen(false)}>{link}</a></li>
   ));
 
   return (
