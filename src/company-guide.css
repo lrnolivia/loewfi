@@ -1,0 +1,123 @@
+.company-guide { background: var(--canvas); min-height: 100dvh; color: var(--text-primary); line-height: 1.65; }
+.company-guide p, .company-guide h2, .company-guide h3 { margin: 0; }
+.company-guide a:not(.brand) { text-underline-offset: 4px; }
+.guide-header { max-width: 1440px; margin: auto; padding: 36px var(--page-inset) 30px; }
+.guide-header .accent-rail { height: 4px; }
+.guide-header-row { display: flex; align-items: center; gap: 28px; padding-top: 20px; }
+.guide-meta, .guide-kicker, .guide-phase-number, .guide-footer { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: .6px; }
+.guide-meta { color: var(--text-secondary); }
+.guide-home { margin-left: auto; color: var(--text-secondary); font-size: 12px; padding: 10px 0; }
+.guide-home:hover, .company-guide a:hover { color: var(--nav-software); }
+.guide-skip { position: absolute; top: -100px; left: 20px; z-index: 10; background: var(--cream); color: var(--canvas); padding: 12px; }
+.guide-skip:focus { top: 12px; }
+.guide-intro { position: relative; isolation: isolate; overflow: hidden; max-width: 1440px; margin: auto; background: var(--surface); border-block: 1px solid var(--border); }
+.guide-moss { position: absolute; z-index: -2; width: 100%; height: 100%; inset: 0; object-fit: cover; object-position: 75% 48%; opacity: .6; }
+.guide-intro::after { content: ''; position: absolute; z-index: -1; inset: 0; background: linear-gradient(90deg, rgb(17 17 16 / 94%), rgb(17 17 16 / 70%) 47%, rgb(17 17 16 / 10%)); }
+.guide-intro-copy { padding: 72px var(--page-inset) 64px; }
+.guide-kicker { text-transform: uppercase; color: var(--text-secondary); }
+.company-guide h1 { font-size: clamp(44px, 6.5vw, 88px); line-height: 1.02; letter-spacing: -.045em; margin: 26px 0; }
+.guide-deck { font-size: clamp(17px, 2vw, 21px); color: var(--text-secondary); margin-bottom: 32px !important; line-height: 1.6; }
+.guide-body { max-width: 1180px; padding: 0 var(--page-inset); margin: auto; }
+.guide-notice { display: grid; grid-template-columns: 1fr 2fr; gap: 32px; padding: 32px 0; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--text-secondary); }
+.guide-notice strong { color: var(--cream); font-weight: 600; }
+.company-guide h2 { font-family: 'Momo Trust Display', sans-serif; font-weight: 400; font-size: clamp(27px, 3.2vw, 40px); line-height: 1.2; letter-spacing: -.025em; color: var(--cream); }
+.guide-costs { padding: 64px 0 48px; }
+.guide-costs h2 { margin: 12px 0 !important; }
+.guide-muted { color: var(--text-secondary); }
+.guide-costs > div:first-child > p:last-child { font-size: 14px; }
+.guide-cost-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin-top: 32px; }
+.guide-cost-grid article { border-top: 2px solid var(--nav-photo); padding-top: 24px; }
+.guide-cost-grid article:nth-child(2) { border-color: var(--nav-about); }
+.guide-cost-grid article:nth-child(3) { border-color: var(--nav-design); }
+.guide-price { font-family: 'Momo Trust Display', sans-serif; font-size: clamp(30px, 3.5vw, 46px); line-height: 1.1; color: var(--cream); }
+.guide-price span { display: block; font: 10px/1.6 'Space Mono', monospace; color: var(--text-secondary); margin-top: 10px; }
+.guide-cost-grid h3 { font-size: 14px; margin: 20px 0 6px; }
+.guide-cost-grid article > p:not(.guide-price) { font-size: 13px; color: var(--text-secondary); }
+.guide-sources { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 18px !important; font: 10px/1.8 'Space Mono', monospace; color: var(--text-secondary); }
+.guide-sources a { text-decoration: underline; overflow-wrap: anywhere; }
+.guide-sources > span { width: 100%; color: var(--text-secondary); }
+.guide-store-budget { border: 1px solid var(--border); border-radius: 12px; background: var(--surface); padding: 24px; margin-top: 32px; font-size: 14px; }
+.guide-store-budget p + p { margin-top: 10px; }
+.guide-progress { border-block: 1px solid var(--border); padding: 32px 0; display: grid; grid-template-columns: 1.7fr 1fr; gap: 24px 48px; }
+.guide-progress h2 { font-size: 25px; margin-bottom: 12px; }
+.guide-progress p { color: var(--text-secondary); font-size: 13px; }
+.guide-progress-tools { display: flex; align-items: flex-start; flex-direction: column; gap: 10px; justify-content: center; font: 12px/1.5 'Space Mono', monospace; }
+.guide-progress progress { width: 100%; height: 6px; accent-color: var(--nav-about); }
+.company-guide button { min-height: 44px; border: 1px solid var(--border); background: var(--surface); color: var(--cream); border-radius: 6px; font-size: 12px; padding: 10px 14px; }
+.company-guide button:hover { background: var(--interactive); }
+.guide-storage-note { grid-column: 1 / -1; color: var(--nav-software) !important; }
+.guide-phase-links { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--border); gap: 12px; padding: 24px 0; font-size: 12px; }
+.guide-phase-links a { padding: 8px 0; }
+.guide-phase-links span { display: block; font: 10px/1.5 'Space Mono', monospace; color: var(--nav-photo); margin-bottom: 6px; }
+.guide-phase { padding: 56px 0 8px; scroll-margin-top: 20px; }
+.guide-phase-heading { display: flex; gap: 24px; align-items: baseline; margin-bottom: 30px; }
+.guide-phase-number { color: var(--nav-photo); }
+.guide-phase:nth-of-type(2) .guide-phase-number { color: var(--nav-design); }
+.guide-phase-heading h2 { margin-bottom: 12px; }
+.guide-phase-heading div > p { color: var(--text-secondary); font-size: 14px; }
+.guide-checklist { list-style: none; padding: 0; }
+.guide-checklist li { border-top: 1px solid var(--border); padding: 26px 0; }
+.guide-check-title { display: flex; align-items: flex-start; gap: 18px; }
+.guide-check-title input { appearance: auto; accent-color: var(--nav-about); width: 22px; height: 22px; flex-shrink: 0; margin: 3px 0 0; cursor: pointer; }
+.guide-check-title label { font-size: 17px; font-weight: 600; line-height: 1.55; cursor: pointer; min-height: 44px; padding-bottom: 8px; }
+.is-checked .guide-check-title label { color: var(--nav-about); }
+.guide-item-content { padding-left: 40px; max-width: 820px; font-size: 14px; color: var(--text-secondary); }
+.guide-item-content details { margin-top: 16px; }
+.guide-item-content summary { cursor: pointer; color: var(--cream); font-size: 12px; width: fit-content; padding: 10px 4px 10px 0; }
+.company-guide summary:focus-visible { outline: 2px solid var(--nav-software); outline-offset: 4px; }
+.guide-item-content details p { padding: 12px 16px; border-left: 2px solid var(--border); background: var(--surface); }
+.guide-extra-link { margin-top: 12px !important; font-size: 12px; text-decoration: underline; }
+.guide-end { border-top: 1px solid var(--border); margin-top: 32px; padding: 48px 0 64px; }
+.guide-end h2 { margin: 20px 0; }
+.guide-end > p:not(.guide-kicker) { max-width: 680px; margin-bottom: 16px; font-size: 13px; color: var(--text-secondary); }
+.guide-end > a { display: inline-block; padding: 12px; margin-left: 12px; font-size: 12px; }
+.guide-footer { display: flex; justify-content: space-between; gap: 24px; border-top: 1px solid var(--border); padding: 24px var(--page-inset); color: var(--text-secondary); max-width: 1440px; margin: auto; }
+@media (max-width: 800px) {
+  .guide-header { padding-block: 24px; }
+  .guide-header-row { gap: 12px; flex-wrap: wrap; }
+  .guide-header-row .guide-meta { display: none; }
+  .guide-home { font-size: 11px; }
+  .guide-intro-copy { padding-block: 48px; }
+  .guide-intro::after { background: rgb(17 17 16 / 72%); }
+  .guide-notice { grid-template-columns: 1fr; gap: 8px; }
+  .guide-costs { padding-top: 40px; }
+  .guide-cost-grid { grid-template-columns: 1fr; gap: 30px; }
+  .guide-cost-grid article { display: grid; grid-template-columns: 125px 1fr; column-gap: 20px; padding-top: 20px; }
+  .guide-cost-grid .guide-price { grid-row: 1 / 4; font-size: 32px; }
+  .guide-cost-grid h3 { margin-top: 0; }
+  .guide-cost-grid article .guide-sources { grid-column: 2; }
+  .guide-store-budget { padding: 20px; }
+  .guide-progress { grid-template-columns: 1fr; gap: 20px; }
+  .guide-progress-tools { width: 100%; }
+  .guide-phase-links { grid-template-columns: 1fr 1fr; }
+  .guide-phase { padding-top: 40px; }
+  .guide-phase-heading { gap: 16px; }
+  .guide-check-title { gap: 14px; }
+  .guide-check-title label { font-size: 16px; }
+  .guide-item-content { padding-left: 36px; }
+  .guide-footer { flex-wrap: wrap; font-size: 10px; gap: 12px; }
+}
+@media (max-width: 359px) {
+  .company-guide h1 { font-size: 38px; }
+  .guide-cost-grid article { grid-template-columns: 105px 1fr; column-gap: 12px; }
+  .guide-cost-grid .guide-price { font-size: 27px; }
+  .guide-item-content { padding-left: 0; }
+}
+@media print {
+  :root { color-scheme: light; }
+  .company-guide { background: white; color: #111; font-size: 10pt; }
+  .guide-body { max-width: none; padding: 0; }
+  .guide-header { padding: 0 0 16px; }
+  .guide-intro { border-color: #777; background: white; }
+  .guide-intro::after, .guide-moss, .guide-home, .guide-skip, .guide-phase-links, .guide-progress-tools button, .guide-print, .guide-end > a { display: none; }
+  .guide-intro-copy { padding: 20px 0; }
+  .company-guide h1 { font-size: 36pt; }
+  .company-guide h1, .company-guide h2, .company-guide h3, .company-guide p, .company-guide a, .company-guide label, .company-guide strong, .company-guide span, .company-guide summary { color: #111 !important; }
+  .guide-costs, .guide-phase, .guide-end { padding-block: 20px; }
+  .guide-store-budget, .guide-item-content details p { background: white; border-color: #777; }
+  .guide-item-content details::details-content { content-visibility: visible; }
+  .guide-item-content details > p { display: block !important; }
+  .guide-checklist li { break-inside: avoid; }
+  .guide-sources a::after { content: ' (' attr(href) ')'; font-size: 8pt; overflow-wrap: anywhere; }
+  .guide-footer { padding: 16px 0; }
+}

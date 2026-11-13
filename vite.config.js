@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath, URL } from 'node:url';
 import { copyFile } from 'node:fs/promises';
 
-const landingPublicFiles = ['_redirects', 'favicon.svg', 'robots.txt', 'sitemap.xml'];
+const landingPublicFiles = ['_redirects', '_headers', 'favicon.svg', 'robots.txt', 'sitemap.xml'];
 
 const cloudflarePages404 = () => ({
   name: 'cloudflare-pages-react-404',
@@ -23,6 +23,7 @@ export default defineConfig(({ command }) => ({
     rollupOptions: {
       input: {
         main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        companyGuide: fileURLToPath(new URL('./company-guide/index.html', import.meta.url)),
         admin: fileURLToPath(new URL('./admin/index.html', import.meta.url)),
       }
     }
