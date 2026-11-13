@@ -34,6 +34,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "22"
+      - name: Install locked coordination dependencies
+        run: npm ci --ignore-scripts
       - name: Verify live ownership and exact PR scope
         env:
           GH_TOKEN: ${{ github.token }}
@@ -61,6 +63,8 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: "22"
+      - name: Install locked coordination dependencies
+        run: npm ci --ignore-scripts
       - name: Reconcile and remove completed managed branches
         env:
           GH_TOKEN: ${{ github.token }}
